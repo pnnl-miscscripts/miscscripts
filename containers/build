@@ -17,7 +17,8 @@ RES=$?
 if [ $RES -eq 1 ]; then
 	echo Nothing changed. Skipping.
 	exit 0
-else
+fi
+if [ $RES != 0 ]; then
 	echo Something went wrong. Failing.
 	exit $RES
 fi
