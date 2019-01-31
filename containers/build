@@ -1,5 +1,16 @@
 #!/bin/bash
 CONTAINER="$1"
-pushd $(dirname "$0")
-docker build -t pnnl-miscscripts/$CONTAINER:latest $CONTAINER
+pushd $(dirname "$0")/"$CONTAINER"
+
+[ ! -d hubbuildtools ] && git clone https://github.com/kfox1111/hubbuildtools
+
+export AUTO_PREFIX=apk-version
+export AUTO_PREFIX_PACKAGE=ipmitool
+export NEW_BUILD=x
+export IMAGE_NAME=pnnlmiscscripts/ipmitool:latest
+export DOCKER_TAG=latest
+export DOCKER_REPO=pnnlmiscscripts/ipmitool
+
+bash -x hubbuildtools/hubhookhelpers/build
+
 popd
