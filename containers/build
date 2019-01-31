@@ -4,11 +4,14 @@ pushd $(dirname "$0")/"$CONTAINER"
 
 [ ! -d hubbuildtools ] && git clone https://github.com/kfox1111/hubbuildtools
 
-export AUTO_PREFIX=apk-version
-export AUTO_PREFIX_PACKAGE=ipmitool
-export IMAGE_NAME=pnnlmiscscripts/ipmitool:latest
+export DOCKER_REPO=pnnlmiscscripts/"$CONTAINER"
 export DOCKER_TAG=latest
-export DOCKER_REPO=pnnlmiscscripts/ipmitool
+
+[ -f "$CONTAINER"/buildenv ] . "$CONTAINER"/buildenv
+
+if [ "x$IMAGE_NAME" == "x" ]; then
+	export IMAGE_NAME="${DOCKER_REPO}:${DOCKER_TAG}"
+fi
 
 hubbuildtools/hubhookhelpers/build
 RES=$?
@@ -25,8 +28,6 @@ fi
 REVISION=$(hubbuildtools/fetchlocalrevision.sh "$IMAGE_NAME")
 
 docker tag "$IMAGE_NAME" "$DOCKER_REPO:$REVISION"
-
-docker images
 
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
