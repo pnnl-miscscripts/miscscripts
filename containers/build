@@ -6,7 +6,6 @@ pushd $(dirname "$0")/"$CONTAINER"
 
 export AUTO_PREFIX=apk-version
 export AUTO_PREFIX_PACKAGE=ipmitool
-export NEW_BUILD=x
 export IMAGE_NAME=pnnlmiscscripts/ipmitool:latest
 export DOCKER_TAG=latest
 export DOCKER_REPO=pnnlmiscscripts/ipmitool
