@@ -13,6 +13,11 @@ export DOCKER_REPO=pnnlmiscscripts/ipmitool
 
 hubbuildtools/hubhookhelpers/build
 
+
+REVISION=$(hubbuildtools/fetchlocalrevision.sh "$IMAGE_NAME")
+
+docker tag "$IMAGE_NAME" "$DOCKER_REPO:$REVISION"
+
 docker images
 
 popd
