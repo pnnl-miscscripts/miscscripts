@@ -11,6 +11,8 @@ export IMAGE_NAME=pnnlmiscscripts/ipmitool:latest
 export DOCKER_TAG=latest
 export DOCKER_REPO=pnnlmiscscripts/ipmitool
 
-bash -x hubbuildtools/hubhookhelpers/build
+hubbuildtools/hubhookhelpers/build
+
+docker images
 
 popd
