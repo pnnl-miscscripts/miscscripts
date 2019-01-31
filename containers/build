@@ -7,7 +7,7 @@ pushd $(dirname "$0")/"$CONTAINER"
 export DOCKER_REPO=pnnlmiscscripts/"$CONTAINER"
 export DOCKER_TAG=latest
 
-[ -f "$CONTAINER"/buildenv ] . "$CONTAINER"/buildenv
+[ -f "$CONTAINER"/buildenv ] && . "$CONTAINER"/buildenv
 
 if [ "x$IMAGE_NAME" == "x" ]; then
 	export IMAGE_NAME="${DOCKER_REPO}:${DOCKER_TAG}"

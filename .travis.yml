@@ -2,9 +2,11 @@ jobs:
   include:
   - stage: build
     language: shell
+    name: "Build ipmitool container"
     script: ./containers/build ipmitool
   - stage: build
     language: shell
+    name: "Build dhcpd container"
     script: ./containers/build dhcpd
 env:
   global:
