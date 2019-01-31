@@ -1,0 +1,4 @@
+jobs:
+  include:
+    - stage: build
+      script: ./container/build ipmitool

@@ -1,0 +1,3 @@
+#!/bin/bash
+CONTAINER="$1"
+docker build -t pnnl-miscscripts/$CONTAINER:latest $CONTAINER
