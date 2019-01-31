@@ -1,4 +1,2 @@
-export NEW_BUILD=y
 export AUTO_PREFIX=apk-version
 export AUTO_PREFIX_PACKAGE=dhcp
-
