@@ -1,0 +1,77 @@
+#!/bin/bash
+
+CONTAINER="$1"
+
+if [ "x$REVISION" == "x" ]; then
+	echo REVISION is not set.
+	exit -1
+fi
+
+mkdir -p $(dirname "$0")/"$CONTAINER"
+
+pushd $(dirname "$0")/"$CONTAINER"
+
+
+export DOCKER_TAG=latest
+export CPREFIX="pnnlmiscscripts"
+
+[ -f buildenv ] && . ../../../containers/"$CONTAINER"/buildenv
+
+if [ "x$IMAGE_NAME" == "x" ]; then
+	export IMAGE_NAME="${DOCKER_REPO}:${DOCKER_TAG}"
+fi
+
+cat > Chart.yaml <<EOF
+apiVersion: v1
+appVersion: "$REVISION"
+description: A Helm chart for Kubernetes
+name: $CONTAINER
+version: 1.0.0
+EOF
+
+mkdir -p templates
+cat > templates/_helpers.tpl <<EOF
+{{- define "$CPREFIX.$CONTAINER.server" -}}
+{{- if and (hasKey . "section") (kindIs "bool" .section) (hasKey .section "server") .section.server -}}
+{{ .section.server }}
+{{- else -}}
+docker.io
+{{- end -}}
+{{- end -}}
+
+{{- define "$CPREFIX.$CONTAINER.prefix" -}}
+{{- if and (hasKey . "section") (hasKey .section "prefix") .section.prefix -}}
+{{ .section.prefix }}
+{{- else -}}
+pnnlmiscscripts
+{{- end -}}
+{{- end -}}
+
+{{- define "$CPREFIX.$CONTAINER.repo" -}}
+{{- if and (hasKey . "section") (hasKey .section "repo") .section.repo -}}
+{{ .section.repo }}
+{{- else -}}
+$CONTAINER
+{{- end -}}
+{{- end -}}
+
+{{- define "$CPREFIX.$CONTAINER.tag" -}}
+{{- if and (hasKey . "section") (hasKey .section "tag") .section.tag -}}
+{{ .section.tag }}
+{{- else -}}
+$REVISION
+{{- end -}}
+{{- end -}}
+
+{/*
+How to use:
+  {{ dict "dot" . "section" .Values.$CONTAINER | include "$CPREFIX.$CONTAINER.image" }}
+*/}}
+{{- define "$CPREFIX.$CONTAINER.image" -}}
+{{- include "$CPREFIX.$CONTAINER.server" . -}}/{{- include "$CPREFIX.$CONTAINER.prefix" . -}}/{{- include "$CPREFIX.$CONTAINER.repo" . -}}:{{- include "$CPREFIX.$CONTAINER.tag" . -}}
+{{- end -}}
+EOF
+
+pushd ../image-library-charts/docs
+helm package "../../$CONTAINER"
+popd

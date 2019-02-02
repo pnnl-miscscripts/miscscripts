@@ -1,0 +1,45 @@
+#!/bin/bash
+
+set -e
+
+#fetch helm in a way build can use...
+
+pushd $(dirname "$0")
+[ ! -d image-library-charts ] && git clone https://github.com/pnnl-miscscripts/image-library-charts
+[ ! -d hubbuildtools ] && git clone https://github.com/kfox1111/hubbuildtools
+
+if [ "x$TRAVIS" != "x" ]; then
+	curl https://raw.githubusercontent.com/helm/helm/master/scripts/get > get_helm.sh
+	chmod 700 get_helm.sh
+	./get_helm.sh
+fi
+
+cd image-library-charts
+
+mkdir -p tags
+
+CHANGE=0
+for CONTAINER in ipmitool dhcpd; do
+	REVISION=$(../hubbuildtools/hubcurlrevision.sh "pnnlmiscscripts/$CONTAINER" "latest")
+	echo $REVISION
+	FOUND=0
+	if [ -f "tags/$CONTAINER-latest" ]; then
+		if [ "x$REVISION" == "x$(cat tags/$CONTAINER-latest)" ]; then
+			FOUND=1
+			echo $CONTAINER already built.
+		fi
+	fi
+	if [ $FOUND -eq 0 ]; then
+		CHANGE=1
+		echo $CONTAINER building...
+		../build "$CONTAINER"
+		echo "$REVISION" > "tags/$CONTAINER-latest"
+	fi
+done
+if [ $CHANGE -eq 1 ]; then
+	pushd docs
+	helm repo index .
+	popd
+	git add --all :/ && git commit -m "Update repo"
+	git push https://pnnlmiscscriptsci:"$GITHUB_LIBRARY_CHARTS_TOKEN"@github.com/pnnl-miscscripts/image-library-charts
+fi
