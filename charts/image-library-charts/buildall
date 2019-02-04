@@ -20,8 +20,8 @@ mkdir -p tags
 
 CHANGE=0
 for CONTAINER in ipmitool dhcpd debug-toolbox; do
-	REVISION=$(../hubbuildtools/hubcurlrevision.sh "pnnlmiscscripts/$CONTAINER" "latest")
-	echo $REVISION
+	export REVISION=$(../hubbuildtools/hubcurlrevision.sh "pnnlmiscscripts/$CONTAINER" "latest")
+	echo Revision: $REVISION
 	FOUND=0
 	if [ -f "tags/$CONTAINER-latest" ]; then
 		if [ "x$REVISION" == "x$(cat tags/$CONTAINER-latest)" ]; then
