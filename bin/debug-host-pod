@@ -1,0 +1,68 @@
+#!/bin/bash
+
+SERVICEACCOUNT=${SERVICEACCOUNT:-default}
+
+if [ "x$1" == "x" ]; then
+	echo "Usage: $0 <hostname>"
+	exit -1
+fi
+
+echo Attaching debug container to hostname "$1"
+
+SHORT=$(echo $1 | tr '.' '-')
+
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: debug
+    net: host
+    host: $1
+  name: debug-host-$SHORT
+spec:
+  serviceAccount: $SERVICEACCOUNT
+  hostNetwork: true
+  hostPID: true
+  hostIPC: true
+  containers:
+  - command:
+    - /bin/bash
+    - -cxe
+    - |
+      while true; do
+        sleep 1000;
+      done
+    image: pnnlmiscscripts/debug-toolbox
+    imagePullPolicy: Always
+    name: main
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - mountPath: /host
+      name: host
+    - mountPath: /dev
+      name: dev
+  nodeSelector:
+    kubernetes.io/hostname: $1
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  - key: node-role.kubernetes.io/master
+    operator: Exists
+    effect: NoSchedule
+  volumes:
+  - name: host
+    hostPath:
+      path: /
+  - name: dev
+    hostPath:
+      path: /dev
+EOF
+
