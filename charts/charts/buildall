@@ -1,0 +1,26 @@
+#!/bin/bash
+set -e
+
+pushd $(dirname "$0")
+
+[ ! -d charts ] && git clone https://github.com/pnnl-miscscripts/charts
+[ ! -d hubbuildtools ] && git clone https://github.com/kfox1111/hubbuildtools
+
+if [ "x$TRAVIS" != "x" ]; then
+	curl https://raw.githubusercontent.com/helm/helm/master/scripts/get > get_helm.sh
+	chmod 700 get_helm.sh
+	./get_helm.sh
+fi
+
+mkdir -p charts/docs
+
+helm repo add pnnl-miscscripts-image-library-charts https://pnnl-miscscripts.github.io/image-library-charts/
+helm repo update
+for CHART in console; do
+	pushd "$CHART"
+	helm dep up --skip-refresh
+	echo $CHART
+	popd
+done
+
+popd
