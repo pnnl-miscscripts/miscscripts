@@ -1,0 +1,2 @@
+export NEW_BUILD=1
+export PREFIX=1.0.0

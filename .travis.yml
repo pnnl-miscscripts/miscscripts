@@ -8,6 +8,10 @@ jobs:
     language: shell
     name: Build dhcpd container
     script: ./containers/build dhcpd
+  - stage: build
+    language: shell
+    name: Build debug-toolbox container
+    script: ./containers/build debug-toolbox
   - stage: build-image-library-charts
     language: shell
     name: Build image library charts
