@@ -1,0 +1,12 @@
+Load a script onto your client to attach to the console by pasting this into a terminal:
+
+cat > console.sh <<EOF
+#!/bin/bash
+kubectl attach -it $(kubectl get pods -l "host=$1" -o go-template='{{"{{"}}(index .items 0).metadata.name{{"}}"}}')
+EOF
+chmod +x console.sh
+
+
+To use it to get into a console:
+
+./console.sh <host>

@@ -1,0 +1,73 @@
+{{- $global := . }}
+{{- range .Values.hosts }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .host }}-{{ template "console.fullname" $global }}
+  labels:
+    app: {{ template "console.name" $global }}
+    chart: {{ template "console.chart" $global }}
+    release: {{ $global.Release.Name }}
+    heritage: {{ $global.Release.Service }}
+    host: {{ .host }}
+    driver: ipmitool
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "console.name" $global }}
+      release: {{ $global.Release.Name }}
+      host: {{ .host }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "console.name" $global }}
+        release: {{ $global.Release.Name }}
+        host: {{ .host }}
+        driver: ipmitool
+    spec:
+      hostNetwork: true
+      containers:
+        - name: main
+          image:   {{ dict "dot" $global "section" $global.Values.ipmitool | include "pnnlmiscscripts.ipmitool.image" }}
+          imagePullPolicy: {{ $global.Values.ipmitool.pullPolicy }}
+          env:
+          - name: IPMI_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ .secret }}
+                key: username
+          - name: IPMI_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .secret }}
+                key: password
+          - name: IPMI_HOST
+            value: {{ .ip }}
+          stdin: true
+          tty: true
+          command:
+          - /bin/sh
+          - -cex
+          - |
+            mkdir -p /usr/local/sbin/
+            echo IyEvYmluL3NoCg== | base64 -d > /usr/local/sbin/ipmitool
+            echo 'exec /usr/sbin/ipmitool -H "$IPMI_HOST" -U "$IPMI_USER" -E -I lanplus "$@"' >> /usr/local/sbin/ipmitool
+            chmod +x /usr/local/sbin/ipmitool
+            /usr/local/sbin/ipmitool sol activate
+          resources:
+{{ toYaml $global.Values.resources | indent 12 }}
+    {{- with $global.Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with $global.Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with $global.Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+{{- end }}
