@@ -13,14 +13,53 @@ if [ "x$TRAVIS" != "x" ]; then
 fi
 
 mkdir -p charts/docs
+mkdir -p charts/tags
 
 helm repo add pnnl-miscscripts-image-library-charts https://pnnl-miscscripts.github.io/image-library-charts/
 helm repo update
+
+CHANGE=0
 for CHART in console; do
 	pushd "$CHART"
 	helm dep up --skip-refresh
-	echo $CHART
+	FINGERPRINT=$((echo main
+	cat Chart.yaml | sort | awk '{if(/^(appVersion|version|name):/){print $2}}' | sed 'N;N; s/\([^\n]*\)\n\([^\n]*\)\n\([^n]*\)/\2 \3 \1/g'
+	echo deps
+	ls charts | sort | while read line; do
+		helm inspect charts/$line | sort | awk '{if(/^(appVersion|version|name):/){print $2}}' | sed 'N;N; s/\([^\n]*\)\n\([^\n]*\)\n\([^n]*\)/\2 \3 \1/g'
+	done) | bzip2 -c | base64 | tr '\n' '=' | sed 's/=//g')
+        VERSION=$(cat Chart.yaml | awk '{if(/^version:/){print $2}}')
+	popd
+	echo Version: $VERSION
+	echo Fingerprint: $FINGERPRINT
+	pushd charts
+	FOUND=0
+	if [ -f "tags/$CHART-$VERSION" ]; then
+		if [ "x$FINGERPRINT" == "x$(cat tags/$CHART-$VERSION)" ]; then
+			FOUND=1
+			echo $CHART already built.
+		fi
+	fi
+	if [ $FOUND -eq 0 ]; then
+		CHANGE=1
+		echo $CHART building...
+		echo FIXME update version
+		pushd docs/
+		helm package ../../$CHART
+		popd
+		echo "$FINGERPRINT" > "tags/$CHART-$VERSION"
+	fi
 	popd
 done
+
+pushd charts
+if [ $CHANGE -eq 1 ]; then
+	pushd docs
+	helm repo index .
+	popd
+	#git add --all :/ && git commit -m "Update repo"
+	#git push https://pnnlmiscscriptsci:"$GITHUB_LIBRARY_CHARTS_TOKEN"@github.com/pnnl-miscscripts/charts
+fi
+popd
 
 popd
