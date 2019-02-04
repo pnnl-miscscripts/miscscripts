@@ -19,7 +19,7 @@ cd image-library-charts
 mkdir -p tags
 
 CHANGE=0
-for CONTAINER in ipmitool dhcpd; do
+for CONTAINER in ipmitool dhcpd debug-toolbox; do
 	REVISION=$(../hubbuildtools/hubcurlrevision.sh "pnnlmiscscripts/$CONTAINER" "latest")
 	echo $REVISION
 	FOUND=0
