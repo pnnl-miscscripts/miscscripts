@@ -17,6 +17,7 @@ mkdir -p charts/docs
 mkdir -p charts/tags
 mkdir -p charts/vers
 
+helm init --client-only
 helm repo add pnnl-miscscripts-image-library-charts https://pnnl-miscscripts.github.io/image-library-charts/
 helm repo update
 
