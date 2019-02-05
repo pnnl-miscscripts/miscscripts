@@ -73,8 +73,8 @@ if [ $CHANGE -eq 1 ]; then
 	pushd docs
 	helm repo index .
 	popd
-	#git add --all :/ && git commit -m "Update repo"
-	#git push https://pnnlmiscscriptsci:"$GITHUB_LIBRARY_CHARTS_TOKEN"@github.com/pnnl-miscscripts/charts
+	git add --all :/ && git commit -m "Update repo"
+	git push https://pnnlmiscscriptsci:"$GITHUB_LIBRARY_CHARTS_TOKEN"@github.com/pnnl-miscscripts/charts
 fi
 popd
 
