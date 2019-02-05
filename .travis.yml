@@ -16,6 +16,10 @@ jobs:
     language: shell
     name: Build image library charts
     script: ./charts/image-library-charts/buildall
+  - stage: build-charts
+    language: shell
+    name: Build charts
+    script: ./charts/charts/buildall
 env:
   global:
   - secure: U5KTbwJ4mk5R6LQmCIeXUYJahoPsnn9IjU+zYL8Wo60bYUL0KWItmfrfbWQL09g365B61qgmx2OeJOgZ27oS4rKi+BFw3OqVvbBypZm7UCwml4uKRVA5BTMNnCYDL5o5N4Q+uFbBvdiw1TM+NjgHd2E4F32FeJWRp5teGlXK0fzzPQS7Vpv4ZvGlAyKGlozg0nzhq2XygtNyDsMFY0760WBjpeXkijvjcwD+/W+bGvISTRD4VTV8/+bRIGcWoat3CmYEumsqoT2Vj3/onWh/NWDWUeyJ9FHgLdRypcWf9XDKjFxa2bV5yqguxU7HOaGS4qWDsKF1DDRGne3HCRvzPrwS71j5tT3t+9B6XwXC9RVjjVcv3IFWUZwn1Sr1lwxiyteRDbE8j+1S7AXwsfHQc4mViM/sux/56ydJ6llm1ktnfyM+F0khdJpLU4RJTcLia9FaI+XZ61CIC1G+KhWrCpe0u+NWIVwSJL7wJHkzeYY7a671JSk9cGBl6NeJBdYv7DCuhxn5nqOv54eyqNlXM6u9WaIPweAg7sJy0wU/D2eND+3TtZ9o3qosWNNZ5lwPSKu6JCmzdIBliXwnf5PYl9jXr1QefJdDCAoXSq6MLErMznLTWAnmGQqEYc2UKKbOYned2GtFLGbOgSuoXl04EAlXo9wutIfIiTptutqxa10=
