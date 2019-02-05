@@ -24,7 +24,7 @@ for CONTAINER in ipmitool dhcpd debug-toolbox; do
 	echo Revision: $REVISION
 	FOUND=0
 	if [ -f "tags/$CONTAINER-latest" ]; then
-		if [ "x$REVISION" == "x$(cat tags/$CONTAINER-latest)" ]; then
+		if [ "x2 $REVISION" == "x$(cat tags/$CONTAINER-latest)" ]; then
 			FOUND=1
 			echo $CONTAINER already built.
 		fi
@@ -33,7 +33,7 @@ for CONTAINER in ipmitool dhcpd debug-toolbox; do
 		CHANGE=1
 		echo $CONTAINER building...
 		../build "$CONTAINER"
-		echo "$REVISION" > "tags/$CONTAINER-latest"
+		echo "2 $REVISION" > "tags/$CONTAINER-latest"
 	fi
 done
 if [ $CHANGE -eq 1 ]; then
