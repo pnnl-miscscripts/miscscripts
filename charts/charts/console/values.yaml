@@ -5,6 +5,7 @@
 ipmitool:
   server:
   prefix:
+  org:
   repo:
   tag:
   pullPolicy: IfNotPresent
