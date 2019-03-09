@@ -12,6 +12,10 @@ jobs:
     language: shell
     name: Build debug-toolbox container
     script: ./containers/build debug-toolbox
+  - stage: build
+    language: shell
+    name: Build rpms-containerd container
+    script: ./containers/build rpms-containerd
   - stage: build-image-library-charts
     language: shell
     name: Build image library charts
