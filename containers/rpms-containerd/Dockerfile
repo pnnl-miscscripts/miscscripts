@@ -1,7 +1,7 @@
 FROM centos:centos7
 MAINTAINER Kevin Fox <Kevin.Fox@pnnl.gov>
 
-ENV "VERSION=1.2.4"
+ENV VERSION=1.2.4
 
 ADD containerd.spec /root/rpmbuild/SOURCES/containerd.spec
 
