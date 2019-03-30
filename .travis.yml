@@ -20,6 +20,10 @@ jobs:
     language: shell
     name: Build rpms-centos7-base container
     script: ./containers/build rpms-centos7-base
+  - stage: build
+    language: shell
+    name: Build rpms-openvswitch container
+    script: ./containers/build rpms-openvswitch
   - stage: build-image-library-charts
     language: shell
     name: Build image library charts
