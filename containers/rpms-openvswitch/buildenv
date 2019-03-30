@@ -1,3 +1,2 @@
 export AUTO_PREFIX=rpmrepo-version
 export AUTO_PREFIX_PACKAGE=openvswitch
-export NEW_BUILD=1

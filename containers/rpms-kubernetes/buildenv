@@ -1,0 +1,4 @@
+export AUTO_PREFIX=rpmrepo-version
+export AUTO_PREFIX_PACKAGE=kubelet
+export DOCKER_TAG=$SUBBUILD
+export NEW_BUILD=1

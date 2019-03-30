@@ -1,5 +1,6 @@
 #!/bin/bash
 CONTAINER="$1"
+[ "x$2" != "x" ] && export SUBBUILD="$2"
 pushd $(dirname "$0")/"$CONTAINER"
 
 [ ! -d hubbuildtools ] && git clone https://github.com/kfox1111/hubbuildtools
