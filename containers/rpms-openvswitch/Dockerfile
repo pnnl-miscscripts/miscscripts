@@ -7,7 +7,8 @@ RUN \
   yum install -y createrepo && \
   mkdir -p rpms/ && \
   yum install -y centos-release-openstack-rocky createrepo && \
-  yumdownloader --resolv --destdir rpms openvswitch
+  yumdownloader --resolv --destdir rpms openvswitch && \
+  createrepo rpms
 
 FROM scratch
 COPY --from=0 /rpms /data
