@@ -1,5 +1,6 @@
 export AUTO_PREFIX=filecontent
 export AUTO_PREFIX_FILE=/data/CentOS_BuildTag
+export AUTO_PREFIX_FILTER='sed "s/^/-nginx/g"'
 export DOCKER_REPO=pnnlmiscscripts/anaconda
 export DOCKER_TAG=latest-nginx
 export NEW_BUILD=1
