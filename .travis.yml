@@ -36,6 +36,10 @@ jobs:
     language: shell
     name: Build anaconda container
     script: ./containers/build anaconda
+  - stage: build-nginx
+    language: shell
+    name: Build anaconda+nginx container
+    script: ./containers/build anaconda-nginx
   - stage: build-image-library-charts
     language: shell
     name: Build image library charts
