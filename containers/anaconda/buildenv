@@ -1,3 +1,2 @@
 export AUTO_PREFIX=filecontent
 export AUTO_PREFIX_FILE=/data/CentOS_BuildTag
-export NEW_BUILD=1
