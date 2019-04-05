@@ -40,6 +40,7 @@ jobs:
     script: ./containers/build rpms-openvswitch
   - stage: build
     before_install: *upgradedocker
+    dist: xenial
     language: shell
     name: Build rpms-kubernetes container 1.13
     script: ./containers/build rpms-kubernetes 1.13
