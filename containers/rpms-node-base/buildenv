@@ -3,4 +3,3 @@ export AUTO_PREFIX_PACKAGE=centos-release
 export AUTO_PREFIX_FILTER='cut -d . -f 1 | tr '-' .'
 export DOCKER_BUILDKIT=1
 export GPGSIGN=1
-export NEW_BUILD=1
