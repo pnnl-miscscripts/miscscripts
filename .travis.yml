@@ -13,22 +13,31 @@ jobs:
     name: Build debug-toolbox container
     script: ./containers/build debug-toolbox
   - stage: build
+    before_install: &upgradedocker
+    - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    - sudo apt-get update
+    - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
     language: shell
     name: Build rpms-containerd container
     script: ./containers/build rpms-containerd
   - stage: build
+    before_install: *upgradedocker
     language: shell
-    name: Build rpms-centos7-base container
-    script: ./containers/build rpms-centos7-base
+    name: Build rpms-node-base container
+    script: ./containers/build rpms-node-base
   - stage: build
+    before_install: *upgradedocker
     language: shell
     name: Build rpms-openvswitch container
     script: ./containers/build rpms-openvswitch
   - stage: build
+    before_install: *upgradedocker
     language: shell
     name: Build rpms-kubernetes container 1.13
     script: ./containers/build rpms-kubernetes 1.13
   - stage: build
+    before_install: *upgradedocker
     language: shell
     name: Build rpms-kubernetes container 1.14
     script: ./containers/build rpms-kubernetes 1.14
