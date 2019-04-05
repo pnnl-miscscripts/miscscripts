@@ -1,14 +1,17 @@
 jobs:
   include:
   - stage: build
+    dist: xenial
     language: shell
     name: Build ipmitool container
     script: ./containers/build ipmitool
   - stage: build
+    dist: xenial
     language: shell
     name: Build dhcpd container
     script: ./containers/build dhcpd
   - stage: build
+    dist: xenial
     language: shell
     name: Build debug-toolbox container
     script: ./containers/build debug-toolbox
@@ -17,16 +20,19 @@ jobs:
     - curl -fsSL https://get.docker.com -o get-docker.sh
     - sudo sh get-docker.sh
     - openssl aes-256-cbc -K $encrypted_94b98ec18b77_key -iv $encrypted_94b98ec18b77_iv -in rpm.priv.enc -out rpm.priv -d
+    dist: xenial
     language: shell
     name: Build rpms-containerd container
     script: ./containers/build rpms-containerd
   - stage: build
     before_install: *upgradedocker
+    dist: xenial
     language: shell
     name: Build rpms-node-base container
     script: ./containers/build rpms-node-base
   - stage: build
     before_install: *upgradedocker
+    dist: xenial
     language: shell
     name: Build rpms-openvswitch container
     script: ./containers/build rpms-openvswitch
@@ -37,22 +43,27 @@ jobs:
     script: ./containers/build rpms-kubernetes 1.13
   - stage: build
     before_install: *upgradedocker
+    dist: xenial
     language: shell
     name: Build rpms-kubernetes container 1.14
     script: ./containers/build rpms-kubernetes 1.14
   - stage: build
+    dist: xenial
     language: shell
     name: Build anaconda container
     script: ./containers/build anaconda
   - stage: build-nginx
+    dist: xenial
     language: shell
     name: Build anaconda+nginx container
     script: ./containers/build anaconda-nginx
   - stage: build-image-library-charts
+    dist: xenial
     language: shell
     name: Build image library charts
     script: ./charts/image-library-charts/buildall
   - stage: build-charts
+    dist: xenial
     language: shell
     name: Build charts
     script: ./charts/charts/buildall
