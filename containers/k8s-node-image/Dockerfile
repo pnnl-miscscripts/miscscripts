@@ -12,13 +12,12 @@ COPY --from=2 /data /data/openvswitch
 COPY --from=3 /data /data/kubernetes
 ADD rpm.pub /root/rpm.pub
 RUN --mount=type=secret,id=gpg \
-  yum install -y epel-release && \
   yum install -y createrepo yum-utils gnupg2 && \
   zcat /data/repodata/*comps.xml.gz > /data/repodata/comps.xml && \
   createrepo -g /data/repodata/comps.xml /data && \
   gpg --import /run/secrets/gpg && \
   gpg --import /root/rpm.pub && \
-  gpg --detach-sign --armor rpms/repodata/repomd.xml && \
+  gpg --detach-sign --armor /data/repodata/repomd.xml && \
   rm -rf ~/.gnupg
 
 FROM pnnlmiscscripts/rpms-node-base:latest
