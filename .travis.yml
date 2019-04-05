@@ -17,8 +17,6 @@ jobs:
     script: ./containers/build debug-toolbox
   - stage: build
     before_install: &upgradedocker
-    - curl -fsSL https://get.docker.com -o get-docker.sh
-    - sudo sh get-docker.sh
     - openssl aes-256-cbc -K $encrypted_94b98ec18b77_key -iv $encrypted_94b98ec18b77_iv -in rpm.priv.enc -out rpm.priv -d
     dist: xenial
     language: shell
