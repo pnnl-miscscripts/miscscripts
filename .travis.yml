@@ -55,22 +55,22 @@ jobs:
     language: shell
     name: Build anaconda container
     script: ./containers/build anaconda
-  - stage: build-full-image
-    before_install: *upgradedocker
-    dist: xenial
-    language: shell
-    name: Build full k8s node image
-    script: ./containers/build k8s-node-image
+#  - stage: build-full-image
+#    before_install: *upgradedocker
+#    dist: xenial
+#    language: shell
+#    name: Build full k8s node image
+#    script: ./containers/build k8s-node-image
   - stage: build-nginx
     dist: xenial
     language: shell
     name: Build anaconda+nginx container
     script: ./containers/build anaconda-nginx
-  - stage: build-nginx
-    dist: xenial
-    language: shell
-    name: Build k8s-node-image+nginx container
-    script: ./containers/build k8s-node-image-nginx
+#  - stage: build-nginx
+#    dist: xenial
+#    language: shell
+#    name: Build k8s-node-image+nginx container
+#    script: ./containers/build k8s-node-image-nginx
   - stage: build-image-library-charts
     dist: xenial
     language: shell
