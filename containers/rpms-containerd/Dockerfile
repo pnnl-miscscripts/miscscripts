@@ -5,7 +5,7 @@ MAINTAINER Kevin Fox <Kevin.Fox@pnnl.gov>
 ENV VERSION=1.2.5
 
 ADD containerd.spec /root/rpmbuild/SOURCES/containerd.spec
-ADD rpm.pub /rpms/repodata/RPM-GPG-KEY
+ADD rpm.pub /root/rpm.pub
 ADD rpmmacros /root/.rpmmacros
 
 RUN --mount=type=secret,id=gpg \
@@ -16,13 +16,15 @@ RUN --mount=type=secret,id=gpg \
   sed -i "s/^\(Version:\).*$/\1 $VERSION/" /root/rpmbuild/SOURCES/containerd.spec && \
   cat /root/rpmbuild/SOURCES/containerd.spec && \
   rpmbuild -ba /root/rpmbuild/SOURCES/containerd.spec && \
+  mkdir -p rpms && \
   mv ~/rpmbuild/RPMS/x86_64/* rpms/ && \
   gpg --import /run/secrets/gpg && \
-  gpg --import /rpms/repodata/RPM-GPG-KEY && \
+  gpg --import /root/rpm.pub && \
   rpm --addsign $(find rpms -type f -name '*.rpm') && \
   createrepo rpms && \
   gpg --detach-sign --armor rpms/repodata/repomd.xml && \
   rm -rf ~/.gnupg && \
+  cp /root/rpm.pub /rpms/repodata/RPM-GPG-KEY && \
   mkdir tmp1 && \
   pushd tmp1 && \
   tar -xvf ~/rpmbuild/SOURCES/containerd.tar.gz && \
