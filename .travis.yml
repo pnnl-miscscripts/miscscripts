@@ -66,6 +66,11 @@ jobs:
     language: shell
     name: Build anaconda+nginx container
     script: ./containers/build anaconda-nginx
+  - stage: build-nginx
+    dist: xenial
+    language: shell
+    name: Build k8s-node-image+nginx container
+    script: ./containers/build k8s-node-image-nginx
   - stage: build-image-library-charts
     dist: xenial
     language: shell
