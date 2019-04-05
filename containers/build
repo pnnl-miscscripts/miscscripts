@@ -14,8 +14,18 @@ if [ "x$IMAGE_NAME" == "x" ]; then
 	export IMAGE_NAME="${DOCKER_REPO}:${DOCKER_TAG}"
 fi
 
+if [ "x$GPGSIGN" != "x" ]; then
+	[ ! -f rpm.pub ] && cp -a ../../rpm.pub .
+	[ ! -f rpmmacros ] && cp -a ../rpmmacros .
+	export GPGKEY=$(pwd)/../../rpm.priv
+fi
+
 hubbuildtools/hubhookhelpers/build
 RES=$?
+
+if [ "x$GPGSIGN" != "x" ]; then
+rm -f "$GPGKEY" || true
+fi
 
 if [ $RES -eq 1 ]; then
 	echo Nothing changed. Skipping.

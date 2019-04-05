@@ -1,21 +1,28 @@
+# syntax = docker/dockerfile:1.0-experimental
 FROM centos:centos7
 MAINTAINER Kevin Fox <Kevin.Fox@pnnl.gov>
 
 ENV VERSION=1.2.5
 
 ADD containerd.spec /root/rpmbuild/SOURCES/containerd.spec
+ADD rpm.pub /rpms/repodata/RPM-GPG-KEY
+ADD rpmmacros /root/.rpmmacros
 
-RUN \
+RUN --mount=type=secret,id=gpg \
   set -x && \
   cd / && \
-  yum install -y rpm-build cpio createrepo && \
-  mkdir -p rpms/ && \
+  yum install -y rpm-build cpio createrepo gnupg2 && \
   curl -o /root/rpmbuild/SOURCES/containerd.tar.gz "https://storage.googleapis.com/cri-containerd-release/cri-containerd-$VERSION.linux-amd64.tar.gz" && \
   sed -i "s/^\(Version:\).*$/\1 $VERSION/" /root/rpmbuild/SOURCES/containerd.spec && \
   cat /root/rpmbuild/SOURCES/containerd.spec && \
   rpmbuild -ba /root/rpmbuild/SOURCES/containerd.spec && \
   mv ~/rpmbuild/RPMS/x86_64/* rpms/ && \
+  gpg --import /run/secrets/gpg && \
+  gpg --import /rpms/repodata/RPM-GPG-KEY && \
+  rpm --addsign $(find rpms -type f -name '*.rpm') && \
   createrepo rpms && \
+  gpg --detach-sign --armor rpms/repodata/repomd.xml && \
+  rm -rf ~/.gnupg && \
   mkdir tmp1 && \
   pushd tmp1 && \
   tar -xvf ~/rpmbuild/SOURCES/containerd.tar.gz && \

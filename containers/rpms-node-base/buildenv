@@ -1,3 +1,4 @@
 export AUTO_PREFIX=rpmrepo-version-release
 export AUTO_PREFIX_PACKAGE=centos-release
 export AUTO_PREFIX_FILTER='cut -d . -f 1 | tr '-' .'
+export DOCKER_BUILDKIT=1
