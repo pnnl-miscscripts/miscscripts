@@ -18,7 +18,10 @@ RUN --mount=type=secret,id=gpg \
   rpmbuild -ba /root/rpmbuild/SOURCES/containerd.spec && \
   mv ~/rpmbuild/RPMS/x86_64/* rpms/ && \
   gpg --import /run/secrets/gpg && \
-  gpg --import /rpms/repodata/RPM-GPG-KEY && \
+  cat /rpms/repodata/RPM-GPG-KEY > /tmp/pubkey.txt && \
+  echo Using public key: && \
+  cat /tmp/pubkey.txt && \
+  gpg --import /tmp/pubkey.txt && \
   rpm --addsign $(find rpms -type f -name '*.rpm') && \
   createrepo rpms && \
   gpg --detach-sign --armor rpms/repodata/repomd.xml && \
