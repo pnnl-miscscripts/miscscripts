@@ -18,6 +18,7 @@ RUN --mount=type=secret,id=gpg \
   gpg --import /root/rpm.pub && \
   rpm --addsign $(find rpms -type f -name '*.rpm') && \
   reposync --gpgcheck -l --repoid=base --downloadcomps -u > /dev/null && \
+  mkdir -p rpms/repodata && \
   mv base/comps.xml rpms/repodata && \
   createrepo -g `pwd`/rpms/repodata/comps.xml rpms && \
   gpg --detach-sign --armor rpms/repodata/repomd.xml && \
