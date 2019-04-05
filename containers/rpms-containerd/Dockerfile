@@ -2,7 +2,7 @@
 FROM centos:centos7
 MAINTAINER Kevin Fox <Kevin.Fox@pnnl.gov>
 
-ENV VERSION=1.2.6
+ENV VERSION=1.2.5
 
 ADD containerd.spec /root/rpmbuild/SOURCES/containerd.spec
 ADD rpm.pub /rpms/repodata/RPM-GPG-KEY
