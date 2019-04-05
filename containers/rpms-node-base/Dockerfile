@@ -1,18 +1,27 @@
 FROM centos:centos7
 MAINTAINER Kevin Fox <Kevin.Fox@pnnl.gov>
 
-RUN \
+ADD rpm.pub /root/rpm.pub
+ADD rpmmacros /root/.rpmmacros
+
+RUN --mount=type=secret,id=gpg \
   cd / && \
   set -e && \
-  yum install -y createrepo yum-utils && \
+  yum install -y createrepo yum-utils gnupg2 rpm-sign && \
   mkdir -p rpms/ && \
   yumdownloader --resolv --installroot=/tmp/root --releasever=/ \
     --destdir rpms --setopt cachedir=/tmp/cache \
     @Base @Core kernel grub2 docker e2fsprogs container-selinux nspr \
     nss-util openssh-server openssh iptables-services nfs-utils && \
-  createrepo rpms
+  gpg --import /run/secrets/gpg && \
+  gpg --import /root/rpm.pub && \
+  rpm --addsign $(find rpms -type f -name '*.rpm') && \
+  createrepo -g `pwd`/rpms/repodata/comps.xml rpms && \
   reposync --gpgcheck -l --repoid=base --downloadcomps -u > /dev/null && \
-  mv base/comps.xml rpms/repodata
+  mv base/comps.xml rpms/repodata && \
+  gpg --detach-sign --armor rpms/repodata/repomd.xml && \
+  rm -rf ~/.gnupg && \
+  cp /root/rpm.pub /rpms/repodata/RPM-GPG-KEY && \
 
 FROM scratch
 COPY --from=0 /rpms /data
