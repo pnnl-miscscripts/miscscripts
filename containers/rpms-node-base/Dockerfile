@@ -23,7 +23,7 @@ RUN --mount=type=secret,id=gpg \
   createrepo -g `pwd`/rpms/repodata/comps.xml rpms && \
   gpg --detach-sign --armor rpms/repodata/repomd.xml && \
   rm -rf ~/.gnupg && \
-  cp /root/rpm.pub /rpms/repodata/RPM-GPG-KEY && \
+  cp /root/rpm.pub /rpms/repodata/RPM-GPG-KEY
 
 FROM scratch
 COPY --from=0 /rpms /data
