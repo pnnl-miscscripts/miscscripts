@@ -11,7 +11,7 @@ ADD rpmmacros /root/.rpmmacros
 RUN --mount=type=secret,id=gpg \
   set -x && \
   cd / && \
-  yum install -y rpm-build cpio createrepo gnupg2 && \
+  yum install -y rpm-build cpio createrepo gnupg2 rpm-sign && \
   curl -o /root/rpmbuild/SOURCES/containerd.tar.gz "https://storage.googleapis.com/cri-containerd-release/cri-containerd-$VERSION.linux-amd64.tar.gz" && \
   sed -i "s/^\(Version:\).*$/\1 $VERSION/" /root/rpmbuild/SOURCES/containerd.spec && \
   cat /root/rpmbuild/SOURCES/containerd.spec && \
