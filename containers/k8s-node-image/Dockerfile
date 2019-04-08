@@ -18,7 +18,8 @@ RUN --mount=type=secret,id=gpg \
   gpg --import /run/secrets/gpg && \
   gpg --import /root/rpm.pub && \
   gpg --detach-sign --armor /data/repodata/repomd.xml && \
-  rm -rf ~/.gnupg
+  rm -rf ~/.gnupg && \
+  echo Done building repo.
 
 FROM pnnlmiscscripts/rpms-node-base:latest
 COPY --from=1 /data /data/containerd
