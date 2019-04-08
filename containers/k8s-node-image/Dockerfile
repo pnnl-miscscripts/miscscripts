@@ -14,6 +14,7 @@ ADD rpm.pub /root/rpm.pub
 RUN --mount=type=secret,id=gpg \
   yum install -y createrepo yum-utils gnupg2 && \
   zcat /data/repodata/*comps.xml.gz > /data/repodata/comps.xml && \
+  mount && \
   createrepo -g /data/repodata/comps.xml /data && \
   gpg --import /run/secrets/gpg && \
   gpg --import /root/rpm.pub && \
