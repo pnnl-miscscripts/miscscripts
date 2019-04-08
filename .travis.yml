@@ -59,6 +59,12 @@ jobs:
     before_install: *upgradedocker
     dist: xenial
     language: shell
+    name: Build full k8s node image 1.13
+    script: ./containers/build k8s-node-image 1.13
+  - stage: build-full-image
+    before_install: *upgradedocker
+    dist: xenial
+    language: shell
     name: Build full k8s node image 1.14
     script: ./containers/build k8s-node-image 1.14
   - stage: build-nginx
@@ -66,11 +72,16 @@ jobs:
     language: shell
     name: Build anaconda+nginx container
     script: ./containers/build anaconda-nginx
-#  - stage: build-nginx
-#    dist: xenial
-#    language: shell
-#    name: Build k8s-node-image+nginx container 1.14
-#    script: ./containers/build k8s-node-image-nginx 1.14
+  - stage: build-nginx
+    dist: xenial
+    language: shell
+    name: Build k8s-node-image+nginx container 1.13
+    script: ./containers/build k8s-node-image-nginx 1.13
+  - stage: build-nginx
+    dist: xenial
+    language: shell
+    name: Build k8s-node-image+nginx container 1.14
+    script: ./containers/build k8s-node-image-nginx 1.14
   - stage: build-image-library-charts
     dist: xenial
     language: shell
