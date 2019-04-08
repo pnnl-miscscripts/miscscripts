@@ -13,10 +13,9 @@ COPY --from=3 /data /data/kubernetes
 ADD rpm.pub /root/rpm.pub
 RUN --mount=type=secret,id=gpg \
   yum install -y createrepo yum-utils gnupg2 && \
-  zcat /data/repodata/*comps.xml.gz > /data/repodata/comps.xml && \
-  cp -a /rpmdata/*.rpm /data && \
   mkdir -p /data/repodata && \
-  cp -a /rpmdata/repodata/comps.xml /data/repodata/ && \
+  zcat /rpmdata/repodata/*comps.xml.gz > /data/repodata/comps.xml && \
+  cp -a /rpmdata/*.rpm /data && \
   createrepo -g /data/repodata/comps.xml /data && \
   gpg --import /run/secrets/gpg && \
   gpg --import /root/rpm.pub && \
