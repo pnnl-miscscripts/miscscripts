@@ -20,7 +20,7 @@ if [ "x$GPGSIGN" != "x" ]; then
 	export GPGKEY=$(pwd)/../../rpm.priv
 fi
 
-hubbuildtools/hubhookhelpers/build
+bash -x hubbuildtools/hubhookhelpers/build
 RES=$?
 
 if [ "x$GPGSIGN" != "x" ]; then
