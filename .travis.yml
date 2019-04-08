@@ -59,8 +59,8 @@ jobs:
     before_install: *upgradedocker
     dist: xenial
     language: shell
-    name: Build full k8s node image
-    script: ./containers/build k8s-node-image
+    name: Build full k8s node image 1.14
+    script: ./containers/build k8s-node-image 1.14
   - stage: build-nginx
     dist: xenial
     language: shell
@@ -69,8 +69,8 @@ jobs:
 #  - stage: build-nginx
 #    dist: xenial
 #    language: shell
-#    name: Build k8s-node-image+nginx container
-#    script: ./containers/build k8s-node-image-nginx
+#    name: Build k8s-node-image+nginx container 1.14
+#    script: ./containers/build k8s-node-image-nginx 1.14
   - stage: build-image-library-charts
     dist: xenial
     language: shell
