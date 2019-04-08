@@ -25,5 +25,5 @@ FROM pnnlmiscscripts/rpms-node-base:latest
 COPY --from=1 /data /data/containerd
 COPY --from=2 /data /data/openvswitch
 COPY --from=3 /data /data/kubernetes
-COPY --from=4 /data /data
+COPY --from=4 /data/repodata /data/repodata
 
