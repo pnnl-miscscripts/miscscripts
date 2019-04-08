@@ -1,7 +1,6 @@
 export AUTO_PREFIX=rpmrepo-version
 export AUTO_PREFIX_PACKAGE=kubelet
-export DOCKER_TAG=$SUBBUILD
 export AUTO_PREFIX_FILTER='sed "s/$/-nginx/g"'
 export DOCKER_REPO=pnnlmiscscripts/k8s-node-image
-export DOCKER_TAG=latest-nginx
+export DOCKER_TAG="$SUBBUILD-nginx"
 export NEW_BUILD=1
