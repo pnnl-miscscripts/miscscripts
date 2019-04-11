@@ -63,7 +63,6 @@ for CONTAINER in ipmitool dhcpd debug-toolbox anaconda-nginx k8s-node-image-ngin
 		fi
 	done
 done
-exit 1
 if [ $CHANGE -eq 1 ]; then
 	pushd docs
 	helm repo index .
