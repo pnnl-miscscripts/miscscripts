@@ -19,23 +19,50 @@ cd image-library-charts
 mkdir -p tags
 
 CHANGE=0
-for CONTAINER in ipmitool dhcpd debug-toolbox; do
-	export REVISION=$(../hubbuildtools/hubcurlrevision.sh "pnnlmiscscripts/$CONTAINER" "latest")
-	echo Revision: $REVISION
-	FOUND=0
-	if [ -f "tags/$CONTAINER-latest" ]; then
-		if [ "x2 $REVISION" == "x$(cat tags/$CONTAINER-latest)" ]; then
-			FOUND=1
-			echo $CONTAINER already built.
+for CONTAINER in ipmitool dhcpd debug-toolbox anaconda-nginx k8s-node-image-nginx; do
+	case "$CONTAINER" in
+	k8s-node-image-nginx)
+		SUBBUILDS="1.13 1.14"
+		;;
+	*)
+		SUBBUILDS="latest"
+		;;
+	esac
+	for SUBBUILD in $SUBBUILDS; do
+		unset DOCKER_REPO
+		export DOCKER_REPO=$(
+			[ -f ../../../containers/"$CONTAINER"/buildenv ] && . ../../../containers/"$CONTAINER"/buildenv
+			[ "x$DOCKER_REPO" != "x" ] && echo "$DOCKER_REPO" || \
+			echo "pnnlmiscscripts/$CONTAINER"
+		)
+		unset DOCKER_TAG
+		export DOCKER_TAG=$(
+			[ -f ../../../containers/"$CONTAINER"/buildenv ] && . ../../../containers/"$CONTAINER"/buildenv
+			[ "x$DOCKER_TAG" != "x" ] && echo "$DOCKER_TAG" || \
+			echo "$SUBBUILD"
+		)
+		export REVISION=$(../hubbuildtools/hubcurlrevision.sh "$DOCKER_REPO" "$DOCKER_TAG")
+		echo Revision: $REVISION
+		if [ "$REVISION" == "null" ]; then
+			echo BAD REVISION
+			exit 1
 		fi
-	fi
-	if [ $FOUND -eq 0 ]; then
-		CHANGE=1
-		echo $CONTAINER building...
-		../build "$CONTAINER"
-		echo "2 $REVISION" > "tags/$CONTAINER-latest"
-	fi
+		FOUND=0
+		if [ -f "tags/$CONTAINER-$SUBBUILD" ]; then
+			if [ "x2 $REVISION" == "x$(cat tags/$CONTAINER-$SUBBUILD)" ]; then
+				FOUND=1
+				echo $CONTAINER $SUBBUILD already built.
+			fi
+		fi
+		if [ $FOUND -eq 0 ]; then
+			CHANGE=1
+			echo $CONTAINER building...
+			../build "$CONTAINER" "$SUBBUILD"
+			echo "2 $REVISION" > "tags/$CONTAINER-$SUBBUILD"
+		fi
+	done
 done
+exit 1
 if [ $CHANGE -eq 1 ]; then
 	pushd docs
 	helm repo index .

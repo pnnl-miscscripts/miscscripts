@@ -1,6 +1,13 @@
-#!/bin/bash
+#!/bin/bash -e
 
-CONTAINER="$1"
+RAWCONTAINER="$1"
+SUBBUILD="$2"
+if [ "x$SUBBUILD" == "x" -o "x$SUBBUILD" == "xlatest" ]; then
+	CONTAINER="$RAWCONTAINER"
+	SUBBUILD=latest
+else
+	CONTAINER="$RAWCONTAINER-$(echo $SUBBUILD | tr '.' '-')"
+fi
 
 if [ "x$REVISION" == "x" ]; then
 	echo REVISION is not set.
@@ -12,13 +19,18 @@ mkdir -p $(dirname "$0")/"$CONTAINER"
 pushd $(dirname "$0")/"$CONTAINER"
 
 
-export DOCKER_TAG=latest
+export DOCKER_TAG="$SUBBUILD"
 export CPREFIX="pnnlmiscscripts"
 
-[ -f buildenv ] && . ../../../containers/"$CONTAINER"/buildenv
+[ -f buildenv ] && . ../../../containers/"$RAWCONTAINER"/buildenv
 
 if [ "x$IMAGE_NAME" == "x" ]; then
 	export IMAGE_NAME="${DOCKER_REPO}:${DOCKER_TAG}"
+fi
+
+SUBREPO="$RAWCONTAINER"
+if [ "x$DOCKER_REPO" != "x" ]; then
+	SUBREPO=$(echo "$DOCKER_REPO" | sed "s@$CPREFIX/@@g")
 fi
 
 cat > Chart.yaml <<EOF
@@ -49,7 +61,7 @@ docker.io
 {{- if and (hasKey . "section") (hasKey .section "org") .section.org -}}
 {{ .section.org }}
 {{- else -}}
-pnnlmiscscripts
+$CPREFIX
 {{- end -}}
 {{- end -}}
 
@@ -57,7 +69,7 @@ pnnlmiscscripts
 {{- if and (hasKey . "section") (hasKey .section "repo") .section.repo -}}
 {{ .section.repo }}
 {{- else -}}
-$CONTAINER
+$SUBREPO
 {{- end -}}
 {{- end -}}
 
@@ -69,15 +81,16 @@ $REVISION
 {{- end -}}
 {{- end -}}
 
-{/*
+{{- /*
 How to use:
-  {{ dict "dot" . "section" .Values.$CONTAINER | include "$CPREFIX.$CONTAINER.image" }}
-*/}}
+  {{ dict "dot" . "section" (index .Values "$CONTAINER") | include "$CPREFIX.$CONTAINER.image" }}
+*/ -}}
 {{- define "$CPREFIX.$CONTAINER.image" -}}
 {{- include "$CPREFIX.$CONTAINER.server" . -}}{{- include "$CPREFIX.$CONTAINER.prefix" . -}}/{{- include "$CPREFIX.$CONTAINER.org" . -}}/{{- include "$CPREFIX.$CONTAINER.repo" . -}}:{{- include "$CPREFIX.$CONTAINER.tag" . -}}
 {{- end -}}
 EOF
 
 pushd ../image-library-charts/docs
+helm template "../../$CONTAINER" > /dev/null
 helm package "../../$CONTAINER"
 popd
