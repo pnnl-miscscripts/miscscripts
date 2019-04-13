@@ -1,0 +1,59 @@
+{{- if .Values.ingress.enabled -}}
+{{- $dot := . }}
+{{- $prefix := include "k8s-node-image.ingress.prefix" . }}
+{{- $aFullName := include "k8s-node-image.anaconda.fullname" . -}}
+{{- $nFullName := include "k8s-node-image.k8s-node.fullname" . -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ include "k8s-node-image.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "k8s-node-image.name" . }}
+    helm.sh/chart: {{ include "k8s-node-image.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+{{- if .Values.ingress.regex }}
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+{{- end }}
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+{{- if .Values.ingress.tls }}
+  tls:
+  {{- range .Values.ingress.tls }}
+    - hosts:
+      {{- range .hosts }}
+        - {{ . | quote }}
+      {{- end }}
+      secretName: {{ .secretName }}
+  {{- end }}
+{{- end }}
+  rules:
+  {{- range .Values.ingress.hosts }}
+    - host: {{ . | quote }}
+      http:
+        paths:
+          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "" "type" "d" | include "k8s-node-image.ingress" }}
+            backend:
+              serviceName: {{ $nFullName }}
+              servicePort: http
+          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "vmlinuz" "type" "f" | include "k8s-node-image.ingress" }}
+            backend:
+              serviceName: {{ $aFullName }}
+              servicePort: http
+          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "initrd.img" "type" "f" | include "k8s-node-image.ingress" }}
+            backend:
+              serviceName: {{ $aFullName }}
+              servicePort: http
+          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "LiveOS" "type" "d" | include "k8s-node-image.ingress" }}
+            backend:
+              serviceName: {{ $aFullName }}
+              servicePort: http
+          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" ".treeinfo" "type" "f" | include "k8s-node-image.ingress" }}
+            backend:
+              serviceName: {{ $aFullName }}
+              servicePort: http
+  {{- end }}
+{{- end }}
