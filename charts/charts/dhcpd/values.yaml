@@ -1,0 +1,37 @@
+dhcpd:
+  imagePullPolicy: IfNotPresent
+
+resources: {}
+interfaces: []
+
+config:
+  manage: true
+
+  defaultLeaseTime: 600
+  maxLeaseTime: 7200
+  ddnsUpdateStyle: none
+
+  subnets:
+  - start: 172.22.0.0
+    netmask: 255.255.255.0
+#FIXME rangeStart/End should not be used until pv support is added.
+#   rangeStart: 192.168.0.100
+#   rangeEnd: 192.168.0.254
+  groups:
+  - domainName: example.com
+    domainNameServers: [172.22.0.1]
+    routers: [172.22.0.1]
+    subnetMask: 255.255.255.0
+    hosts:
+    - name: c1
+      mac: 00:01:02:aa:bb:cc
+      ip: 172.22.0.3
+
+nodeSelector: {}
+
+tolerations: []
+#- key: node-role.kubernetes.io/master
+#  operator: Exists
+#  effect: NoSchedule
+
+affinity: {}

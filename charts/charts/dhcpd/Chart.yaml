@@ -1,0 +1,8 @@
+name: dhcpd
+version: 0.1.0
+description: Super simple dhcp setup
+keywords:
+- dhcp
+- dhcpd
+sources:
+- https://github.com/pnnl-miscscripts/miscscripts

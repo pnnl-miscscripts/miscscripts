@@ -1,0 +1,60 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: {{ template "pnnlmiscscripts.dhcp-full.fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: {{ template "pnnlmiscscripts.dhcp-full.chart" . }}
+    app: {{ template "pnnlmiscscripts.dhcp-full.name" . }}
+spec:
+  template:
+    metadata:
+      labels:
+        release: {{ .Release.Name | quote }}
+        app: {{ template "pnnlmiscscripts.dhcp-full.name" . }}
+    spec:
+      hostNetwork: true
+      containers:
+      - name: main
+        image: {{ dict "dot" . "section" .Values.dhcpd | include "pnnlmiscscripts.dhcpd.image" }}
+        imagePullPolicy: {{ .Values.dhcpd.imagePullPolicy }}
+        securityContext:
+          capabilities:
+            add: ["NET_ADMIN"]
+        command:
+        - /bin/sh
+        - -ec
+        - |
+          touch /var/lib/dhcp/dhcpd.leases
+          chown daemon.daemon /var/lib/dhcp/dhcpd.leases
+          chown daemon.daemon /var/lib/dhcp
+          chown daemon.daemon /var/run/dhcp
+          dhcpd -cf /etc/dhcp/dhcpd.conf -d -user daemon -group daemon {{ join " " .Values.interfaces }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+#FIXME this and pixiecore block each other....
+#       ports:
+#       - containerPort: 67
+#         name: dhcp
+#         protocol: UDP
+        volumeMounts:
+        - name: config
+          mountPath: /etc/dhcp
+      volumes:
+      - name: config
+        configMap:
+          name: {{ template "pnnlmiscscripts.dhcp-full.fullname" . }}
+
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

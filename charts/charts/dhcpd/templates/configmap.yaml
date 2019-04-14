@@ -1,0 +1,40 @@
+{{- if .Values.config.manage }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "pnnlmiscscripts.dhcp-full.fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: {{ template "pnnlmiscscripts.dhcp-full.chart" . }}
+    app: {{ template "pnnlmiscscripts.dhcp-full.name" . }}
+data:
+  dhcpd.conf: |
+    default-lease-time {{ .Values.config.defaultLeaseTime }};
+    max-lease-time {{ .Values.config.maxLeaseTime }};
+
+    ddns-update-style {{ .Values.config.ddnsUpdateStyle }};
+
+{{- range .Values.config.subnets }}
+    subnet {{ .start }} netmask {{ .netmask }} {
+{{- if hasKey . "rangeStart" }}
+      range {{ .rangeStart }} {{ .rangeEnd }};
+{{- end }}
+    }
+{{- end }}
+
+{{- range .Values.config.groups }}
+    group {
+      option routers {{ join ", " .routers }};
+      option domain-name "{{ .domainName }}";
+      option domain-name-servers {{ join ", " .domainNameServers }};
+      option subnet-mask {{ join ", " .subnetMask }};
+{{- range .hosts }}
+      host {{ .name }} {
+        hardware ethernet {{ .mac }};
+        fixed-address {{ .ip }};
+      }
+    }
+{{- end }}
+{{- end }}
+{{- end }}

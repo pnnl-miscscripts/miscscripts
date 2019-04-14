@@ -34,7 +34,7 @@ for ver in 1-13 1-14; do
 done
 
 CHANGE=0
-for CHART in console k8s-node-image; do
+for CHART in console dhcpd k8s-node-image; do
 	RAWCHART=$CHART
 	case "$CHART" in
 	k8s-node-image)
