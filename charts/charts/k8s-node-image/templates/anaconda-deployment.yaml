@@ -1,10 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "k8s-node-image.anaconda.fullname" . }}
+  name: {{ include "pnnlmiscscripts.k8s-node-image-full.anaconda.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "k8s-node-image.name" . }}
-    helm.sh/chart: {{ include "k8s-node-image.chart" . }}
+    app.kubernetes.io/name: {{ include "pnnlmiscscripts.k8s-node-image-full.name" . }}
+    helm.sh/chart: {{ include "pnnlmiscscripts.k8s-node-image-full.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
     svc: anaconda
@@ -12,13 +12,13 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "k8s-node-image.name" . }}
+      app.kubernetes.io/name: {{ include "pnnlmiscscripts.k8s-node-image-full.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
       svc: anaconda
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: {{ include "k8s-node-image.name" . }}
+        app.kubernetes.io/name: {{ include "pnnlmiscscripts.k8s-node-image-full.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
         svc: anaconda
     spec:

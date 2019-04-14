@@ -11,6 +11,7 @@ if [ "x$TRAVIS" != "x" ]; then
 	curl https://raw.githubusercontent.com/helm/helm/master/scripts/get > get_helm.sh
 	chmod 700 get_helm.sh
 	./get_helm.sh
+	helm init -c
 fi
 
 mkdir -p charts/docs
@@ -21,52 +22,79 @@ helm init --client-only
 helm repo add pnnl-miscscripts-image-library-charts https://pnnl-miscscripts.github.io/image-library-charts/
 helm repo update
 
-CHANGE=0
-for CHART in console; do
-	pushd "$CHART"
+for ver in 1-13 1-14; do
+	cp -a k8s-node-image k8s-node-image-$ver
+	sed -i "s@k8s-node-image-nginx-1-14@k8s-node-image-nginx-$ver@g" k8s-node-image-$ver/requirements.yaml k8s-node-image-$ver/values.yaml
+	sed -i "s@^name:.*@name: k8s-node-image-$ver@g" k8s-node-image-$ver/Chart.yaml
+	pushd k8s-node-image-$ver 2>/dev/null
 	helm dep up --skip-refresh
-	FINGERPRINT=$((echo main
-	cat Chart.yaml | sort | awk '{if(/^(appVersion|version|name):/){print $2}}' | sed 'N;N; s/\([^\n]*\)\n\([^\n]*\)\n\([^n]*\)/\2 \3 \1/g'
-	echo deps
-	ls charts | sort | while read line; do
-		helm inspect chart charts/$line | sort | awk '{if(/^(appVersion|version|name):/){print $2}}' | sed 'N;N; s/\([^\n]*\)\n\([^\n]*\)\n\([^n]*\)/\2 \3 \1/g'
-	done) | bzip2 -c | base64 | tr '\n' '=' | sed 's/=//g')
-        VERSION=$(cat Chart.yaml | awk '{if(/^version:/){print $2}}')
-	popd
-	echo Version: $VERSION
-	echo Fingerprint: $FINGERPRINT
-	pushd charts
-	FOUND=0
-	if [ -f "tags/$CHART-latest" ]; then
-		if [ "x$FINGERPRINT" == "x$(cat tags/$CHART-latest)" ]; then
-			FOUND=1
-			echo $CHART already built.
+	popd 2>/dev/null
+	APPVER=$(helm inspect chart k8s-node-image-$ver/charts/k8s-node-image-nginx-*.tgz | sort | awk '{if(/^(appVersion):/){print $2}}')
+	sed -i "s@^appVersion:.*@appVersion: k8s-node-image-$APPVER@g" k8s-node-image-$ver/Chart.yaml
+done
+
+CHANGE=0
+for CHART in console k8s-node-image; do
+	RAWCHART=$CHART
+	case "$CHART" in
+	k8s-node-image)
+		SUBBUILDS="1-13 1-14"
+		;;
+	*)
+		SUBBUILDS="latest"
+		;;
+	esac
+	for SUBBUILD in $SUBBUILDS; do
+		if [ $SUBBUILD != "latest" ]; then
+			CHART=$RAWCHART-$SUBBUILD
 		fi
-	fi
-	if [ $FOUND -eq 0 ]; then
-		CHANGE=1
-		echo $CHART building...
-		pushd docs/
-		NEWVERSION="$VERSION"
-		if [ -f ../vers/$CHART-latest ]; then
-			echo Existing package found. Updating version.
-			OLDVERSION=$(cat ../vers/$CHART-latest)
-			MAJORVERSION=$(echo $OLDVERSION | awk -F . '{print $1}')
-			MINORVERSION=$(echo $OLDVERSION | awk -F . '{print $2}')
-			PATCHVERSION=$(echo $OLDVERSION | awk -F . '{print $3}')
-			NEWPATCHVERSION=$((PATCHVERSION + 1))
-			NEWVERSION="$MAJORVERSION.$MINORVERSION.$NEWPATCHVERSION"
-			echo Old version: $OLDVERSION
-			echo New version: $NEWVERSION
-			sed -i "s/^version: .*/version: $NEWVERSION/" ../../$CHART/Chart.yaml
-			sed -i "s/^appVersion: .*/appVersion: $NEWVERSION/" ../../$CHART/Chart.yaml
-		fi
-		helm package ../../$CHART
+		pushd "$CHART"
+		helm dep up --skip-refresh
+		FINGERPRINT=$((echo main
+		cat Chart.yaml | sort | awk '{if(/^(appVersion|version|name):/){print $2}}' | sed 'N;N; s/\([^\n]*\)\n\([^\n]*\)\n\([^n]*\)/\2 \3 \1/g'
+		echo deps
+		ls charts | sort | while read line; do
+			helm inspect chart charts/$line | sort | awk '{if(/^(appVersion|version|name):/){print $2}}' | sed 'N;N; s/\([^\n]*\)\n\([^\n]*\)\n\([^n]*\)/\2 \3 \1/g'
+		done) | bzip2 -c | base64 | tr '\n' '=' | sed 's/=//g')
+		VERSION=$(cat Chart.yaml | awk '{if(/^version:/){print $2}}')
 		popd
-		echo "$FINGERPRINT" > "tags/$CHART-latest"
-		echo "$NEWVERSION" > "vers/$CHART-latest"
-	fi
-	popd
+		echo Version: $VERSION
+		echo Fingerprint: $FINGERPRINT
+		pushd charts
+		FOUND=0
+		if [ -f "tags/$CHART-latest" ]; then
+			if [ "x$FINGERPRINT" == "x$(cat tags/$CHART-latest)" ]; then
+				FOUND=1
+				echo $CHART already built.
+			fi
+		fi
+		if [ $FOUND -eq 0 ]; then
+			CHANGE=1
+			echo $CHART building...
+			pushd docs/
+			NEWVERSION="$VERSION"
+			if [ -f ../vers/$CHART-latest ]; then
+				echo Existing package found. Updating version.
+				OLDVERSION=$(cat ../vers/$CHART-latest)
+				MAJORVERSION=$(echo $OLDVERSION | awk -F . '{print $1}')
+				MINORVERSION=$(echo $OLDVERSION | awk -F . '{print $2}')
+				PATCHVERSION=$(echo $OLDVERSION | awk -F . '{print $3}')
+				NEWPATCHVERSION=$((PATCHVERSION + 1))
+				NEWVERSION="$MAJORVERSION.$MINORVERSION.$NEWPATCHVERSION"
+				echo Old version: $OLDVERSION
+				echo New version: $NEWVERSION
+				sed -i "s/^version: .*/version: $NEWVERSION/" ../../$CHART/Chart.yaml
+				if [ "$SUBBUILD" == "latest" ]; then
+					sed -i "s/^appVersion: .*/appVersion: $NEWVERSION/" ../../$CHART/Chart.yaml
+				fi
+			fi
+			helm package ../../$CHART
+			popd
+			echo "$FINGERPRINT" > "tags/$CHART-latest"
+			echo "$NEWVERSION" > "vers/$CHART-latest"
+		fi
+		popd
+	done
 done
 
 pushd charts

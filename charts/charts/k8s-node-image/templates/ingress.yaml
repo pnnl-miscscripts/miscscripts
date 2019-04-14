@@ -1,15 +1,16 @@
 {{- if .Values.ingress.enabled -}}
 {{- $dot := . }}
-{{- $prefix := include "k8s-node-image.ingress.prefix" . }}
-{{- $aFullName := include "k8s-node-image.anaconda.fullname" . -}}
-{{- $nFullName := include "k8s-node-image.k8s-node.fullname" . -}}
+{{- $prefix := include "pnnlmiscscripts.k8s-node-image-full.ingress.prefix" . }}
+{{- $pxeprefix := printf "%s/images/pxeboot" $prefix }}
+{{- $aFullName := include "pnnlmiscscripts.k8s-node-image-full.anaconda.fullname" . -}}
+{{- $nFullName := include "pnnlmiscscripts.k8s-node-image-full.k8s-node.fullname" . -}}
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: {{ include "k8s-node-image.fullname" . }}
+  name: {{ include "pnnlmiscscripts.k8s-node-image-full.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "k8s-node-image.name" . }}
-    helm.sh/chart: {{ include "k8s-node-image.chart" . }}
+    app.kubernetes.io/name: {{ include "pnnlmiscscripts.k8s-node-image-full.name" . }}
+    helm.sh/chart: {{ include "pnnlmiscscripts.k8s-node-image-full.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   annotations:
@@ -35,23 +36,31 @@ spec:
     - host: {{ . | quote }}
       http:
         paths:
-          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "" "type" "d" | include "k8s-node-image.ingress" }}
+          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "" "type" "d" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
             backend:
               serviceName: {{ $nFullName }}
               servicePort: http
-          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "vmlinuz" "type" "f" | include "k8s-node-image.ingress" }}
+          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "vmlinuz" "type" "f" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
             backend:
               serviceName: {{ $aFullName }}
               servicePort: http
-          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "initrd.img" "type" "f" | include "k8s-node-image.ingress" }}
+          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "initrd.img" "type" "f" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
             backend:
               serviceName: {{ $aFullName }}
               servicePort: http
-          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "LiveOS" "type" "d" | include "k8s-node-image.ingress" }}
+          - path: {{ dict "dot" $dot "prefix" $pxeprefix "suffix" "vmlinuz" "type" "f" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
             backend:
               serviceName: {{ $aFullName }}
               servicePort: http
-          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" ".treeinfo" "type" "f" | include "k8s-node-image.ingress" }}
+          - path: {{ dict "dot" $dot "prefix" $pxeprefix "suffix" "initrd.img" "type" "f" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
+            backend:
+              serviceName: {{ $aFullName }}
+              servicePort: http
+          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "LiveOS" "type" "d" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
+            backend:
+              serviceName: {{ $aFullName }}
+              servicePort: http
+          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" ".treeinfo" "type" "f" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
             backend:
               serviceName: {{ $aFullName }}
               servicePort: http

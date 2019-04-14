@@ -13,6 +13,11 @@ jobs:
   - stage: build
     dist: xenial
     language: shell
+    name: Build chronyd container
+    script: ./containers/build chronyd
+  - stage: build
+    dist: xenial
+    language: shell
     name: Build debug-toolbox container
     script: ./containers/build debug-toolbox
   - stage: build

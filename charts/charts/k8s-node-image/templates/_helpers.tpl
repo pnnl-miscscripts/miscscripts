@@ -2,7 +2,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "k8s-node-image.name" -}}
+{{- define "pnnlmiscscripts.k8s-node-image-full.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
@@ -11,7 +11,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "k8s-node-image.fullname" -}}
+{{- define "pnnlmiscscripts.k8s-node-image-full.fullname" -}}
 {{- if .Values.fullnameOverride -}}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -27,21 +27,21 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "k8s-node-image.chart" -}}
+{{- define "pnnlmiscscripts.k8s-node-image-full.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-{{- define "k8s-node-image.anaconda.fullname" -}}
-{{- $f := include "k8s-node-image.fullname" . }}
+{{- define "pnnlmiscscripts.k8s-node-image-full.anaconda.fullname" -}}
+{{- $f := include "pnnlmiscscripts.k8s-node-image-full.fullname" . }}
 {{- $f | trunc 59 | trimSuffix "-" -}}-ana
 {{- end -}}
 
-{{- define "k8s-node-image.k8s-node.fullname" -}}
-{{- $f := include "k8s-node-image.fullname" . }}
+{{- define "pnnlmiscscripts.k8s-node-image-full.k8s-node.fullname" -}}
+{{- $f := include "pnnlmiscscripts.k8s-node-image-full.fullname" . }}
 {{- $f | trunc 58 | trimSuffix "-" -}}-node
 {{- end -}}
 
-{{- define "k8s-node-image.ingress.regex" -}}
+{{- define "pnnlmiscscripts.k8s-node-image-full.ingress.regex" -}}
 {{- if gt (len .suffix) 0 }}
   {{- if eq .type "d" }}
     {{- printf "%s/(%s$|%s/.*)" .prefix .suffix .suffix }}
@@ -53,7 +53,7 @@ Create chart name and version as used by the chart label.
 {{- end }}
 {{- end -}}
 
-{{- define "k8s-node-image.ingress.noregex" -}}
+{{- define "pnnlmiscscripts.k8s-node-image-full.ingress.noregex" -}}
 {{- if gt (len .suffix) 0 }}
   {{- printf "%s/%s" .prefix .suffix }}
 {{- else }}
@@ -61,7 +61,7 @@ Create chart name and version as used by the chart label.
 {{- end }}
 {{- end -}}
 
-{{- define "k8s-node-image.ingress.prefix" -}}
+{{- define "pnnlmiscscripts.k8s-node-image-full.ingress.prefix" -}}
 {{- if .Values.ingress.enableVersionPrefix -}}
 {{- $tag := dict "dot" . "section" .Values.k8sNode.image | include (printf "%s.tag" .Values.k8sNode.prefix) -}}
 {{- printf "%s/%s" .Values.ingress.prefix $tag -}}
@@ -73,11 +73,11 @@ Create chart name and version as used by the chart label.
 {{/*
 takes dot, prefix, suffix, and type. type can be either f or d.
 */}}
-{{- define "k8s-node-image.ingress" -}}
+{{- define "pnnlmiscscripts.k8s-node-image-full.ingress" -}}
 {{- if .dot.Values.ingress.regex }}
-{{- include "k8s-node-image.ingress.regex" . }}
+{{- include "pnnlmiscscripts.k8s-node-image-full.ingress.regex" . }}
 {{- else }}
-{{- include "k8s-node-image.ingress.noregex" . }}
+{{- include "pnnlmiscscripts.k8s-node-image-full.ingress.noregex" . }}
 {{- end }}
 {{- end -}}
 

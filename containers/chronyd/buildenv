@@ -1,0 +1,2 @@
+export AUTO_PREFIX=apk-version
+export AUTO_PREFIX_PACKAGE=chrony
