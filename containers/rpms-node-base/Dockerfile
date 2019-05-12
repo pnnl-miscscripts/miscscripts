@@ -13,7 +13,8 @@ RUN --mount=type=secret,id=gpg \
   yumdownloader --resolv --installroot=/tmp/root --releasever=/ \
     --destdir rpms --setopt cachedir=/tmp/cache \
     @Base @Core kernel grub2 docker e2fsprogs container-selinux nspr \
-    nss-util openssh-server openssh iptables-services nfs-utils && \
+    nss-util openssh-server openssh iptables-services nfs-utils \
+    authconfig && \
   gpg --import /run/secrets/gpg && \
   gpg --import /root/rpm.pub && \
   rpm --addsign $(find rpms -type f -name '*.rpm') && \
