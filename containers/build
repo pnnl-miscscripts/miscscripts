@@ -27,7 +27,7 @@ if [ "x$GPGSIGN" != "x" ]; then
 rm -f "$GPGKEY" || true
 fi
 
-if [ $RES -eq 1 ]; then
+if [ $RES -eq 42 ]; then
 	echo Nothing changed. Skipping.
 	exit 0
 fi
