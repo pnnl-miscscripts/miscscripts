@@ -17,6 +17,9 @@ metadata:
 {{- if .Values.ingress.regex }}
     nginx.ingress.kubernetes.io/rewrite-target: /$1
 {{- end }}
+{{- if eq (len .Values.ingress.tls) 0 }}
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+{{- end }}
     {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -33,8 +36,7 @@ spec:
 {{- end }}
   rules:
   {{- range .Values.ingress.hosts }}
-    - host: {{ . | quote }}
-      http:
+    - http:
         paths:
           - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "" "type" "d" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
             backend:
@@ -64,5 +66,8 @@ spec:
             backend:
               serviceName: {{ $aFullName }}
               servicePort: http
+{{- if . }}
+      host: {{ . | quote }}
+{{- end }}
   {{- end }}
 {{- end }}
