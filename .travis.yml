@@ -13,6 +13,11 @@ jobs:
   - stage: build
     dist: xenial
     language: shell
+    name: Build inotify-tools container
+    script: ./containers/build inotify-tools
+  - stage: build
+    dist: xenial
+    language: shell
     name: Build chronyd container
     script: ./containers/build chronyd
   - stage: build
