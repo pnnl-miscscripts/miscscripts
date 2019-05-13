@@ -22,7 +22,7 @@ fi
 
 #Workaround https://github.com/moby/moby/issues/39120
 if [ "x$DOCKER_BUILDKIT" != "x" ]; then
-	cat /etc/docker/daemon.json
+	sudo cat /etc/docker/daemon.json
 	echo '{}' | sudo dd of=/tmp/daemon.json
 	sudo systemctl restart docker
 	docker ps -a
