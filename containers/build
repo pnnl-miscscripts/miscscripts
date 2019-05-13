@@ -22,7 +22,10 @@ fi
 
 #Workaround https://github.com/moby/moby/issues/39120
 if [ "x$DOCKER_BUILDKIT" != "x" ]; then
-	docker pull docker/dockerfile:1.0-experimental
+	cat /etc/docker/daemon.json
+	echo '{}' | sudo dd of=/tmp/daemon.json
+	sudo systemctl restart docker
+	docker ps -a
 fi
 
 hubbuildtools/hubhookhelpers/build
