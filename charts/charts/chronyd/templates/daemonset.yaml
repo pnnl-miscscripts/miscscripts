@@ -1,0 +1,70 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: {{ template "pnnlmiscscripts.chronyd.fullname" . }}
+  labels:
+    app: {{ template "pnnlmiscscripts.chronyd.name" . }}
+    chart: {{ template "pnnlmiscscripts.chronyd.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "pnnlmiscscripts.chronyd.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "pnnlmiscscripts.chronyd.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+      - image: {{ dict "dot" . "section" .Values.image | include "pnnlmiscscripts.chronyd.image" }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: main
+        command:
+        - /bin/sh
+        - -xec
+        - |
+          [ -f /var/run/chronyd.pid ] && rm -f /var/run/chronyd.pid
+          /usr/sbin/chronyd -n
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /var/lib/cronyd
+          name: state
+        - mountPath: /etc/chrony/chrony.conf
+          subPath: chrony.conf
+          name: config
+      dnsPolicy: ClusterFirst
+      hostNetwork: true
+      hostPID: true
+      hostIPC: true
+      restartPolicy: Always
+      serviceAccountName: {{ template "pnnlmiscscripts.chronyd.fullname" . }}
+      volumes:
+      - configMap:
+          name: {{ template "pnnlmiscscripts.chronyd.fullname" . }}
+        name: config
+      - hostPath:
+          path: /var/lib/chrony
+        name: state
+      resources:
+{{ toYaml .Values.resources | indent 8 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

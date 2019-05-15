@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "pnnlmiscscripts.chronyd.fullname" . }}
+  labels:
+    app: {{ template "pnnlmiscscripts.chronyd.name" . }}
+    chart: {{ template "pnnlmiscscripts.chronyd.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  chrony.conf: |
+{{ .Values.config | indent 4 }}
