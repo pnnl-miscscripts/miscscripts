@@ -31,6 +31,9 @@ for ver in 1-13 1-14; do
 	popd 2>/dev/null
 	APPVER=$(helm inspect chart k8s-node-image-$ver/charts/k8s-node-image-nginx-*.tgz | sort | awk '{if(/^(appVersion):/){print $2}}')
 	sed -i "s@^appVersion:.*@appVersion: k8s-node-image-$APPVER@g" k8s-node-image-$ver/Chart.yaml
+	#FIXME
+	#IMAGETAG=$(tar -zxOf k8s-node-image-$ver/charts/k8s-node-image-nginx-*.tgz k8s-node-image-nginx/files/metadata.json | jq -r .tag )
+	#sed IMAGETAG into README.md
 done
 
 CHANGE=0

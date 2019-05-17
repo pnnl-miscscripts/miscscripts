@@ -90,6 +90,17 @@ How to use:
 {{- end -}}
 EOF
 
+mkdir -p files
+cat > files/metadata.json <<EOF
+{
+  "server": "docker.io",
+  "prefix": "",
+  "org": "$CPREFIX",
+  "repo": "$SUBREPO",
+  "tag": "$REVISION"
+}
+EOF
+
 pushd ../image-library-charts/docs
 helm template "../../$CONTAINER" > /dev/null
 helm package "../../$CONTAINER"
