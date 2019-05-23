@@ -1,0 +1,2 @@
+export AUTO_PREFIX=pip-version
+export AUTO_PREFIX_PACKAGE=pylint

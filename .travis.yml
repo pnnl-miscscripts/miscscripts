@@ -3,6 +3,11 @@ jobs:
   - stage: build
     dist: xenial
     language: shell
+    name: Build py2lint container
+    script: ./containers/build py2lint
+  - stage: build
+    dist: xenial
+    language: shell
     name: Build ipmitool container
     script: ./containers/build ipmitool
   - stage: build
