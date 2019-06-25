@@ -66,6 +66,12 @@ jobs:
     name: Build rpms-kubernetes container 1.14
     script: ./containers/build rpms-kubernetes 1.14
   - stage: build
+    before_install: *upgradedocker
+    dist: xenial
+    language: shell
+    name: Build rpms-kubernetes container 1.15
+    script: ./containers/build rpms-kubernetes 1.15
+  - stage: build
     dist: xenial
     language: shell
     name: Build anaconda container
@@ -82,6 +88,12 @@ jobs:
     language: shell
     name: Build full k8s node image 1.14
     script: ./containers/build k8s-node-image 1.14
+  - stage: build-full-image
+    before_install: *upgradedocker
+    dist: xenial
+    language: shell
+    name: Build full k8s node image 1.15
+    script: ./containers/build k8s-node-image 1.15
   - stage: build-nginx
     dist: xenial
     language: shell
@@ -97,6 +109,11 @@ jobs:
     language: shell
     name: Build k8s-node-image+nginx container 1.14
     script: ./containers/build k8s-node-image-nginx 1.14
+  - stage: build-nginx
+    dist: xenial
+    language: shell
+    name: Build k8s-node-image+nginx container 1.15
+    script: ./containers/build k8s-node-image-nginx 1.15
   - stage: build-image-library-charts
     dist: xenial
     language: shell
