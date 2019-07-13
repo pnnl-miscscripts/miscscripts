@@ -41,7 +41,7 @@ for CHART in console chronyd dhcpd k8s-node-image; do
 	RAWCHART=$CHART
 	case "$CHART" in
 	k8s-node-image)
-		SUBBUILDS="1-13 1-14"
+		SUBBUILDS="1-13 1-14 1-15"
 		;;
 	*)
 		SUBBUILDS="latest"
