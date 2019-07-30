@@ -8,6 +8,11 @@ jobs:
   - stage: build
     dist: xenial
     language: shell
+    name: Build pixiecore container
+    script: ./containers/build pixiecore
+  - stage: build
+    dist: xenial
+    language: shell
     name: Build ipmitool container
     script: ./containers/build ipmitool
   - stage: build
