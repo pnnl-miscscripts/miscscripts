@@ -5,5 +5,6 @@ RUN \
 
 FROM alpine:3.9
 COPY --from=0 /go/bin/pixiecore /bin/pixiecore
+RUN echo 1.0.1 > /.extrafingerprints
 ENTRYPOINT ["/bin/pixiecore"]
 
