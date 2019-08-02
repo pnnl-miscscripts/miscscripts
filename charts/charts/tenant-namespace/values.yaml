@@ -1,0 +1,104 @@
+contact: some@email.addr
+subdomain: tenants.subdomain.addr # Tenant foo at foo.tenants.subdomain.addr
+
+adminmagicnamespace:
+  enabled: false
+  #namespace: project-admin
+  tiller:
+    image:
+      tag: v2.11.0
+    role:
+      type: ClusterRole
+      name: admin
+
+#NOTE, letsencrypt support isn't fully baked yet. It works, but nginx-ingress
+# cant use it yet, as nginx-ingress can't watch two namespaces at once.
+letsencrypt:
+  enabled: false
+  solvers: [] #List of solvers in a cert-manager issuer
+
+# Provides tenant namespace isolation. Tested with Canal. At time of release
+# Known not to work with Weave except for the unrelased trunk version.
+networkPolicy:
+  enabled: true
+  type: simple-restricted
+  ingress:
+# These are default settings for kubeadm with canal.
+    ipBlocks:
+    - cidr: 0.0.0.0/0
+      except:
+      - 10.244.0.0/16 # Pod network
+      - 10.96.0.0/12 # Service network
+  egress:
+    ipBlocks:
+    - cidr: 0.0.0.0/0
+      except:
+      - 10.244.0.0/16 # Pod network
+      - 10.96.0.0/12 # Service network
+
+magicnamespace:
+  namespace: project
+  tiller:
+    role:
+      type: ClusterRole
+      name: admin
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+  serviceAccounts:
+# Service account users can use to drive via ci.
+    - ci
+  roleBindings:
+  - name: ci-admin
+    role:
+      kind: ClusterRole
+      name: admin
+    subject:
+      kind: ServiceAccount
+      name: ci
+
+roleBindings:
+# Used to manage rbac rules. User's group prefix to use for assigning
+# permissions. Group foo.tenantname.admin is role bound to the admin
+# role of the tenants namespace.
+  groupPrefix: foo.
+
+ingress:
+  nginx:
+    enabled: true
+  controller:
+    ingressClass: public
+    extraArgs: {}
+#     default-ssl-certificate=default/default-tls
+    scope:
+      enabled: true
+      namespace: ""
+    stats:
+      enabled: true
+    metrics:
+      enabled: true
+    publishService:
+      enabled: true
+
+quota:
+  pods: 10
+  limits:
+    cpu: 10
+    memory: 8Gi
+  requests:
+    cpu: 5
+    memory: 4Gi
+
+limitRange:
+  limits:
+  - default:
+      cpu: 1000m
+      memory: 2Gi
+    defaultRequest:
+      cpu: 100m
+      memory: 256Mi
+    type: Container

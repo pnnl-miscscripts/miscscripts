@@ -1,0 +1,49 @@
+{{- if and .Values.networkPolicy.enabled (eq .Values.networkPolicy.type "simple-restricted") }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default
+  namespace: {{ .Values.magicnamespace.namespace }}
+spec:
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+# Allow non pod traffic
+{{- range .Values.networkPolicy.ingress.ipBlocks }}
+    - ipBlock:
+{{ toYaml . | indent 8 }}
+{{- end }}
+# Allow admin namespace to access this namespace
+    - namespaceSelector:
+        matchLabels:
+          name: {{ .Release.Namespace }}
+      podSelector: {}
+# Allow access to the kube-system namespace for service discovery
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+      podSelector: {}
+# Allow this namespace to access itself
+    - podSelector: {}
+  egress:
+  - to:
+# Allow non pod traffic
+{{- range .Values.networkPolicy.ingress.ipBlocks }}
+    - ipBlock:
+{{ toYaml . | indent 8 }}
+{{- end }}
+# Allow admin namespace to access this namespace
+    - namespaceSelector:
+        matchLabels:
+          name: {{ .Release.Namespace }}
+      podSelector: {}
+# Allow access to the kube-system namespace for service discovery
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+      podSelector: {}
+# Allow this namespace to access itself
+    - podSelector: {}
+{{- end }}

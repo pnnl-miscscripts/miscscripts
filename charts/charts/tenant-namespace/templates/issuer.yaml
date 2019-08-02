@@ -1,0 +1,16 @@
+{{- if .Values.letsencrypt.enabled }}
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Issuer
+metadata:
+  name: letsencrypt-production
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: {{ .Values.contact }}
+
+    privateKeySecretRef:
+      name: letsencrypt-production
+
+    solvers:
+{{ toYaml .Values.letsencrypt.solvers | indent 6 }}
+{{- end }}

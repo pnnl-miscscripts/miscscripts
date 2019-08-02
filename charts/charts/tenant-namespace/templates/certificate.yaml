@@ -1,0 +1,15 @@
+{{- if .Values.letsencrypt.enabled }}
+{{- $name := .Values.magicnamespace.namespace }}
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: default-tls
+spec:
+  secretName: default-tls
+  dnsNames:
+  - {{ $name }}.{{ .Values.subdomain }}
+  - "*.{{ $name }}.{{ .Values.subdomain }}"
+  issuerRef:
+    name: letsencrypt-production
+    kind: Issuer
+{{- end }}

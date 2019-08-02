@@ -1,0 +1,15 @@
+dependencies:
+- name: magic-namespace
+  alias: adminmagicnamespace
+  version: "0.5.2"
+  repository: "https://kubernetes-charts.storage.googleapis.com"
+  condition: adminmagicnamespace.enabled
+- name: magic-namespace
+  alias: magicnamespace
+  version: "0.5.2"
+  repository: "https://kubernetes-charts.storage.googleapis.com"
+- name: nginx-ingress
+  alias: ingress
+  version: "1.7.0"
+  repository: "https://kubernetes-charts.storage.googleapis.com"
+  condition: ingress.nginx.enabled

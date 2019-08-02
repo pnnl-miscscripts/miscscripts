@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+    name: {{ .Release.Name }}
+    namespace: {{ .Values.magicnamespace.namespace }}
+    labels:
+        app: {{ template "namespace.name" . }}
+        chart: {{ template "namespace.chart" . }}
+        release: {{ .Release.Name }}
+        heritage: {{ .Release.Service }}
+spec:
+{{ toYaml .Values.limitRange | indent 2 }}
