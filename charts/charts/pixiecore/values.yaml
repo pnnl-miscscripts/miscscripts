@@ -1,0 +1,7 @@
+pixiecore:
+  imagePullPolicy: IfNotPresent
+upstreamURL: http://pixiecore
+port: 9200
+nodeSelector: {}
+extraArgs: []
+#- -l=192.168.0.1

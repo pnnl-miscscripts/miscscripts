@@ -1,0 +1,4 @@
+dependencies:
+- name: pixiecore
+  version: 2.0.0
+  repository: https://pnnl-miscscripts.github.io/image-library-charts/

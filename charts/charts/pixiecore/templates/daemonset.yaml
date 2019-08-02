@@ -1,0 +1,39 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  name: {{ template "pnnlmiscscripts.pixiecore-full.fullname" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: {{ template "pnnlmiscscripts.pixiecore-full.chart" . }}
+    app: {{ template "pnnlmiscscripts.pixiecore-full.name" . }}
+spec:
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ template "pnnlmiscscripts.pixiecore-full.name" . }}
+    spec:
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: True
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      containers:
+      - name: main
+        image: {{ dict "dot" . "section" .Values.pixiecore | include "pnnlmiscscripts.pixiecore.image" }}
+        imagePullPolicy: {{ .Values.pixiecore.imagePullPolicy }}
+        securityContext:
+          capabilities:
+            add: ["NET_ADMIN"]
+        args:
+        - api
+        - --dhcp-no-bind
+        - --port
+        - {{ .Values.port | quote }}
+{{- range .Values.extraArgs }}
+        - {{ . | quote }}
+{{- end }}
+        - {{ .Values.upstreamURL | quote }}
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
