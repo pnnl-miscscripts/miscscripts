@@ -1,0 +1,51 @@
+# Default values for pixiecore-simpleconfig.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: nginx
+  tag: stable
+  pullPolicy: IfNotPresent
+
+service:
+  #externalIPs: []
+  type: ClusterIP
+  name: pixiecore
+  port: 80
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+ingress:
+  enabled: false
+  annotations: {}
+  path: /v1/boot
+#  host: example.com
+
+config: {}
+# "00:11:22:33": |
+#   {pixiecore config here}
+# For example:
+#   {
+#     "kernel": "http://xxx.xxx.xxx.xxx:9090/vmlinuz",
+#     "initrd": ["http://xxx.xxx.xxx.xxx:9090/initrd.img"],
+#     "cmdline": "ks=http://xxx.xxx.xxx.xxx:9091/v1/boot/ks.cfg ksdevice=ens1 console=ttyS1,115200"
+#   }
+

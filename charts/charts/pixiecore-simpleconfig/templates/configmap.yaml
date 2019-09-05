@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "pnnlmiscscripts.pixiecore.simpleconfig.fullname" . }}
+  labels:
+    app: {{ template "pnnlmiscscripts.pixiecore.simpleconfig.name" . }}
+    chart: {{ template "pnnlmiscscripts.pixiecore.simpleconfig.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+{{- range $key, $value := .Values.config }}
+  {{ $key | replace ":" "" | quote }}: |
+{{ $value | indent 4 }}
+{{- end }}

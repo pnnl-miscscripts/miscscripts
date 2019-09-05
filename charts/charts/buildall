@@ -37,7 +37,7 @@ for ver in 1-13 1-14 1-15; do
 done
 
 CHANGE=0
-for CHART in console chronyd dhcpd k8s-node-image tenant-namespace pixiecore; do
+for CHART in console chronyd dhcpd k8s-node-image tenant-namespace pixiecore pixiecore-simpleconfig; do
 	RAWCHART=$CHART
 	case "$CHART" in
 	k8s-node-image)

@@ -1,0 +1,21 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ include "pnnlmiscscripts.pixiecore.simpleconfig.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "pnnlmiscscripts.pixiecore.simpleconfig.name" . }}
+    helm.sh/chart: {{ include "pnnlmiscscripts.pixiecore.simpleconfig.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+{{- toYaml .Values.ingress.annotations | nindent 4 }}
+spec:
+  rules:
+    - http:
+        paths:
+          - path: {{ .Values.ingress.path }}
+{{- if .Values.ingress.host }}
+      host: {{ .Values.ingress.host | quote }}
+{{- end }}
+{{- end }}
