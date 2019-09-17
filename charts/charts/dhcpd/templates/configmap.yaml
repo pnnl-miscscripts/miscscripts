@@ -34,7 +34,7 @@ data:
         hardware ethernet {{ .mac }};
         fixed-address {{ .ip }};
       }
-    }
 {{- end }}
+    }
 {{- end }}
 {{- end }}
