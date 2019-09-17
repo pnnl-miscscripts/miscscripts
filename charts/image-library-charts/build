@@ -44,7 +44,7 @@ EOF
 mkdir -p templates
 cat > templates/_helpers.tpl <<EOF
 {{- define "$CPREFIX.$CONTAINER.server" -}}
-{{- if and (hasKey . "section") (kindIs "bool" .section) (hasKey .section "server") .section.server -}}
+{{- if and (hasKey . "section") (hasKey .section "server") .section.server -}}
 {{ .section.server }}
 {{- else -}}
 docker.io

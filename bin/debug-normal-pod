@@ -1,5 +1,15 @@
 #!/bin/bash
 
+DEBUGTOOLBOXIMAGE=${DEBUGTOOLBOXIMAGE:-pnnlmiscscripts/debug-toolbox}
+
+mykubectl () {
+if [ "x$NAMESPACE" != "x" ]; then
+  kubectl -n "$NAMESPACE" "$@"
+else
+  kubectl "$@"
+fi
+}
+
 SERVICEACCOUNT=${SERVICEACCOUNT:-default}
 
 if [ "x$1" == "x" ]; then
@@ -11,7 +21,7 @@ echo Attaching debug container to hostname "$1"
 
 SHORT=$(echo $1 | tr '.' '-')
 
-cat <<EOF | kubectl apply -f -
+cat <<EOF | mykubectl apply -f -
 apiVersion: v1
 kind: Pod
 metadata:
@@ -30,7 +40,7 @@ spec:
       while true; do
         sleep 1000;
       done
-    image: pnnlmiscscripts/debug-toolbox
+    image: $DEBUGTOOLBOXIMAGE
     imagePullPolicy: Always
     name: main
     securityContext:
@@ -38,10 +48,9 @@ spec:
   nodeSelector:
     kubernetes.io/hostname: $1
   tolerations:
-  - effect: NoExecute
+  - effect: NoSchedule
     key: node.kubernetes.io/not-ready
     operator: Exists
-    tolerationSeconds: 300
   - effect: NoExecute
     key: node.kubernetes.io/unreachable
     operator: Exists
