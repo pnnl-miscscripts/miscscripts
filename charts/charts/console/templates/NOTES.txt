@@ -1,8 +1,8 @@
 Load a script onto your client to attach to the console by pasting this into a terminal:
 
-cat > console.sh <<EOF
+cat > console.sh <<'EOF'
 #!/bin/bash
-kubectl attach -it $(kubectl get pods -l "host=$1" -o go-template='{{"{{"}}(index .items 0).metadata.name{{"}}"}}')
+kubectl attach -it $(kubectl get pods -l "host=$1" -o go-template='{{"{{"}}(index .items 0).metadata.name{{"}}"}}' -n "{{ .Release.Namespace }}") -n "{{ .Release.Namespace }}"
 EOF
 chmod +x console.sh
 
