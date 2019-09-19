@@ -3,5 +3,7 @@ pixiecore:
 upstreamURL: http://pixiecore
 port: 9200
 nodeSelector: {}
+listen:
+  interface: ""
+  ip: ""
 extraArgs: []
-#- -l=192.168.0.1

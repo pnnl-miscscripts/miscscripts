@@ -26,14 +26,20 @@ spec:
         securityContext:
           capabilities:
             add: ["NET_ADMIN"]
-        args:
-        - api
-        - --dhcp-no-bind
-        - --port
-        - {{ .Values.port | quote }}
-{{- range .Values.extraArgs }}
-        - {{ . | quote }}
+        command:
+        - /bin/sh
+        - -ec
+        - |
+{{- if .Values.listen.interface }}
+          LISTENARG=-l;
+          LISTENIP=$(ip a show dev {{ .Values.listen.interface }} | awk '{if($1 == "inet"){print $2}}' | sed 's@/.*@@');
+{{- else if .Values.listen.ip }}
+          LISTENARG=-l;
+          LISTENIP={{ .Values.listen.ip }};
+{{- else }}
+          LISTENARG="";
+          LISTENIP="";
 {{- end }}
-        - {{ .Values.upstreamURL | quote }}
+          exec pixiecore api --dhcp-no-bind $LISTENARG $LISTENIP --port {{ .Values.port | quote }} {{ .Values.extraArgs | join " " }} {{ .Values.upstreamURL | quote }}
         resources:
 {{ toYaml .Values.resources | indent 10 }}
