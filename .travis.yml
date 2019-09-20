@@ -62,8 +62,8 @@ jobs:
     before_install: *upgradedocker
     dist: xenial
     language: shell
-    name: Build rpms-kubernetes container 1.13
-    script: ./containers/build rpms-kubernetes 1.13
+    name: Build rpms-kubernetes container 1.16
+    script: ./containers/build rpms-kubernetes 1.16
   - stage: build
     before_install: *upgradedocker
     dist: xenial
@@ -85,8 +85,8 @@ jobs:
     before_install: *upgradedocker
     dist: xenial
     language: shell
-    name: Build full k8s node image 1.13
-    script: ./containers/build k8s-node-image 1.13
+    name: Build full k8s node image 1.16
+    script: ./containers/build k8s-node-image 1.16
   - stage: build-full-image
     before_install: *upgradedocker
     dist: xenial
@@ -107,8 +107,8 @@ jobs:
   - stage: build-nginx
     dist: xenial
     language: shell
-    name: Build k8s-node-image+nginx container 1.13
-    script: ./containers/build k8s-node-image-nginx 1.13
+    name: Build k8s-node-image+nginx container 1.16
+    script: ./containers/build k8s-node-image-nginx 1.16
   - stage: build-nginx
     dist: xenial
     language: shell
