@@ -13,6 +13,8 @@ spec:
       labels:
         release: {{ .Release.Name | quote }}
         app: {{ template "pnnlmiscscripts.dhcp-full.name" . }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum | quote }}
     spec:
       hostNetwork: true
       containers:
