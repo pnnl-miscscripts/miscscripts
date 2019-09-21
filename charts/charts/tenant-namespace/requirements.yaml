@@ -10,6 +10,6 @@ dependencies:
   repository: "https://kubernetes-charts.storage.googleapis.com"
 - name: nginx-ingress
   alias: ingress
-  version: "1.7.0"
+  version: "1.19.0"
   repository: "https://kubernetes-charts.storage.googleapis.com"
   condition: ingress.nginx.enabled
