@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: {{ template "pnnlmiscscripts.dhcp-full.fullname" . }}
@@ -8,6 +8,8 @@ metadata:
     chart: {{ template "pnnlmiscscripts.dhcp-full.chart" . }}
     app: {{ template "pnnlmiscscripts.dhcp-full.name" . }}
 spec:
+  updateStrategy:
+    type: RollingUpdate
   template:
     metadata:
       labels:
