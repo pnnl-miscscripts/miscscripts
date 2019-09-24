@@ -6,7 +6,21 @@ kubectl attach -it $(kubectl get pods -l "host=$1" -o go-template='{{"{{"}}(inde
 EOF
 chmod +x console.sh
 
+cat > ipmi.sh <<'EOF'
+#!/bin/bash
+HOST="$1"
+shift
+kubectl exec -it $(kubectl get pods -l "host=$HOST" -o go-template='{{(index .items 0).metadata.name}}' -n console) -n console -- ipmitool "$@"
+EOF
+chmod +x ipmi.sh
 
 To use it to get into a console:
 
 ./console.sh <host>
+
+To ipmi manage a machine:
+
+./ipmi.sh <host> power status
+./ipmi.sh <host> chassis bootdev pxe
+./ipmi.sh <host> power on
+./ipmi.sh <host> power off
