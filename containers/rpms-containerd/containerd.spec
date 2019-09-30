@@ -27,6 +27,7 @@ ls -l %{buildroot}
 %files
 /usr/local/bin/containerd-stress
 /usr/local/bin/containerd-shim-runc-v1
+/usr/local/bin/containerd-shim-runc-v2
 /usr/local/bin/crictl
 /usr/local/bin/ctr
 /usr/local/bin/critest
