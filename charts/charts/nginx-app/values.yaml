@@ -16,6 +16,7 @@ service:
 ingress:
   enabled: true
   annotations:
+    kubernetes.io/ingress.class: nginx
   path: /
   hosts:
     - nginx-app.example.com
