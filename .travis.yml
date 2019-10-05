@@ -33,11 +33,6 @@ jobs:
   - stage: build
     dist: xenial
     language: shell
-    name: Build nginx-add container
-    script: ./containers/build nginix-app
-  - stage: build
-    dist: xenial
-    language: shell
     name: Build debug-toolbox container
     script: ./containers/build debug-toolbox
   - stage: build
