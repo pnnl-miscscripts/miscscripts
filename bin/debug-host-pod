@@ -52,8 +52,10 @@ spec:
     volumeMounts:
     - mountPath: /host
       name: host
+      mountPropagation: Bidirectional
     - mountPath: /dev
       name: dev
+      mountPropagation: Bidirectional
   nodeSelector:
     kubernetes.io/hostname: $1
   tolerations:
