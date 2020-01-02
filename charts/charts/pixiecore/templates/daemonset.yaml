@@ -8,6 +8,9 @@ metadata:
     chart: {{ template "pnnlmiscscripts.pixiecore-full.chart" . }}
     app: {{ template "pnnlmiscscripts.pixiecore-full.name" . }}
 spec:
+  selector:
+    matchLabels:
+      app: {{ template "pnnlmiscscripts.pixiecore-full.name" . }}
   updateStrategy:
     type: RollingUpdate
   template:
