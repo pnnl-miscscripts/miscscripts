@@ -3,6 +3,11 @@ jobs:
   - stage: build
     dist: xenial
     language: shell
+    name: Build gitlab-runner-operator container
+    script: ./containers/build gitlab-runner-operator
+  - stage: build
+    dist: xenial
+    language: shell
     name: Build py2lint container
     script: ./containers/build py2lint
   - stage: build

@@ -1,0 +1,12 @@
+apiVersion: miscscripts.pnnl.gov/v1beta1
+kind: GitlabRunner
+metadata:
+  name: example
+spec:
+  flavorRef:
+    name: example
+    kind: ClusterGitlabRunnerFlavor
+    group: miscscripts.pnnl.gov
+  runners:
+    tags: foo,bar
+    secret: example

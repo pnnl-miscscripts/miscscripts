@@ -1,0 +1,6 @@
+apiVersion: miscscripts.pnnl.gov/v1beta1
+kind: ClusterGitlabRunnerFlavor
+metadata:
+  name: example
+spec:
+  gitlabUrl: http://localhost:8080

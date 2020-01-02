@@ -1,0 +1,58 @@
+---
+# tasks file for gitlabrunner
+- tempfile:
+    state: file
+    suffix: .yaml
+  register: temp_filename
+
+- block:
+  - tempfile:
+      state: file
+      suffix: .yaml
+    register: temp_filename2
+
+  - block:
+    - copy:
+        content: ""
+        dest: "{{ temp_filename2.path }}"
+    - block:
+      - set_fact:
+          flavor: "{{ lookup('k8s', kind='ClusterGitlabRunnerFlavor', api_version='miscscripts.pnnl.gov/v1beta1', resource_name=_miscscripts_pnnl_gov_gitlabrunner_spec.flavorRef.name) }}"
+        no_log: True
+      - copy:
+          content: "{{ flavor.spec | to_yaml }}"
+          dest: "{{ temp_filename2.path }}"
+        no_log: True
+      when:
+      - _miscscripts_pnnl_gov_gitlabrunner_spec.flavorRef is defined
+      - _miscscripts_pnnl_gov_gitlabrunner_spec.flavorRef.kind == "ClusterGitlabRunnerFlavor"
+      - _miscscripts_pnnl_gov_gitlabrunner_spec.flavorRef.group == "miscscripts.pnnl.gov"
+    - copy:
+        content: "{{ _miscscripts_pnnl_gov_gitlabrunner_spec | to_yaml }}"
+        dest: "{{ temp_filename.path }}"
+      no_log: True
+
+    - shell: "helm template --namespace {{ meta.namespace }} {{ meta.name }} /gitlab-runner/ -f {{ temp_filename2.path }} -f {{ temp_filename.path }}"
+      register: objs
+      no_log: True
+
+    - copy:
+        content: "{{ objs.stdout }}"
+        dest: "{{ temp_filename.path }}"
+      no_log: True
+
+    - k8s:
+        namespace: "{{ meta.namespace }}"
+        src: "{{ temp_filename.path }}"
+        state: present
+      no_log: True
+
+    always:
+    - file:
+        path: "{{ temp_filename2.path }}"
+        state: absent
+
+  always:
+  - file:
+      path: "{{ temp_filename.path }}"
+      state: absent

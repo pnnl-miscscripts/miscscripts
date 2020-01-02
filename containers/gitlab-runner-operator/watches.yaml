@@ -1,0 +1,5 @@
+---
+- version: v1beta1
+  group: miscscripts.pnnl.gov
+  kind: GitlabRunner
+  role: /opt/ansible/roles/gitlabrunner
