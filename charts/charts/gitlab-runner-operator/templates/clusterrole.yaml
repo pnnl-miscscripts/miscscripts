@@ -1,0 +1,15 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "gitlab-runner-operator.fullname" . }}-fl
+  labels:
+{{ include "gitlab-runner-operator.labels" . | nindent 4 }}
+rules:
+- apiGroups:
+  - miscscripts.pnnl.gov
+  resources:
+  - 'clustergitlabrunnerflavors'
+  verbs:
+  - get
+  - list
+  - watch

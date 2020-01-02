@@ -1,0 +1,24 @@
+apiVersion: rbac.authorization.k8s.io/v1
+{{- if eq .Values.mode "cluster" }}
+kind: ClusterRoleBinding
+{{- else if eq .Values.mode "cluster" }}
+kind: RoleBinding
+{{- end }}
+metadata:
+  name: {{ include "gitlab-runner-operator.fullname" . }}
+  labels:
+{{ include "gitlab-runner-operator.labels" . | nindent 4 }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "gitlab-runner-operator.serviceAccountName" . }}
+{{- if eq .Values.mode "cluster" }}
+  namespace: {{ .Release.Namespace }}
+{{- end }}
+roleRef:
+{{- if eq .Values.mode "cluster" }}
+  kind: ClusterRole
+{{- else if eq .Values.mode "cluster" }}
+  kind: Role
+{{- end}}
+  name: {{ include "gitlab-runner-operator.fullname" . }}
+  apiGroup: rbac.authorization.k8s.io
