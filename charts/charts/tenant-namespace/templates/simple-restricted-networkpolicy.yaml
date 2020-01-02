@@ -5,6 +5,7 @@ metadata:
   name: default
   namespace: {{ .Values.magicnamespace.namespace }}
 spec:
+  podSelector: {}
   policyTypes:
   - Ingress
   - Egress
