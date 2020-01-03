@@ -4,6 +4,10 @@
 
 mode: cluster # or namespaced. Note, only cluster is currently been tested.
 
+rbac:
+  # Allow admin/edit roles to create runners without extra bindings.
+  aggregate: true
+
 replicaCount: 1
 
 image:

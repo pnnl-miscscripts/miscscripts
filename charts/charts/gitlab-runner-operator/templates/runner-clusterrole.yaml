@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: gitlabrunner-edit
+  labels:
+{{- if .Values.rbac.aggregate }}
+    # Add these permissions to the "admin" and "edit" default roles.
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+{{- end }}
+rules:
+- apiGroups:
+  - miscscripts.pnnl.gov
+  resources:
+  - gitlabrunners
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete
