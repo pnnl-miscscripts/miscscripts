@@ -8,17 +8,16 @@ pushd $(dirname "$0")
 [ ! -d hubbuildtools ] && git clone https://github.com/kfox1111/hubbuildtools
 
 if [ "x$TRAVIS" != "x" ]; then
-	curl https://raw.githubusercontent.com/helm/helm/master/scripts/get > get_helm.sh
+	curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
 	chmod 700 get_helm.sh
 	./get_helm.sh
-	helm init -c
+	helm repo add stable https://kubernetes-charts.storage.googleapis.com
 fi
 
 mkdir -p charts/docs
 mkdir -p charts/tags
 mkdir -p charts/vers
 
-helm init --client-only
 helm repo add pnnl-miscscripts-image-library-charts https://pnnl-miscscripts.github.io/image-library-charts/
 helm repo update
 
