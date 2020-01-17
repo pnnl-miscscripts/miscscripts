@@ -3,6 +3,8 @@ FROM quay.io/operator-framework/ansible-operator:v0.13.0
 USER 0
 
 COPY chart.patch /chart.patch
+COPY watches.yaml ${HOME}/watches.yaml
+COPY roles/ ${HOME}/roles/
 
 RUN \
   yum install -y patch && \
@@ -15,10 +17,10 @@ RUN \
   helm pull gitlab/gitlab-runner --untar && \
   cd gitlab-runner && \
   patch -p1 < /chart.patch && \
-  yum remove -y patch
-
-COPY watches.yaml ${HOME}/watches.yaml
-
-COPY roles/ ${HOME}/roles/
+  cd .. & \
+  yum remove -y patch && \
+  cd ${HOME} && \
+  find roles/ -type f -exec md5sum {} \; > /.extrafingerprints && \
+  md5sum watches.yaml >> /.extrafingerprints
 
 USER 1001
