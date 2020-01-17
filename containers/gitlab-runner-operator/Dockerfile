@@ -17,7 +17,7 @@ RUN \
   helm pull gitlab/gitlab-runner --untar && \
   cd gitlab-runner && \
   patch -p1 < /chart.patch && \
-  cd .. & \
+  cd .. && \
   yum remove -y patch && \
   cd ${HOME} && \
   find roles/ -type f -exec md5sum {} \; > /.extrafingerprints && \
