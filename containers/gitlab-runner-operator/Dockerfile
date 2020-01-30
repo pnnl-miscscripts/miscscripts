@@ -23,7 +23,7 @@ RUN \
   yum remove -y patch && \
   cd ${HOME} && \
   find roles/ -type f -exec md5sum {} \; > /.extrafingerprints && \
-  echo 0.1.2 >> /.extrafingerprints
+  echo 0.1.2 >> /.extrafingerprints && \
   md5sum watches.yaml >> /.extrafingerprints
 
 USER 1001
