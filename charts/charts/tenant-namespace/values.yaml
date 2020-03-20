@@ -107,3 +107,7 @@ limitRange:
       cpu: 100m
       memory: 256Mi
     type: Container
+
+operatorGroup:
+  enabled: false
+

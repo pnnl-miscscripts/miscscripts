@@ -1,0 +1,15 @@
+{{- if .Values.operatorGroup.enabled }}
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: {{ .Values.magicnamespace.namespace }}
+  namespace: {{ .Values.magicnamespace.namespace }}
+  labels:
+    app: {{ template "namespace.name" . }}
+    chart: {{ template "namespace.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  targetNamespaces:
+  - {{ .Values.magicnamespace.namespace }}
+{{- end }}
