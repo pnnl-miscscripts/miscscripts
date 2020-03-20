@@ -15,3 +15,6 @@ spec:
     requests.memory: {{ .Values.quota.requests.memory }}
     limits.cpu: {{ .Values.quota.limits.cpu }}
     limits.memory: {{ .Values.quota.limits.memory }}
+    {{- range $key, $val := .Values.quota.extraQuota }}
+    {{ $key }}: {{ $val | quote }}
+    {{- end }}

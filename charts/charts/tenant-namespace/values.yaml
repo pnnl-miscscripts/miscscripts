@@ -92,6 +92,11 @@ quota:
   requests:
     cpu: 5
     memory: 4Gi
+  extraQuota:
+#    requests.storage: 5Gi
+#    persistentvolumeclaims: 5
+#    foobar.storageclass.storage.k8s.io/requests.storage: 5Gi
+#    foobar.storageclass.storage.k8s.io/persistentvolumeclaims: 5
 
 limitRange:
   limits:
