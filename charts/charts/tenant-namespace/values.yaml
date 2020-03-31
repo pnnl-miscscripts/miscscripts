@@ -71,6 +71,8 @@ ingress:
   nginx:
     enabled: true
   controller:
+    rbac:
+      scope: true
     ingressClass: public
     extraArgs: {}
 #     default-ssl-certificate=default/default-tls
