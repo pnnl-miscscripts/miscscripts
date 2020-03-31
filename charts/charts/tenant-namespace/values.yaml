@@ -71,20 +71,18 @@ ingress:
   nginx:
     enabled: true
   controller:
-    rbac:
-      scope: true
     ingressClass: public
     extraArgs: {}
 #     default-ssl-certificate=default/default-tls
     scope:
       enabled: true
       namespace: ""
-    stats:
-      enabled: true
     metrics:
       enabled: true
     publishService:
       enabled: true
+  rbac:
+    scope: true
 
 quota:
   pods: 10
@@ -94,7 +92,7 @@ quota:
   requests:
     cpu: 5
     memory: 4Gi
-  extraQuota:
+  extraQuota: {}
 #    requests.storage: 5Gi
 #    persistentvolumeclaims: 5
 #    foobar.storageclass.storage.k8s.io/requests.storage: 5Gi
