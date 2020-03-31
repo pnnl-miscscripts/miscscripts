@@ -1,0 +1,12 @@
+apiVersion: miscscripts.pnnl.gov/v1beta1
+kind: TenantNamespace
+metadata:
+  name: example
+spec:
+  flavorRef:
+    name: example
+    kind: TenantNamespaceFlavor
+    group: miscscripts.pnnl.gov
+#  ingress:
+#    nginx:
+#      enabled: false

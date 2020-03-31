@@ -1,0 +1,18 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: tenantnamespaceflavors-edit
+rules:
+- apiGroups:
+  - miscscripts.pnnl.gov
+  resources:
+  - tenantnamespaceflavors
+  verbs:
+  - get
+  - list
+  - watch
+  - create
+  - update
+  - patch
+  - delete

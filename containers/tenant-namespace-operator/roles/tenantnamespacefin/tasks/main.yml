@@ -1,0 +1,27 @@
+---
+# tasks file for tenantnamespace
+
+#Check to see release exists. If it doesnt continue on. If it does, delete it.
+- shell: "(! helm get values --namespace {{ meta.name }}-admin {{ meta.name }}) || helm delete --namespace {{ meta.name }}-admin {{ meta.name }}"
+  register: objs
+  no_log: True
+
+- name: Delete the k8s user namespace
+  k8s:
+    state: present
+    state: absent
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ meta.name }}"
+
+- name: Delete the k8s admin namespace
+  k8s:
+    state: absent
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ meta.name }}-admin"
+

@@ -1,0 +1,5 @@
+apiVersion: miscscripts.pnnl.gov/v1beta1
+kind: TenantNamespaceFlavor
+metadata:
+  name: example
+spec: {}

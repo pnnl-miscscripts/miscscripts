@@ -8,6 +8,11 @@ jobs:
   - stage: build
     dist: xenial
     language: shell
+    name: Build tenant-namespace-operator container
+    script: ./containers/build tenant-namespace-operator
+  - stage: build
+    dist: xenial
+    language: shell
     name: Build py2lint container
     script: ./containers/build py2lint
   - stage: build
