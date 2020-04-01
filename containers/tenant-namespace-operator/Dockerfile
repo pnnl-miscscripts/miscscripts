@@ -16,7 +16,7 @@ RUN \
   helm pull pnnl-miscscripts/tenant-namespace --untar && \
   cd ${HOME} && \
   find roles/ -type f -exec md5sum {} \; > /.extrafingerprints && \
-  echo 0.1.2 >> /.extrafingerprints && \
+  echo 0.1.3 >> /.extrafingerprints && \
   md5sum watches.yaml >> /.extrafingerprints
 
 USER 1001
