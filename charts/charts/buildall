@@ -87,7 +87,7 @@ for CHART in nginx-app console chronyd dhcpd k8s-node-image tenant-namespace pix
 				echo New version: $NEWVERSION
 				sed -i "s/^version: .*/version: $NEWVERSION/" ../../$CHART/Chart.yaml
 				if [ "$SUBBUILD" == "latest" ]; then
-					if [ "$CHART" != "gitlab-runner-operator" ]; then
+					if [ "$CHART" != "gitlab-runner-operator" -a "$CHART" != "tenant-namespace-operator" ]; then
 						sed -i "s/^appVersion: .*/appVersion: $NEWVERSION/" ../../$CHART/Chart.yaml
 					fi
 				fi

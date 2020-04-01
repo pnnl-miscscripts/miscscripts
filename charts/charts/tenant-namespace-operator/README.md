@@ -8,7 +8,7 @@ The tenant-namespace-operator chart launches an instance of the tenant-namespace
 Apply the CRD's if not already done so:
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/pnnl-miscscripts/miscscripts/master/containers/tenant-namespace-operator/deploy/crds/miscscripts.pnnl.gov_tenantnamespaceflavors_crd.yaml
-kubectl apply -f https://raw.githubusercontent.com/pnnl-miscscripts/miscscripts/master/containers/tenant-namespace-operator/deploy/crds/miscscripts.pnnl.gov_tenantnamespace_crd.yaml
+kubectl apply -f https://raw.githubusercontent.com/pnnl-miscscripts/miscscripts/master/containers/tenant-namespace-operator/deploy/crds/miscscripts.pnnl.gov_tenantnamespaces_crd.yaml
 ```
 
 To install the Chart into your Kubernetes cluster (Helm 3 only) :
