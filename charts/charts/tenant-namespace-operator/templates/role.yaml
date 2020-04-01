@@ -46,6 +46,11 @@ rules:
   verbs:
   - get
   - create
+  - list
+  - delete
+  - patch
+  - update
+  - watch
 - apiGroups:
   - apps
   resourceNames:

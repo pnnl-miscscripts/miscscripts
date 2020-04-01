@@ -8,7 +8,6 @@
 
 - name: Delete the k8s user namespace
   k8s:
-    state: present
     state: absent
     definition:
       apiVersion: v1
