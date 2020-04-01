@@ -22,18 +22,7 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: ansible
-          command:
-          - /usr/local/bin/ao-logs
-          - /tmp/ansible-operator/runner
-          - stdout
-          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
-          volumeMounts:
-          - mountPath: /tmp/ansible-operator/runner
-            name: runner
-            readOnly: true
-        - name: operator
+        - name: {{ include "tenant-namespace-operator.fullname" . }}
           image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
@@ -47,7 +36,7 @@ spec:
             - name: WATCH_NAMESPACE
 {{- if eq .Values.mode "cluster" }}
               value: ""
-{{- else if eq .Values.mode "cluster" }}
+{{- else if ne .Values.mode "cluster" }}
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace

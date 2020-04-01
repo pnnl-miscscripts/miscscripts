@@ -65,9 +65,17 @@
     no_log: True
 
 #FIXME Consider making a service account specifically for this so it can't cross namespaces as far as it can today
+  - name: Check for differeneces
+    shell: "helm diff upgrade --detailed-exitcode --namespace {{ meta.name }}-admin {{ meta.name }} /tenant-namespace/ -f {{ temp_filename.path }}"
+    register: differ
+    ignore_errors: yes
+    no_log: True
+
   - name: Run Helm
     shell: "helm upgrade --install --namespace {{ meta.name }}-admin {{ meta.name }} /tenant-namespace/ -f {{ temp_filename.path }}"
     register: objs
+    when:
+    - differ.rc != 0
 
   always:
   - name: Remove temp file

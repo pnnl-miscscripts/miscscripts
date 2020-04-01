@@ -3,7 +3,7 @@
   group: miscscripts.pnnl.gov
   kind: TenantNamespace
   role: /opt/ansible/roles/tenantnamespace
-  reconcilePeriod: 0
+  reconcilePeriod: "60s"
   finalizer:
     name: finalizer.tenantnamespace.miscscripts.pnnl.gov
     role: /opt/ansible/roles/tenantnamespacefin
