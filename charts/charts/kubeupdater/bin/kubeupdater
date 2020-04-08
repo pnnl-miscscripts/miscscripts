@@ -1,0 +1,112 @@
+#!/bin/bash
+
+flag=$1
+
+HOSTNAME=$(hostname)
+export KUBECONFIG=/etc/kubernetes/kubelet.conf
+
+[ -f /etc/sysconfig/kubeupdater ] && . /etc/sysconfig/kubeupdater
+
+if [ "x$flag" == "x-b" ]; then
+	kubectl label node $HOSTNAME miscscripts.pnnl.gov/upgrade-
+fi
+
+if [ "x$flag" == "x-u" ]; then
+	while true; do
+		UPGRADE=0
+		while read upgrade; do
+			if [ "x$upgrade" == "xtrue" ]; then
+				UPGRADE=1
+				break
+			fi
+		done < <(kubectl get nodes $HOSTNAME -ogo-template='{{printf "%s\n" (index .metadata.labels "miscscripts.pnnl.gov/upgrade")}}' --watch)
+		if [ $UPGRADE -eq 1 ]; then
+			UPGRADE=0
+			echo "Doing upgrade"
+			systemctl stop kubeupdater-checker
+			systemctl stop kubelet
+			yum install kubeadm -y
+			kubeadm upgrade node
+			yum upgrade -y
+			kubectl label node $HOSTNAME miscscripts.pnnl.gov/upgrade-needed-
+			echo "Done upgrading"
+			reboot
+		fi
+	done
+	sleep 1
+fi
+
+if [ "x$flag" == "x-c" ]; then
+	while true; do
+		while read line; do
+			while true; do
+				kubectl get configmap -n kube-system kubeupdater -o go-template='{{index .data "everything.repo"}}' > /etc/yum.repos.d/everything.repo.new
+				mv /etc/yum.repos.d/everything.repo.new /etc/yum.repos.d/everything.repo
+				echo Upgrade checking
+				yum check-update -y
+				res=$?
+				[ $res -eq 0 ] && break
+				if [ $res -eq 100 ]; then
+					echo Upgrade found. Informing the orchestrator.
+					kubectl label node $HOSTNAME miscscripts.pnnl.gov/upgrade-needed=true
+					break
+				fi
+				echo Failed to upgrade check. Retrying in 10 seconds.
+				sleep 10
+			done
+		done < <(kubectl get configmap -n kube-system kubeupdater --watch -ogo-template='{{printf "\n"}}')
+		sleep 1
+	done
+fi
+
+if [ "x$flag" == "x-i" ]; then
+	cat > /etc/systemd/system/kubeupdater-checker.service <<EOF
+[Unit]
+Description=kubeupdater-checker: The Kube Updater Checker
+
+[Service]
+ExecStart=/usr/bin/kubeupdater -c
+Restart=always
+StartLimitInterval=0
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF
+	cat > /etc/systemd/system/kubeupdater-updater.service <<EOF
+[Unit]
+Description=kubeupdater-updater: The Kube Updater updater
+
+[Service]
+ExecStart=/usr/bin/kubeupdater -u
+Restart=always
+StartLimitInterval=0
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOF
+	cat > /etc/systemd/system/kubeupdater-boot.service <<EOF
+[Unit]
+Description=kubeupdater-updater: The Kube Updater on boot service
+After=network-online.target nss-lookup.target
+Before=kubelet.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/kubeupdater -b
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
+EOF
+	systemctl daemon-reload
+	systemctl enable kubeupdater-checker kubeupdater-updater kubeupdater-boot
+	systemctl restart kubeupdater-checker kubeupdater-updater
+fi
+
+if [ "x$flag" == "x-r" ]; then
+	rm -f /etc/systemd/system/kubeupdater-checker.service /etc/systemd/system/kubeupdater-updater.service /etc/systemd/system/kubeupdater-boot.service
+fi
+

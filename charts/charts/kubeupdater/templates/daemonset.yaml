@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ template "kubeupdater.fullname" . }}
+  labels:
+    app: {{ template "kubeupdater.name" . }}
+    chart: {{ template "kubeupdater.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "kubeupdater.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "kubeupdater.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      containers:
+      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command:
+        - /bin/sh
+        - -ec
+        - |
+          cat /config/kubeupdater > /host/usr/bin/kubeupdater
+          chmod +x /host/usr/bin/kubeupdater
+          nsenter -m/proc/1/ns/mnt -- /usr/bin/kubeupdater -i
+          while true; do sleep 10000; done
+        name: main
+        securityContext:
+          privileged: true
+          runAsUser: 0
+        volumeMounts:
+        - mountPath: /host
+          name: host
+        - mountPath: /config
+          name: config
+      serviceAccount: {{ template "kubeupdater.fullname" . }}
+      hostNetwork: true
+      hostPID: true
+      hostIPC: true
+      volumes:
+      - hostPath:
+          path: /
+          mountPropagation: Bidirectional
+        name: host
+      - configMap:
+          name: {{ template "kubeupdater.fullname" . }}
+        name: config
+      resources:
+{{ toYaml .Values.resources | indent 8 }}
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

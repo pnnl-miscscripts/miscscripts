@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "kubeupdater.fullname" . }}
+  labels:
+    app: {{ template "kubeupdater.name" . }}
+    chart: {{ template "kubeupdater.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  kubeupdater: |
+{{ .Files.Get "bin/kubeupdater" | indent 4 }}
