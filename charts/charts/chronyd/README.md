@@ -8,7 +8,8 @@ The chronyd chart launches chronyd on each node of the cluster.
 To install the Chart into your Kubernetes cluster :
 
 ```bash
-helm install --namespace "chronyd" --name "chronyd" pnnl-miscscripts/chronyd -f chronyd-values.yaml
+kubectl create namespace chronyd
+helm upgrade --install --namespace "chronyd" chronyd pnnl-miscscripts/chronyd -f chronyd-values.yaml
 ```
 
 After installation succeeds, you can get a status of Chart

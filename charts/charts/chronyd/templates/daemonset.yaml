@@ -35,6 +35,8 @@ spec:
           /usr/sbin/chronyd -n
         securityContext:
           privileged: true
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
         volumeMounts:
         - mountPath: /var/lib/cronyd
           name: state
@@ -54,8 +56,6 @@ spec:
       - hostPath:
           path: /var/lib/chrony
         name: state
-      resources:
-{{ toYaml .Values.resources | indent 8 }}
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
