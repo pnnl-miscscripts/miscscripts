@@ -2,7 +2,7 @@
 FROM centos:centos7
 MAINTAINER Kevin Fox <Kevin.Fox@pnnl.gov>
 
-ENV VERSION=1.3.3
+ENV VERSION=1.3.4
 
 ADD containerd.spec /root/rpmbuild/SOURCES/containerd.spec
 ADD rpm.pub /root/rpm.pub
