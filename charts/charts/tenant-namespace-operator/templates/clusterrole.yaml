@@ -59,3 +59,10 @@ rules:
   - ingresses/status
   verbs:
   - update
+- apiGroups:
+  - operators.coreos.com
+  resources:
+  - operatorgroups
+  - subscriptions
+  verbs:
+  - "*"
