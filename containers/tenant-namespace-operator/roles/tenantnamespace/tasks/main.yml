@@ -11,77 +11,57 @@
         name: "{{ meta.name }}-admin"
         labels:
           name: "{{ meta.name }}-admin"
+          miscscripts.pnnl.gov/namespace-type: admin
 
-- tempfile:
-    state: file
-    suffix: .yaml
-  register: temp_filename
-
-- name: Block for file removal
+- name: Set initial defaults. They be overridden.
+  set_fact:
+    merged_values:
+      magicnamespace:
+        tiller:
+          enabled: false
+- name: Load in Flavor values if referenced
   block:
-  - name: Set initial defaults. They be overridden.
+  - name: Fetch referenced flavor
+    k8s_info:
+      api_version: miscscripts.pnnl.gov/v1beta1
+      kind: TenantNamespaceFlavor
+      name: "{{ flavor_ref.name }}"
+    register: flavor
+    # Failures immediately trigger another reconciliation
+    failed_when:
+    - flavor.resources | length == 0
+  - name: Merge in flavor values
     set_fact:
-      merged_values:
-        magicnamespace:
-          tiller:
-            enabled: false
-    no_log: True
-  - name: Load in Flavor values if referenced
-    block:
-    - name: Fetch referenced flavor
-      set_fact:
-        flavor: "{{ lookup('k8s', kind='TenantNamespaceFlavor', api_version='miscscripts.pnnl.gov/v1beta1', resource_name=_miscscripts_pnnl_gov_tenantnamespace_spec.flavorRef.name) }}"
-      no_log: True
-    - name: Merge in flavor values
-      set_fact:
-        merged_values: "{{ merged_values | combine(flavor.spec, recursive=True) }}"
-      no_log: True
-    when:
-    - _miscscripts_pnnl_gov_tenantnamespace_spec.flavorRef is defined
-    - _miscscripts_pnnl_gov_tenantnamespace_spec.flavorRef.kind == "TenantNamespaceFlavor"
-    - _miscscripts_pnnl_gov_tenantnamespace_spec.flavorRef.group == "miscscripts.pnnl.gov"
-  - name: Set value for forced settings
-    set_fact:
-      overrides:
+      merged_values: "{{ merged_values | combine(flavor.resources[0].spec, recursive=True) }}"
+  when:
+  - flavor_ref is defined
+  - flavor_ref.kind == "TenantNamespaceFlavor"
+  - flavor_ref.group == "miscscripts.pnnl.gov"
+- name: Set value for forced settings
+  set_fact:
+    overrides:
+      namespace: "{{ meta.name }}"
+      magicnamespace:
         namespace: "{{ meta.name }}"
-        magicnamespace:
-          namespace: "{{ meta.name }}"
-        ingress:
-          controller:
-            scope:
-              namespace: "{{ meta.name }}"
-  - name: Set values from CR
-    set_fact:
-      merged_values: "{{ merged_values | combine(_miscscripts_pnnl_gov_tenantnamespace_spec, recursive=True) }}"
-    no_log: True
-  - name: Force namespace settings. Can not be overridden.
-    set_fact:
-      merged_values: "{{ merged_values | combine(overrides, recursive=True) }}"
-    no_log: True
-  - name: Copy values to temp file
-    copy:
-      content: "{{ merged_values | to_yaml }}"
-      dest: "{{ temp_filename.path }}"
-    no_log: True
+      ingress:
+        controller:
+          scope:
+            namespace: "{{ meta.name }}"
+- name: Set values from CR
+  set_fact:
+    merged_values: "{{ merged_values | combine(_miscscripts_pnnl_gov_tenantnamespace_spec, recursive=True) }}"
+- name: Force namespace settings. Can not be overridden.
+  set_fact:
+    merged_values: "{{ merged_values | combine(overrides, recursive=True) }}"
 
 #FIXME Consider making a service account specifically for this so it can't cross namespaces as far as it can today
-  - name: Check for differeneces
-    shell: "helm diff upgrade --detailed-exitcode --namespace {{ meta.name }}-admin {{ meta.name }} /tenant-namespace/ -f {{ temp_filename.path }}"
-    register: differ
-    ignore_errors: yes
-    no_log: True
-
-  - name: Run Helm
-    shell: "helm upgrade --install --namespace {{ meta.name }}-admin {{ meta.name }} /tenant-namespace/ -f {{ temp_filename.path }}"
-    register: objs
-    when:
-    - differ.rc != 0
-
-  always:
-  - name: Remove temp file
-    file:
-      path: "{{ temp_filename.path }}"
-      state: absent
+- name: Run Helm
+  helm:
+    name: "{{ meta.name }}"
+    namespace: "{{ meta.name }}-admin"
+    chart_ref: ${HOME}/tenant-namespace
+    values: "{{ merged_values }}"
+  register: objs
 
 - name: Create the k8s user namespace
   k8s:
@@ -93,4 +73,5 @@
         name: "{{ meta.name }}"
         labels:
           name: "{{ meta.name }}"
+          miscscripts.pnnl.gov/namespace-type: user
 
