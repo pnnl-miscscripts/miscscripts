@@ -1,30 +1,29 @@
-FROM quay.io/operator-framework/ansible-operator:v0.16.0
+FROM quay.io/operator-framework/ansible-operator:v0.17.0
 
+ARG helm_version=v3.2.0
 USER 0
+RUN \
+  curl -o helm.tar.gz https://get.helm.sh/helm-${helm_version}-linux-amd64.tar.gz && \
+  tar -zxvf helm.tar.gz && \
+  mv linux-amd64/helm /usr/local/bin/helm && \
+  rm -f helm.tar.gz && \
+  rm -rf linux-amd64 && \
+  touch /.extrafingerprints && \
+  chown ${USER_UID}:0 /.extrafingerprints
 
-COPY watches.yaml ${HOME}/watches.yaml
-COPY requirements.yml ${HOME}/requirements.yml
+USER 1001
+WORKDIR ${HOME}
+
+COPY watches.yaml requirements.yml ${HOME}/
 COPY roles/ ${HOME}/roles/
 
 #FIXME forcing ingress newer to work on newer k8s clusters. Fix upstream chart.
-
 RUN \
-  yum clean all && \
-  yum install -y git && \
-  yum clean all && \
-  curl -o /helm.tar.gz https://get.helm.sh/helm-v3.1.2-linux-amd64.tar.gz && \
-  tar -zxvf /helm.tar.gz && \
-  mv /linux-amd64/helm /usr/bin/helm && \
-  rm -f /helm.tar.gz && \
   ansible-galaxy collection install -r ${HOME}/requirements.yml && \
   chmod -R ug+rwx ${HOME}/.ansible && \
-  helm plugin install https://github.com/databus23/helm-diff --version master && \
-  helm repo add pnnl-miscscripts https://pnnl-miscscripts.github.io/charts && \
-  helm pull pnnl-miscscripts/tenant-namespace --untar && \
-  cd ${HOME} && \
+  helm pull --repo https://pnnl-miscscripts.github.io/charts tenant-namespace --untar && \
   find roles/ -type f -exec md5sum {} \; > /.extrafingerprints && \
-  echo 0.1.5 >> /.extrafingerprints && \
+  echo 0.1.6 >> /.extrafingerprints && \
   md5sum watches.yaml >> /.extrafingerprints
 
-USER 1001
 ENTRYPOINT ["/usr/local/bin/entrypoint", "--inject-owner-ref=false"]
