@@ -23,7 +23,7 @@ RUN \
   chmod -R ug+rwx ${HOME}/.ansible && \
   helm pull --repo https://pnnl-miscscripts.github.io/charts tenant-namespace --untar && \
   find roles/ -type f -exec md5sum {} \; > /.extrafingerprints && \
-  echo 0.1.5 >> /.extrafingerprints && \
+  echo 0.1.6 >> /.extrafingerprints && \
   md5sum watches.yaml >> /.extrafingerprints
 
 ENTRYPOINT ["/usr/local/bin/entrypoint", "--inject-owner-ref=false"]
