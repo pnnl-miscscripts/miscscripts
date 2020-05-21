@@ -11,13 +11,14 @@ ADD rpmmacros /root/.rpmmacros
 RUN --mount=type=secret,id=gpg \
   set -x && \
   cd / && \
-  yum install -y rpm-build cpio createrepo gnupg2 rpm-sign && \
+  yum install -y rpmdevtools cpio createrepo gnupg2 rpm-sign && \
+  rpmdev-setuptree && \
   NEWVER=$(echo "$VERSION" | awk -F. '{print $1 "." $2 "." $3+1}') && \
-  (! curl -f -o /root/rpmbuild/SOURCES/containerd.tar.gz "https://storage.googleapis.com/cri-containerd-release/cri-containerd-$NEWVER.linux-amd64.tar.gz") && \
+  (! curl -f -I "https://storage.googleapis.com/cri-containerd-release/cri-containerd-$NEWVER.linux-amd64.tar.gz") && \
   NEWVER=$(echo "$VERSION" | awk -F. '{print $1 "." $2+1 ".0"}') && \
-  (! curl -f -o /root/rpmbuild/SOURCES/containerd.tar.gz "https://storage.googleapis.com/cri-containerd-release/cri-containerd-$NEWVER.linux-amd64.tar.gz") && \
-  curl -f -o /root/rpmbuild/SOURCES/containerd.tar.gz "https://storage.googleapis.com/cri-containerd-release/cri-containerd-$VERSION.linux-amd64.tar.gz" && \
+  (! curl -f -I "https://storage.googleapis.com/cri-containerd-release/cri-containerd-$NEWVER.linux-amd64.tar.gz") && \
   sed -i "s/^\(Version:\).*$/\1 $VERSION/" /root/rpmbuild/SOURCES/containerd.spec && \
+  spectool -g -R /root/rpmbuild/SOURCES/containerd.spec && \
   cat /root/rpmbuild/SOURCES/containerd.spec && \
   rpmbuild -ba /root/rpmbuild/SOURCES/containerd.spec && \
   mkdir -p rpms && \
@@ -31,7 +32,7 @@ RUN --mount=type=secret,id=gpg \
   cp /root/rpm.pub /rpms/repodata/RPM-GPG-KEY && \
   mkdir tmp1 && \
   pushd tmp1 && \
-  tar -xvf ~/rpmbuild/SOURCES/containerd.tar.gz && \
+  tar -xvf ~/rpmbuild/SOURCES/cri-containerd-$VERSION.linux-amd64.tar.gz && \
   SUM=$(md5sum usr/local/bin/containerd | awk '{print $1}') && \
   popd && \
   mkdir tmp2 && \
