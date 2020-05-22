@@ -9,4 +9,4 @@ RUN \
 
 FROM scratch
 COPY --from=0 /data /data
-RUN cat > /data/CentOS_BuildTag > /.extrafingerprints
+RUN cat /data/CentOS_BuildTag > /.extrafingerprints
