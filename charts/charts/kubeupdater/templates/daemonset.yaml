@@ -41,8 +41,11 @@ spec:
         volumeMounts:
         - mountPath: /host
           name: host
+          mountPropagation: Bidirectional
         - mountPath: /config
           name: config
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
       serviceAccount: {{ template "kubeupdater.fullname" . }}
       hostNetwork: true
       hostPID: true
@@ -50,13 +53,10 @@ spec:
       volumes:
       - hostPath:
           path: /
-          mountPropagation: Bidirectional
         name: host
       - configMap:
           name: {{ template "kubeupdater.fullname" . }}
         name: config
-      resources:
-{{ toYaml .Values.resources | indent 8 }}
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
