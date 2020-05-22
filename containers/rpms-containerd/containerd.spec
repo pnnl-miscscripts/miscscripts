@@ -4,16 +4,24 @@
 Summary: ContainerD and friends
 Name: containerd
 Version: @VERSION@
-Release: 1
+Release: 2
 License: APL
 Packager: MISCSCRIPTS
 Group: Development/Tools
-Source: containerd.tar.gz
+
+Source0: https://storage.googleapis.com/cri-containerd-release/cri-containerd-%{version}.linux-amd64.tar.gz
+Source1: https://storage.googleapis.com/cri-containerd-release/cri-containerd-%{version}.linux-amd64.tar.gz.sha256
+
+Requires: container-selinux
+%{?systemd_requires}
+BuildRequires: systemd
+BuildRequires: coreutils
 
 %description
 %{summary}
 
 %prep
+echo "$(cat %{SOURCE1}) %{SOURCE0}" | sha256sum --check
 %setup -c
 
 %build
@@ -37,3 +45,11 @@ ls -l %{buildroot}
 /etc/systemd/system/containerd.service
 /etc/crictl.yaml
 
+%post
+%systemd_post containerd.service
+
+%preun
+%systemd_preun containerd.service
+
+%postun
+%systemd_postun_with_restart containerd.service

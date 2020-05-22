@@ -10,7 +10,7 @@ RUN --mount=type=secret,id=gpg \
   set -e && \
   yum install -y createrepo createrepo gnupg2 rpm-sign && \
   mkdir -p rpms/ && \
-  yum install -y centos-release-openstack-rocky createrepo && \
+  yum install -y centos-release-openstack-train createrepo && \
   yumdownloader --resolv --destdir rpms openvswitch && \
   gpg --import /run/secrets/gpg && \
   gpg --import /root/rpm.pub && \
