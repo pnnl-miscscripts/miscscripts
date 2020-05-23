@@ -5,8 +5,9 @@ RUN \
   curl http://mirror.centos.org/centos-7/7/os/x86_64/images/pxeboot/initrd.img -o /data/initrd.img && \
   curl http://mirror.centos.org/centos-7/7/os/x86_64/images/pxeboot/vmlinuz -o /data/vmlinuz && \
   curl http://mirror.centos.org/centos-7/7/os/x86_64/.treeinfo -o /data/.treeinfo && \
-  curl http://mirror.centos.org/centos-7/7/os/x86_64/LiveOS/squashfs.img -o /data/LiveOS/squashfs.img
+  curl http://mirror.centos.org/centos-7/7/os/x86_64/LiveOS/squashfs.img -o /data/LiveOS/squashfs.img && \
+  cat /data/CentOS_BuildTag > /.extrafingerprints
 
 FROM scratch
 COPY --from=0 /data /data
-RUN cat /data/CentOS_BuildTag > /.extrafingerprints
+COPY --from=0 /.extrafingerprints /.extrafingerprints
