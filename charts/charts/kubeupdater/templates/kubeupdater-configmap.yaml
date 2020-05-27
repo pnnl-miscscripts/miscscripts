@@ -15,8 +15,7 @@ data:
     enabled=1
     baseurl={{ .Values.base }}{{ .Values.version }}
     gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-CentOS-7
-             {{ .Values.base }}{{ .Values.version }}/repodata/RPM-GPG-KEY-PNNL-RPMS
-             {{ .Values.base }}{{ .Values.version }}/repodata/RPM-GPG-KEY-PNNL-REPO
+             {{ .Values.base }}{{ .Values.version }}/repodata/RPM-GPG-KEY
     gpgcheck = 1
     repo_gpgcheck = 1
     keepcache = 0
