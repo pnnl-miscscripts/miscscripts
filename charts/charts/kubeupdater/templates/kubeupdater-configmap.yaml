@@ -10,6 +10,9 @@ metadata:
     heritage: {{ .Release.Service }}
 data:
   everything.repo: |
+{{- if hasKey .Values "rawConfig" }}
+{{ .Values.rawConfig | indent 4}}
+{{- else }}
     [everything]
     name=everything
     enabled=1
@@ -19,3 +22,4 @@ data:
     gpgcheck = 1
     repo_gpgcheck = 1
     keepcache = 0
+{{- end }}

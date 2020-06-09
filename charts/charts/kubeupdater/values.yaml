@@ -2,6 +2,9 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+#rawConfig: |
+#  [yourrepohere]
+#  etcetc
 
 base: https://changeme/
 version: 1.16.8-nginx-2
