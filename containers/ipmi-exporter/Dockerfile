@@ -7,7 +7,7 @@ RUN \
   tar -xvf ipmi_exporter.tgz && \
   mv ipmi_exporter-v*/ipmi_exporter /usr/bin/ && \
   rm -rf ipmi_exporter-v* && \
-  echo 1.2.0 >> /.extrafingerprints && \
+  echo 1.2.0 >> /.extrafingerprints
 
 ENTRYPOINT ["ipmi_exporter"]
 
