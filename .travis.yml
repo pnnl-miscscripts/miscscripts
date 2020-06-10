@@ -28,6 +28,11 @@ jobs:
   - stage: build
     dist: xenial
     language: shell
+    name: Build ipmi-exporter container
+    script: ./containers/build ipmi-exporter
+  - stage: build
+    dist: xenial
+    language: shell
     name: Build dhcpd container
     script: ./containers/build dhcpd
   - stage: build
