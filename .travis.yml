@@ -83,8 +83,14 @@ jobs:
     before_install: *upgradedocker
     dist: xenial
     language: shell
-    name: Build rpms-kubernetes container 1.14
-    script: ./containers/build rpms-kubernetes 1.14
+    name: Build rpms-kubernetes container 1.17
+    script: ./containers/build rpms-kubernetes 1.17
+  - stage: build
+    before_install: *upgradedocker
+    dist: xenial
+    language: shell
+    name: Build rpms-kubernetes container 1.18
+    script: ./containers/build rpms-kubernetes 1.18
   - stage: build
     before_install: *upgradedocker
     dist: xenial
