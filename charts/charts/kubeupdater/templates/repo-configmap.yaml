@@ -4,10 +4,7 @@ metadata:
   name: kubeupdater
   namespace: kube-system
   labels:
-    app: {{ template "kubeupdater.name" . }}
-    chart: {{ template "kubeupdater.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    {{- include "kubeupdater.labels" . | nindent 4 }}
 data:
   everything.repo: |
 {{- if hasKey .Values "rawConfig" }}

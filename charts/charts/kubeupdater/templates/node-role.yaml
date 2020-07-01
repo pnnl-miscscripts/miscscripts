@@ -1,13 +1,11 @@
+{{- if .Values.rbac.create }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: kubeupdater-node
+  name: {{ template "kubeupdater.fullname" . }}-node
   namespace: kube-system
   labels:
-    app: {{ template "kubeupdater.name" . }}
-    chart: {{ template "kubeupdater.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    {{- include "kubeupdater.labels" . | nindent 4 }}
 rules:
 - apiGroups:
   - ""
@@ -18,3 +16,4 @@ rules:
   verbs:
   - get
   - watch
+{{- end }}

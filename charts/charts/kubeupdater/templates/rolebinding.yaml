@@ -1,0 +1,16 @@
+{{- if and .Values.rbac.create .Values.podSecurityPolicy.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ template "kubeupdater.fullname" . }}
+  labels:
+    {{- include "kubeupdater.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ template "kubeupdater.fullname" . }}
+subjects:
+- kind: ServiceAccount
+  name: {{ template "kubeupdater.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+{{- end }}

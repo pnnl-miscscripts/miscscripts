@@ -3,10 +3,7 @@ kind: ConfigMap
 metadata:
   name: {{ template "kubeupdater.fullname" . }}
   labels:
-    app: {{ template "kubeupdater.name" . }}
-    chart: {{ template "kubeupdater.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    {{- include "kubeupdater.labels" . | nindent 4 }}
 data:
   kubeupdater: |
 {{ .Files.Get "bin/kubeupdater" | indent 4 }}
