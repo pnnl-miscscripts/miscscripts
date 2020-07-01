@@ -18,6 +18,7 @@ spec:
   volumes:
   - 'configMap'
   - 'hostPath'
+  - 'secret'
   hostNetwork: true
   hostIPC: true
   hostPID: true
