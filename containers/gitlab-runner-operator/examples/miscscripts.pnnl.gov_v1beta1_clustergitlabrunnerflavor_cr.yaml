@@ -4,4 +4,4 @@ metadata:
   name: example
 spec:
   gitlabUrl: http://localhost:8080
-  unregisterRunnersWhenSecret: true
+  unregisterRunners: true
