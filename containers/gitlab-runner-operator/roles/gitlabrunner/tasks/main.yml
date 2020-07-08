@@ -6,51 +6,77 @@
   register: temp_filename
 
 - block:
-  - tempfile:
-      state: file
-      suffix: .yaml
-    register: temp_filename2
+  - name: Set initial defaults. They be overridden.
+    set_fact:
+      merged_values: {}
 
-  - block:
-    - copy:
-        content: ""
-        dest: "{{ temp_filename2.path }}"
-    - block:
-      - set_fact:
-          flavor: "{{ lookup('k8s', kind='ClusterGitlabRunnerFlavor', api_version='miscscripts.pnnl.gov/v1beta1', resource_name=_miscscripts_pnnl_gov_gitlabrunner_spec.flavorRef.name) }}"
-        no_log: True
-      - copy:
-          content: "{{ flavor.spec | to_yaml }}"
-          dest: "{{ temp_filename2.path }}"
-        no_log: True
-      when:
-      - _miscscripts_pnnl_gov_gitlabrunner_spec.flavorRef is defined
-      - _miscscripts_pnnl_gov_gitlabrunner_spec.flavorRef.kind == "ClusterGitlabRunnerFlavor"
-      - _miscscripts_pnnl_gov_gitlabrunner_spec.flavorRef.group == "miscscripts.pnnl.gov"
-    - copy:
-        content: "{{ _miscscripts_pnnl_gov_gitlabrunner_spec | to_yaml }}"
-        dest: "{{ temp_filename.path }}"
-      no_log: True
+  - name: Load in Flavor values if referenced
+    block:
+    - name: Fetch referenced flavor
+      k8s_info:
+        api_version: miscscripts.pnnl.gov/v1beta1
+        kind: ClusterGitlabRunnerFlavor
+        name: "{{ flavor_ref.name }}"
+      register: flavor
+      # Failures immediately trigger another reconciliation
+      failed_when:
+      - flavor.resources | length == 0
+    - name: Merge in flavor values
+      set_fact:
+        merged_values: "{{ merged_values | combine(flavor.resources[0].spec, recursive=True) }}"
+    when:
+    - flavor_ref is defined
+    - flavor_ref.kind == "ClusterGitlabRunnerFlavor"
+    - flavor_ref.group == "miscscripts.pnnl.gov"
 
-    - shell: "helm template --namespace {{ meta.namespace }} {{ meta.name }} /gitlab-runner/ -f {{ temp_filename2.path }} -f {{ temp_filename.path }}"
-      register: objs
-      no_log: True
+  - name: Set values from CR
+    set_fact:
+      merged_values: "{{ merged_values | combine(_miscscripts_pnnl_gov_gitlabrunner_spec, recursive=True) }}"
 
-    - copy:
-        content: "{{ objs.stdout }}"
-        dest: "{{ temp_filename.path }}"
-      no_log: True
+  - name: Set value for forced settings
+    set_fact:
+      overrides: {}
 
-    - k8s:
-        namespace: "{{ meta.namespace }}"
-        src: "{{ temp_filename.path }}"
-        state: present
-      no_log: True
+  - name: Compat setting for older CRD
+    set_fact:
+      unregister_overrides:
+        unregisterRunners: true
 
-    always:
-    - file:
-        path: "{{ temp_filename2.path }}"
-        state: absent
+  - name: Compat with older CRD
+    set_fact:
+      overrides: "{{ overrides | combine(unregister_overrides, recursive=True) }}"
+    when:
+    - merged_values.unregisterRunnersWhenSecret is defined
+    - merged_values.unregisterRunnersWhenSecret == true
+
+  - debug:
+      msg: unregisterRunnersWhenSecret is defined but deprecated. Please switch to unregisterRunners.
+    when:
+    - merged_values.unregisterRunnersWhenSecret is defined
+
+  - name: Force overrides.
+    set_fact:
+      merged_values: "{{ merged_values | combine(overrides, recursive=True) }}"
+
+  - copy:
+     content: "{{ merged_values | to_yaml }}"
+     dest: "{{ temp_filename.path }}"
+    no_log: True
+
+  - shell: "helm template --namespace {{ meta.namespace }} {{ meta.name }} /gitlab-runner/ -f {{ temp_filename.path }}"
+    register: objs
+    no_log: True
+
+  - copy:
+      content: "{{ objs.stdout }}"
+      dest: "{{ temp_filename.path }}"
+    no_log: True
+
+  - k8s:
+      namespace: "{{ meta.namespace }}"
+      src: "{{ temp_filename.path }}"
+      state: present
+    no_log: True
 
   always:
   - file:

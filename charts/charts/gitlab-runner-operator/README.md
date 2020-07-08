@@ -39,7 +39,7 @@ metadata:
   name: example
 spec:
   gitlabUrl: http://localhost:8080
-  unregisterRunnersWhenSecret: true
+  unregisterRunners: true
 ```
 
 To deploy a runner, you may do so like:
