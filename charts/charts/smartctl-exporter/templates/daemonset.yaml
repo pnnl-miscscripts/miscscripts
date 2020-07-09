@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ template "pnnlmiscscripts.smartctl-exporter.fullname" . }}
+  labels:
+    app: {{ template "pnnlmiscscripts.smartctl-exporter.name" . }}
+    chart: {{ template "pnnlmiscscripts.smartctl-exporter.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "pnnlmiscscripts.smartctl-exporter.name" . }}
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "pnnlmiscscripts.smartctl-exporter.name" . }}
+        release: {{ .Release.Name }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum | quote }}
+    spec:
+      containers:
+      - image: {{ dict "dot" . "section" .Values.image | include "pnnlmiscscripts.smartctl-exporter.image" }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: main
+        securityContext:
+          privileged: true
+        resources:
+{{ toYaml .Values.resources | indent 10 }}
+        volumeMounts:
+        - mountPath: /hostdev
+          name: dev
+        - mountPath: /etc/smartctl_exporter.yaml
+          subPath: smartctl_exporter.yaml
+          name: config
+      dnsPolicy: ClusterFirst
+      hostNetwork: true
+      restartPolicy: Always
+      serviceAccountName: {{ template "pnnlmiscscripts.smartctl-exporter.fullname" . }}
+      volumes:
+      - configMap:
+          name: {{ template "pnnlmiscscripts.smartctl-exporter.fullname" . }}
+        name: config
+      - hostPath:
+          path: /dev
+        name: dev
+    {{- with .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+{{ toYaml . | indent 8 }}
+    {{- end }}

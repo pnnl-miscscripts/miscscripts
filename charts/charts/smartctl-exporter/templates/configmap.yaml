@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "pnnlmiscscripts.smartctl-exporter.fullname" . }}
+  labels:
+    app: {{ template "pnnlmiscscripts.smartctl-exporter.name" . }}
+    chart: {{ template "pnnlmiscscripts.smartctl-exporter.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+data:
+  smartctl_exporter.yaml: |
+    smartctl_exporter:
+{{ toYaml .Values.config | indent 6 }}
