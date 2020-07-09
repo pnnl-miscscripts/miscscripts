@@ -51,6 +51,11 @@ jobs:
     name: Build debug-toolbox container
     script: ./containers/build debug-toolbox
   - stage: build
+    dist: xenial
+    language: shell
+    name: Build smartctl-exporter container
+    script: ./containers/build smartctl-exporter
+  - stage: build
     before_install: &upgradedocker
     - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
     - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
