@@ -1,35 +1,35 @@
-# Chronyd
+# smartctl-exporter
 
-The chronyd chart launches chronyd on each node of the cluster.
+The smartctl-exporter chart launches smartctl-exporter on each node of the cluster.
 
 
 ## Install Chart
 
-To install the Chart into your Kubernetes cluster :
+To install the Chart into your Kubernetes cluster:
 
 ```bash
-kubectl create namespace chronyd
-helm upgrade --install --namespace "chronyd" chronyd pnnl-miscscripts/chronyd -f chronyd-values.yaml
+kubectl create namespace smartctl-exporter
+helm upgrade --install --namespace "smartctl-exporter" smartctl-exporter pnnl-miscscripts/smartctl-exporter -f smartctl-exporter-values.yaml
 ```
 
 After installation succeeds, you can get a status of Chart
 
 ```bash
-helm status "chronyd"
+helm status "smartctl-exporter"
 ```
 
 If you want to delete your Chart, use this command:
 
 ```bash
-helm delete  --purge "chronyd"
+helm delete "smartctl-exporter"
 ```
 
 ### Chronyd configuration
-Set your chronyd config like:
+Set your smartctl-exporter config like:
 ```yaml
-config: |
-  pool pool.ntp.org iburst maxsources 3
-  rtcsync
-  driftfile /var/lib/chrony/drift
+config:
+  devices:
+  - /dev/sda
+  - /dev/sdb
 ```
 

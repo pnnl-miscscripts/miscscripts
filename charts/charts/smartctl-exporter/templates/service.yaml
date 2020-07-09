@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "pnnlmiscscripts.smartctl-exporter.fullname" . }}
+  labels:
+    app: {{ template "pnnlmiscscripts.smartctl-exporter.name" . }}
+    chart: {{ template "pnnlmiscscripts.smartctl-exporter.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  externalIPs:
+{{ toYaml .Values.service.externalIPs | indent 4 }}
+  selector:
+    app: {{ template "pnnlmiscscripts.smartctl-exporter.name" . }}
+    release: {{ .Release.Name }}
