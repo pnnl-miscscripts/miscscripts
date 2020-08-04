@@ -1,0 +1,19 @@
+{{- if .Values.pvcUsage.enabled -}}
+{{- $fullName := include "grafana-misc-dashboards.fullname" . -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "grafana-misc-dashboards.fullname" . }}-pvc-usage
+  labels:
+    {{- include "grafana-misc-dashboards.labels" . | nindent 4 }}
+  {{- with .Values.extraLabels }}
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.extraAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+data:
+  {{ include "grafana-misc-dashboards.fullname" . }}-pvc-usage.json: |-
+  {{- .Files.Get "files/pvc-usage.json" | nindent 4 }}
+{{- end }}

@@ -1,0 +1,17 @@
+# Default values for grafana-misc-dashboards.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+utilization:
+  enabled: false
+pvcUsage:
+  enabled: false
+ipmi:
+  enabled: false
+
+nameOverride: ""
+fullnameOverride: ""
+
+extraLabels: {}
+#    grafana_dashboard: "1"
+extraAnnotations: {}

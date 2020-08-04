@@ -3,6 +3,11 @@ jobs:
   - stage: build
     dist: xenial
     language: shell
+    name: Build curl-jq container
+    script: ./containers/build curl-jq
+  - stage: build
+    dist: xenial
+    language: shell
     name: Build gitlab-runner-operator container
     script: ./containers/build gitlab-runner-operator
   - stage: build

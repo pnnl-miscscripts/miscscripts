@@ -111,3 +111,7 @@ limitRange:
 operatorGroup:
   enabled: false
 
+gitlabRunner:
+  enabled: false
+  name: default
+  spec: {}

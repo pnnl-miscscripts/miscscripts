@@ -1,0 +1,14 @@
+{{- if .Values.gitlabRunner.enabled }}
+apiVersion: miscscripts.pnnl.gov/v1beta1
+kind: GitlabRunner
+metadata:
+  name: {{ .Values.gitlabRunner.name }}
+  namespace: {{ .Values.magicnamespace.namespace }}
+  labels:
+    app: {{ template "namespace.name" . }}
+    chart: {{ template "namespace.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+{{ toYaml .Values.gitlabRunner.spec | indent 2 }}
+{{- end }}
