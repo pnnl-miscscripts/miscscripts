@@ -53,6 +53,10 @@ spec:
               value: {{ include "tenant-namespace-operator.serviceAccountName" . }}
             - name: NAMESPACE
               value: {{ .Release.Namespace }}
+{{- if .Values.dryrun }}
+            - name: DRYRUN
+              value: "yes"
+{{- end }}
       volumes:
         - name: runner
           emptyDir: {}

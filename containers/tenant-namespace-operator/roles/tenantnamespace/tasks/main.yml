@@ -1,6 +1,10 @@
 ---
 # tasks file for tenantnamespace
 
+- name: Set dryrun value
+  set_fact:
+    dryrun: "{{ lookup('env','DRYRUN') | default('False') | bool }}"
+
 - name: Create the k8s admin namespace
   k8s:
     state: present
@@ -12,6 +16,8 @@
         labels:
           name: "{{ meta.name }}-admin"
           miscscripts.pnnl.gov/namespace-type: admin
+  when:
+  - not dryrun
 
 - name: Set initial defaults. They be overridden.
   set_fact:
@@ -19,6 +25,10 @@
       magicnamespace:
         tiller:
           enabled: false
+      gitlabRunner:
+        autoSetNamespaceAndTags: true
+        spec:
+          runners: {}
 - name: Load in Flavor values if referenced
   block:
   - name: Fetch referenced flavor
@@ -37,6 +47,24 @@
   - flavor_ref is defined
   - flavor_ref.kind == "TenantNamespaceFlavor"
   - flavor_ref.group == "miscscripts.pnnl.gov"
+- name: Set values from CR
+  set_fact:
+    merged_values: "{{ merged_values | combine(_miscscripts_pnnl_gov_tenantnamespace_spec, recursive=True) }}"
+
+- name: Setup gitlabRunner if needed
+  set_fact:
+    gitlabrunnerconfig:
+      gitlabRunner:
+        spec:
+          runners:
+            namespace: "{{ meta.name }}"
+            tags: "{{ (merged_values.gitlabRunner.spec.runners.tags | default([]) + [meta.name]) | unique | list }}"
+  when:
+  - merged_values.gitlabRunner.autoSetNamespaceAndTags
+- name: Merge gitlabRunner values
+  set_fact:
+    merged_values: "{{ merged_values | combine(gitlabrunnerconfig, recursive=True) }}"
+
 - name: Set value for forced settings
   set_fact:
     overrides:
@@ -47,9 +75,6 @@
         controller:
           scope:
             namespace: "{{ meta.name }}"
-- name: Set values from CR
-  set_fact:
-    merged_values: "{{ merged_values | combine(_miscscripts_pnnl_gov_tenantnamespace_spec, recursive=True) }}"
 - name: Force namespace settings. Can not be overridden.
   set_fact:
     merged_values: "{{ merged_values | combine(overrides, recursive=True) }}"
@@ -62,6 +87,47 @@
     chart_ref: ${HOME}/tenant-namespace
     values: "{{ merged_values }}"
   register: objs
+  when:
+  - not dryrun
+
+- name: Set diff
+  set_fact:
+    differ: ""
+
+- name: Dry Run Helm
+  block:
+  - name: Make temp file
+    tempfile:
+      state: file
+      suffix: .yaml
+    register: temp_filename
+  - name: Copy values to temp file
+    copy:
+      content: "{{ merged_values | to_yaml }}"
+      dest: "{{ temp_filename.path }}"
+    no_log: True
+  - name: Do dry run of helm
+    shell: "helm diff upgrade --install --detailed-exitcode --namespace {{ meta.name }}-admin {{ meta.name }} ${HOME}/tenant-namespace -f {{ temp_filename.path }}"
+    register: diffhelm
+    ignore_errors: yes
+    no_log: True
+  - name: Set diff
+    set_fact:
+      differ: "{{ diffhelm.stdout }}\n"
+  - name: Remove temp file
+    file:
+      path: "{{ temp_filename.path }}"
+      state: absent
+  when:
+  - dryrun
+
+- k8s_status:
+    api_version: miscscripts.pnnl.gov/v1beta1
+    kind: TenantNamespace
+    name: "{{ meta.name }}"
+    namespace: "{{ meta.namespace }}"
+    status:
+      diff: "{{ differ | b64encode }}"
 
 - name: Create the k8s user namespace
   k8s:
@@ -74,4 +140,6 @@
         labels:
           name: "{{ meta.name }}"
           miscscripts.pnnl.gov/namespace-type: user
+  when:
+  - not dryrun
 

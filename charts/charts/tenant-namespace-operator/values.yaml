@@ -10,6 +10,9 @@ rbac:
 
 replicaCount: 1
 
+# Set if the operator will only dryrun actions
+dryrun: false
+
 image:
   repository: pnnlmiscscripts/tenant-namespace-operator
   pullPolicy: IfNotPresent
