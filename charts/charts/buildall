@@ -36,7 +36,7 @@ for ver in 1-15 1-16 1-17 1-18; do
 done
 
 CHANGE=0
-for CHART in nginx-app console chronyd dhcpd ipmi-exporter kubeupdater k8s-node-image tenant-namespace pixiecore pixiecore-simpleconfig gitlab-runner-operator tenant-namespace-operator smartctl-exporter grafana-misc-dashboards; do
+for CHART in nginx-app console chronyd dhcpd ipmi-exporter kubeupdater k8s-node-image tenant-namespace pixiecore pixiecore-simpleconfig gitlab-runner-operator tenant-namespace-operator smartctl-exporter grafana-misc-dashboards magic-namespace; do
 	RAWCHART=$CHART
 	case "$CHART" in
 	k8s-node-image)
@@ -87,7 +87,7 @@ for CHART in nginx-app console chronyd dhcpd ipmi-exporter kubeupdater k8s-node-
 				echo New version: $NEWVERSION
 				sed -i "s/^version: .*/version: $NEWVERSION/" ../../$CHART/Chart.yaml
 				if [ "$SUBBUILD" == "latest" ]; then
-					if [ "$CHART" != "gitlab-runner-operator" -a "$CHART" != "tenant-namespace-operator" -a "$CHART" != "kubeupdater" -a "$CHART" != "grafana-misc-dashboards"]; then
+					if [ "$CHART" != "gitlab-runner-operator" -a "$CHART" != "tenant-namespace-operator" -a "$CHART" != "kubeupdater" -a "$CHART" != "grafana-misc-dashboards" -a "$CHART" != "magic-namespace" ]; then
 						sed -i "s/^appVersion: .*/appVersion: $NEWVERSION/" ../../$CHART/Chart.yaml
 					fi
 				fi
