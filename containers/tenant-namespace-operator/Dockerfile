@@ -3,6 +3,9 @@ FROM quay.io/operator-framework/ansible-operator:v0.17.0
 ARG helm_version=v3.2.0
 USER 0
 RUN \
+  yum clean all && \
+  yum install -y git && \
+  yum clean all && \
   curl -o helm.tar.gz https://get.helm.sh/helm-${helm_version}-linux-amd64.tar.gz && \
   tar -zxvf helm.tar.gz && \
   mv linux-amd64/helm /usr/local/bin/helm && \
@@ -21,9 +24,10 @@ COPY roles/ ${HOME}/roles/
 RUN \
   ansible-galaxy collection install -r ${HOME}/requirements.yml && \
   chmod -R ug+rwx ${HOME}/.ansible && \
+  helm plugin install https://github.com/databus23/helm-diff --version master && \
   helm pull --repo https://pnnl-miscscripts.github.io/charts tenant-namespace --untar && \
   find roles/ -type f -exec md5sum {} \; > /.extrafingerprints && \
-  echo 0.1.7 >> /.extrafingerprints && \
+  echo 0.1.8 >> /.extrafingerprints && \
   md5sum watches.yaml >> /.extrafingerprints
 
 ENTRYPOINT ["/usr/local/bin/entrypoint", "--inject-owner-ref=false"]

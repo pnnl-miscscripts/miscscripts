@@ -59,11 +59,11 @@
           runners:
             namespace: "{{ meta.name }}"
             tags: "{{ (merged_values.gitlabRunner.spec.runners.tags | default([]) + [meta.name]) | unique | list }}"
-  when:
-  - merged_values.gitlabRunner.autoSetNamespaceAndTags
 - name: Merge gitlabRunner values
   set_fact:
     merged_values: "{{ merged_values | combine(gitlabrunnerconfig, recursive=True) }}"
+  when:
+  - merged_values.gitlabRunner.autoSetNamespaceAndTags
 
 - name: Set value for forced settings
   set_fact:
