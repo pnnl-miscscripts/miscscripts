@@ -69,6 +69,10 @@ spec:
   - key: node-role.kubernetes.io/master
     operator: Exists
     effect: NoSchedule
+  - operator: Exists
+    effect: NoSchedule
+  - operator: Exists
+    effect: NoExecute
   volumes:
   - name: host
     hostPath:

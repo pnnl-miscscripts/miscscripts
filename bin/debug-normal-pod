@@ -61,5 +61,9 @@ spec:
   - effect: NoSchedule
     key: norun
     value: DoNotSchedulePods
+  - operator: Exists
+    effect: NoSchedule
+  - operator: Exists
+    effect: NoExecute
 EOF
 

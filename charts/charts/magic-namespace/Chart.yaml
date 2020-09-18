@@ -9,4 +9,4 @@ maintainers:
 #- email: kent.rancourt@microsoft.com
 #  name: krancour
 name: magic-namespace
-version: 0.5.2
+version: 0.5.3
