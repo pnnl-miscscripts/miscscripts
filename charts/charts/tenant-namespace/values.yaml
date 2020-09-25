@@ -85,6 +85,7 @@ ingress:
     scope: true
 
 quota:
+  enabled: true
   pods: 10
   limits:
     cpu: 10
@@ -99,6 +100,7 @@ quota:
 #    foobar.storageclass.storage.k8s.io/persistentvolumeclaims: 5
 
 limitRange:
+  enabled: true
   limits:
   - default:
       cpu: 1000m
