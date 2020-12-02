@@ -10,7 +10,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
       - name: Build curl-jq container
         run: ./containers/build curl-jq
       - name: Build gitlab-runner-operator container
@@ -35,6 +39,11 @@ jobs:
         run: ./containers/build debug-toolbox
       - name: Build smartctl-exporter container
         run: ./containers/build smartctl-exporter
+#      - name: Setup rpm signing
+#        run: |
+#          openssl aes-256-cbc -K $encrypted_94b98ec18b77_key -iv $encrypted_94b98ec18b77_iv -in rpm.priv.enc -out rpm.priv -d
+      - name: Build rpms-containerd container
+        run: ./containers/build rpms-containerd
 #      - stage: build
 #        before_install: &upgradedocker
 #        - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
