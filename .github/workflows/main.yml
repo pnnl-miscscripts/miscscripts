@@ -13,28 +13,28 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build curl-jq container
         run: ./containers/build curl-jq
-#      - name: Build gitlab-runner-operator container
-#        run: ./containers/build gitlab-runner-operator
-#      - name: Build tenant-namespace-operator container
-#        run: ./containers/build tenant-namespace-operator
-#      - name: Build py2lint container
-#        run: ./containers/build py2lint
-#      - name: Build pixiecore container
-#        run: ./containers/build pixiecore
-#      - name: Build ipmitool container
-#        run: ./containers/build ipmitool
-#      - name: Build ipmi-exporter container
-#        run: ./containers/build ipmi-exporter
-#      - name: Build dhcpd container
-#        run: ./containers/build dhcpd
-#      - name: Build inotify-tools container
-#        run: ./containers/build inotify-tools
-#      - name: Build chronyd container
-#        run: ./containers/build chronyd
-#      - name: Build debug-toolbox container
-#        run: ./containers/build debug-toolbox
-#      - name: Build smartctl-exporter container
-#        run: ./containers/build smartctl-exporter
+      - name: Build gitlab-runner-operator container
+        run: ./containers/build gitlab-runner-operator
+      - name: Build tenant-namespace-operator container
+        run: ./containers/build tenant-namespace-operator
+      - name: Build py2lint container
+        run: ./containers/build py2lint
+      - name: Build pixiecore container
+        run: ./containers/build pixiecore
+      - name: Build ipmitool container
+        run: ./containers/build ipmitool
+      - name: Build ipmi-exporter container
+        run: ./containers/build ipmi-exporter
+      - name: Build dhcpd container
+        run: ./containers/build dhcpd
+      - name: Build inotify-tools container
+        run: ./containers/build inotify-tools
+      - name: Build chronyd container
+        run: ./containers/build chronyd
+      - name: Build debug-toolbox container
+        run: ./containers/build debug-toolbox
+      - name: Build smartctl-exporter container
+        run: ./containers/build smartctl-exporter
 #      - stage: build
 #        before_install: &upgradedocker
 #        - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
