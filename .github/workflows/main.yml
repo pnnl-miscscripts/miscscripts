@@ -12,9 +12,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-#      - name: Set up Docker Buildx
-#        id: buildx
-#        uses: docker/setup-buildx-action@v1
       - name: Build curl-jq container
         run: ./containers/build curl-jq
       - name: Build gitlab-runner-operator container
@@ -39,13 +36,6 @@ jobs:
         run: ./containers/build debug-toolbox
       - name: Build smartctl-exporter container
         run: ./containers/build smartctl-exporter
-      - name: Setup rpm signing
-        run: |
-          printf "%s" "$RPM_SIGNING_KEY" > rpm.priv
-          printf "%s" "$RPM_SIGNING_PUB" > rpm.pub
-#      - name: Setup rpm signing
-#        run: |
-#          openssl aes-256-cbc -K $encrypted_94b98ec18b77_key -iv $encrypted_94b98ec18b77_iv -in rpm.priv.enc -out rpm.priv -d
       - name: Build rpms-containerd container
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
@@ -54,118 +44,103 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           printf "%s" "$RPM_GPG_PUB" > rpm.pub
           ./containers/build rpms-containerd
-#      - stage: build
-#        before_install: &upgradedocker
-#        - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-#        - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-#        - sudo apt-get update
-#        - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-ce
-#        - openssl aes-256-cbc -K $encrypted_94b98ec18b77_key -iv $encrypted_94b98ec18b77_iv -in rpm.priv.enc -out rpm.priv -d
-#        dist: xenial
-#        language: shell
-#        name: Build rpms-containerd container
-#        script: ./containers/build rpms-containerd
-#      - stage: build
-#        before_install: *upgradedocker
-#        dist: xenial
-#        language: shell
-#        name: Build rpms-node-base container
-#        script: ./containers/build rpms-node-base
-#      - stage: build
-#        before_install: *upgradedocker
-#        dist: xenial
-#        language: shell
-#        name: Build rpms-openvswitch container
-#        script: ./containers/build rpms-openvswitch
-#      - stage: build
-#        before_install: *upgradedocker
-#        dist: xenial
-#        language: shell
-#        name: Build rpms-kubernetes container 1.16
-#        script: ./containers/build rpms-kubernetes 1.16
-#      - stage: build
-#        before_install: *upgradedocker
-#        dist: xenial
-#        language: shell
-#        name: Build rpms-kubernetes container 1.17
-#        script: ./containers/build rpms-kubernetes 1.17
-#      - stage: build
-#        before_install: *upgradedocker
-#        dist: xenial
-#        language: shell
-#        name: Build rpms-kubernetes container 1.18
-#        script: ./containers/build rpms-kubernetes 1.18
-#      - stage: build
-#        before_install: *upgradedocker
-#        dist: xenial
-#        language: shell
-#        name: Build rpms-kubernetes container 1.15
-#        script: ./containers/build rpms-kubernetes 1.15
-#      - stage: build
-#        dist: xenial
-#        language: shell
-#        name: Build anaconda container
-#        script: ./containers/build anaconda
+      - name: Build rpms-node-base container
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
+          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          printf "%s" "$RPM_GPG_PUB" > rpm.pub
+          ./containers/build rpms-node-base
+      - name: Build rpms-openvswitch container
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
+          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          printf "%s" "$RPM_GPG_PUB" > rpm.pub
+          ./containers/build rpms-openvswitch
+      - name: Build rpms-kubernetes container 1.16
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
+          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          printf "%s" "$RPM_GPG_PUB" > rpm.pub
+          ./containers/build rpms-kubernetes 1.16
+      - name: Build rpms-kubernetes container 1.17
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
+          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          printf "%s" "$RPM_GPG_PUB" > rpm.pub
+          ./containers/build rpms-kubernetes 1.17
+      - name: Build rpms-kubernetes container 1.18
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
+          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          printf "%s" "$RPM_GPG_PUB" > rpm.pub
+          ./containers/build rpms-kubernetes 1.18
+      - name: Build rpms-kubernetes container 1.15
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
+          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          printf "%s" "$RPM_GPG_PUB" > rpm.pub
+          ./containers/build rpms-kubernetes 1.15
+      - name: Build anaconda container
+        run: ./containers/build anaconda
 
-#      - stage: build-full-image
-#        before_install: *upgradedocker
-#        dist: xenial
-#        language: shell
-#        name: Build full k8s node image 1.16
-#        script: ./containers/build k8s-node-image 1.16
-#      - stage: build-full-image
-#        before_install: *upgradedocker
-#        dist: xenial
-#        language: shell
-#        name: Build full k8s node image 1.17
-#        script: ./containers/build k8s-node-image 1.17
-#      - stage: build-full-image
-#        before_install: *upgradedocker
-#        dist: xenial
-#        language: shell
-#        name: Build full k8s node image 1.18
-#        script: ./containers/build k8s-node-image 1.18
-#      - stage: build-full-image
-#        before_install: *upgradedocker
-#        dist: xenial
-#        language: shell
-#        name: Build full k8s node image 1.15
-#        script: ./containers/build k8s-node-image 1.15
+      - name: Build full k8s node image 1.16
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
+          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          printf "%s" "$RPM_GPG_PUB" > rpm.pub
+          ./containers/build k8s-node-image 1.16
+      - name: Build full k8s node image 1.17
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
+          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          printf "%s" "$RPM_GPG_PUB" > rpm.pub
+          ./containers/build k8s-node-image 1.17
+      - name: Build full k8s node image 1.18
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
+          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          printf "%s" "$RPM_GPG_PUB" > rpm.pub
+          ./containers/build k8s-node-image 1.18
+      - name: Build full k8s node image 1.15
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
+          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          printf "%s" "$RPM_GPG_PUB" > rpm.pub
+          ./containers/build k8s-node-image 1.15
 
-#      - stage: build-nginx
-#        dist: xenial
-#        language: shell
-#        name: Build anaconda+nginx container
-#        script: ./containers/build anaconda-nginx
-#      - stage: build-nginx
-#        dist: xenial
-#        language: shell
-#        name: Build k8s-node-image+nginx container 1.16
-#        script: ./containers/build k8s-node-image-nginx 1.16
-#      - stage: build-nginx
-#        dist: xenial
-#        language: shell
-#        name: Build k8s-node-image+nginx container 1.17
-#        script: ./containers/build k8s-node-image-nginx 1.17
-#      - stage: build-nginx
-#        dist: xenial
-#        language: shell
-#        name: Build k8s-node-image+nginx container 1.18
-#        script: ./containers/build k8s-node-image-nginx 1.18
-#      - stage: build-nginx
-#        dist: xenial
-#        language: shell
-#        name: Build k8s-node-image+nginx container 1.15
-#        script: ./containers/build k8s-node-image-nginx 1.15
+      - name: Build anaconda+nginx container
+        run: ./containers/build anaconda-nginx
+      - name: Build k8s-node-image+nginx container 1.16
+        run: ./containers/build k8s-node-image-nginx 1.16
+      - name: Build k8s-node-image+nginx container 1.17
+        run: ./containers/build k8s-node-image-nginx 1.17
+      - name: Build k8s-node-image+nginx container 1.18
+        run: ./containers/build k8s-node-image-nginx 1.18
+      - name: Build k8s-node-image+nginx container 1.15
+        run: ./containers/build k8s-node-image-nginx 1.15
 
-#      - stage: build-image-library-charts
-#        dist: xenial
-#        language: shell
-#        name: Build image library charts
-#        script: ./charts/image-library-charts/buildall
+      - name: Build image library charts
+        run: ./charts/image-library-charts/buildall
 
-#      - stage: build-charts
-#        dist: xenial
-#        language: shell
-#        name: Build charts
-#        script: ./charts/charts/buildall
+      - name: Build charts
+        run: ./charts/charts/buildall
