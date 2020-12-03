@@ -47,7 +47,13 @@ jobs:
 #        run: |
 #          openssl aes-256-cbc -K $encrypted_94b98ec18b77_key -iv $encrypted_94b98ec18b77_iv -in rpm.priv.enc -out rpm.priv -d
       - name: Build rpms-containerd container
-        run: ./containers/build rpms-containerd
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
+          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          printf "%s" "$RPM_GPG_PUB" > rpm.pub
+          ./containers/build rpms-containerd
 #      - stage: build
 #        before_install: &upgradedocker
 #        - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
