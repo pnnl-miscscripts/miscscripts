@@ -38,94 +38,72 @@ jobs:
         run: ./containers/build smartctl-exporter
       - name: Build rpms-containerd container
         env:
-          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
-          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          printf "%s" "$RPM_GPG_PUB" > rpm.pub
           ./containers/build rpms-containerd
       - name: Build rpms-node-base container
         env:
-          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
-          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          printf "%s" "$RPM_GPG_PUB" > rpm.pub
           ./containers/build rpms-node-base
       - name: Build rpms-openvswitch container
         env:
-          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
-          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          printf "%s" "$RPM_GPG_PUB" > rpm.pub
           ./containers/build rpms-openvswitch
       - name: Build rpms-kubernetes container 1.16
         env:
-          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
-          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          printf "%s" "$RPM_GPG_PUB" > rpm.pub
           ./containers/build rpms-kubernetes 1.16
       - name: Build rpms-kubernetes container 1.17
         env:
-          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
-          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          printf "%s" "$RPM_GPG_PUB" > rpm.pub
           ./containers/build rpms-kubernetes 1.17
       - name: Build rpms-kubernetes container 1.18
         env:
-          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
-          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          printf "%s" "$RPM_GPG_PUB" > rpm.pub
           ./containers/build rpms-kubernetes 1.18
       - name: Build rpms-kubernetes container 1.15
         env:
-          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
-          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          printf "%s" "$RPM_GPG_PUB" > rpm.pub
           ./containers/build rpms-kubernetes 1.15
       - name: Build anaconda container
         run: ./containers/build anaconda
 
       - name: Build full k8s node image 1.16
         env:
-          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
-          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          printf "%s" "$RPM_GPG_PUB" > rpm.pub
           ./containers/build k8s-node-image 1.16
       - name: Build full k8s node image 1.17
         env:
-          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
-          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          printf "%s" "$RPM_GPG_PUB" > rpm.pub
           ./containers/build k8s-node-image 1.17
       - name: Build full k8s node image 1.18
         env:
-          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
-          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          printf "%s" "$RPM_GPG_PUB" > rpm.pub
           ./containers/build k8s-node-image 1.18
       - name: Build full k8s node image 1.15
         env:
-          RPM_GPG_KEY: ${{ secrets.RPM_SIGNING_KEY }}
-          RPM_GPG_PUB: ${{ secrets.RPM_SIGNING_PUB }}
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          printf "%s" "$RPM_GPG_PUB" > rpm.pub
           ./containers/build k8s-node-image 1.15
 
       - name: Build anaconda+nginx container
