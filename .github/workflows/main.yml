@@ -42,42 +42,49 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-containerd
+          rm -f rpm.priv
       - name: Build rpms-node-base container
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-node-base
+          rm -f rpm.priv
       - name: Build rpms-openvswitch container
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-openvswitch
+          rm -f rpm.priv
       - name: Build rpms-kubernetes container 1.16
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.16
+          rm -f rpm.priv
       - name: Build rpms-kubernetes container 1.17
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.17
+          rm -f rpm.priv
       - name: Build rpms-kubernetes container 1.18
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.18
+          rm -f rpm.priv
       - name: Build rpms-kubernetes container 1.15
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.15
+          rm -f rpm.priv
       - name: Build anaconda container
         run: ./containers/build anaconda
 
@@ -87,24 +94,28 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.16
+          rm -f rpm.priv
       - name: Build full k8s node image 1.17
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.17
+          rm -f rpm.priv
       - name: Build full k8s node image 1.18
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.18
+          rm -f rpm.priv
       - name: Build full k8s node image 1.15
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.15
+          rm -f rpm.priv
 
       - name: Build anaconda+nginx container
         run: ./containers/build anaconda-nginx
