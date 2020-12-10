@@ -148,14 +148,13 @@ jobs:
       - name: Build k8s-node-image+nginx container 1.20
         run: ./containers/build k8s-node-image-nginx 1.20
 
-      - name: Build image library charts
+      - name: Configure Git
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          ./charts/image-library-charts/buildall
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Build image library charts
+        run: ./charts/image-library-charts/buildall
 
       - name: Build charts
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          ./charts/charts/buildall
+        run: ./charts/charts/buildall
