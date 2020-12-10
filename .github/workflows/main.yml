@@ -1,7 +1,7 @@
 name: Build
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 8 * * *'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-20.04
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -78,12 +81,19 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.18
           rm -f rpm.priv
-      - name: Build rpms-kubernetes container 1.15
+      - name: Build rpms-kubernetes container 1.19
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          ./containers/build rpms-kubernetes 1.15
+          ./containers/build rpms-kubernetes 1.19
+          rm -f rpm.priv
+      - name: Build rpms-kubernetes container 1.20
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          ./containers/build rpms-kubernetes 1.20
           rm -f rpm.priv
       - name: Build anaconda container
         run: ./containers/build anaconda
@@ -109,12 +119,19 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.18
           rm -f rpm.priv
-      - name: Build full k8s node image 1.15
+      - name: Build full k8s node image 1.19
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          ./containers/build k8s-node-image 1.15
+          ./containers/build k8s-node-image 1.19
+          rm -f rpm.priv
+      - name: Build full k8s node image 1.20
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          ./containers/build k8s-node-image 1.20
           rm -f rpm.priv
 
       - name: Build anaconda+nginx container
@@ -125,8 +142,10 @@ jobs:
         run: ./containers/build k8s-node-image-nginx 1.17
       - name: Build k8s-node-image+nginx container 1.18
         run: ./containers/build k8s-node-image-nginx 1.18
-      - name: Build k8s-node-image+nginx container 1.15
-        run: ./containers/build k8s-node-image-nginx 1.15
+      - name: Build k8s-node-image+nginx container 1.19
+        run: ./containers/build k8s-node-image-nginx 1.19
+      - name: Build k8s-node-image+nginx container 1.20
+        run: ./containers/build k8s-node-image-nginx 1.20
 
       - name: Build image library charts
         run: |
