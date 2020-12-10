@@ -9,9 +9,10 @@ pushd $(dirname "$0")
 [ ! -d hubbuildtools ] && git clone https://github.com/kfox1111/hubbuildtools
 
 if [ "x$TRAVIS" != "x" -o "x$GITHUB_ACTION" != "x" ]; then
-	curl https://raw.githubusercontent.com/helm/helm/master/scripts/get > get_helm.sh
+	curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
 	chmod 700 get_helm.sh
 	./get_helm.sh
+	helm repo add stable https://charts.helm.sh/stable
 fi
 
 cd image-library-charts
