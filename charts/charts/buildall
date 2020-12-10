@@ -7,7 +7,7 @@ pushd $(dirname "$0")
 [ ! -d charts ] && git clone https://github.com/pnnl-miscscripts/charts
 [ ! -d hubbuildtools ] && git clone https://github.com/kfox1111/hubbuildtools
 
-if [ "x$TRAVIS" != "x" ]; then
+if [ "x$TRAVIS" != "x" -o "x$GITHUB_ACTION" != "x" ]; then
 	curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
 	chmod 700 get_helm.sh
 	./get_helm.sh
