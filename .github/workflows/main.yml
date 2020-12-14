@@ -12,7 +12,7 @@ jobs:
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      GITHUB_LIBRARY_CHARTS_TOKEN: ${{ secrets.GITHUB_LIBRARY_CHARTS_TOKEN }}
+      GITHUB_LIBRARY_CHARTS_TOKEN: ${{ secrets.GIT_LIBRARY_CHARTS_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
