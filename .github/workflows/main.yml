@@ -1,0 +1,160 @@
+name: Build
+on:
+  schedule:
+    - cron: '0 8 * * *'
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    env:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      GITHUB_LIBRARY_CHARTS_TOKEN: ${{ secrets.GITHUB_LIBRARY_CHARTS_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build curl-jq container
+        run: ./containers/build curl-jq
+      - name: Build gitlab-runner-operator container
+        run: ./containers/build gitlab-runner-operator
+      - name: Build tenant-namespace-operator container
+        run: ./containers/build tenant-namespace-operator
+      - name: Build py2lint container
+        run: ./containers/build py2lint
+      - name: Build pixiecore container
+        run: ./containers/build pixiecore
+      - name: Build ipmitool container
+        run: ./containers/build ipmitool
+      - name: Build ipmi-exporter container
+        run: ./containers/build ipmi-exporter
+      - name: Build dhcpd container
+        run: ./containers/build dhcpd
+      - name: Build inotify-tools container
+        run: ./containers/build inotify-tools
+      - name: Build chronyd container
+        run: ./containers/build chronyd
+      - name: Build debug-toolbox container
+        run: ./containers/build debug-toolbox
+      - name: Build smartctl-exporter container
+        run: ./containers/build smartctl-exporter
+      - name: Build rpms-containerd container
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          ./containers/build rpms-containerd
+          rm -f rpm.priv
+      - name: Build rpms-node-base container
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          ./containers/build rpms-node-base
+          rm -f rpm.priv
+      - name: Build rpms-openvswitch container
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          ./containers/build rpms-openvswitch
+          rm -f rpm.priv
+      - name: Build rpms-kubernetes container 1.16
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          ./containers/build rpms-kubernetes 1.16
+          rm -f rpm.priv
+      - name: Build rpms-kubernetes container 1.17
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          ./containers/build rpms-kubernetes 1.17
+          rm -f rpm.priv
+      - name: Build rpms-kubernetes container 1.18
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          ./containers/build rpms-kubernetes 1.18
+          rm -f rpm.priv
+      - name: Build rpms-kubernetes container 1.19
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          ./containers/build rpms-kubernetes 1.19
+          rm -f rpm.priv
+      - name: Build rpms-kubernetes container 1.20
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          ./containers/build rpms-kubernetes 1.20
+          rm -f rpm.priv
+      - name: Build anaconda container
+        run: ./containers/build anaconda
+
+      - name: Build full k8s node image 1.16
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          ./containers/build k8s-node-image 1.16
+          rm -f rpm.priv
+      - name: Build full k8s node image 1.17
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          ./containers/build k8s-node-image 1.17
+          rm -f rpm.priv
+      - name: Build full k8s node image 1.18
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          ./containers/build k8s-node-image 1.18
+          rm -f rpm.priv
+      - name: Build full k8s node image 1.19
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          ./containers/build k8s-node-image 1.19
+          rm -f rpm.priv
+      - name: Build full k8s node image 1.20
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          ./containers/build k8s-node-image 1.20
+          rm -f rpm.priv
+
+      - name: Build anaconda+nginx container
+        run: ./containers/build anaconda-nginx
+      - name: Build k8s-node-image+nginx container 1.16
+        run: ./containers/build k8s-node-image-nginx 1.16
+      - name: Build k8s-node-image+nginx container 1.17
+        run: ./containers/build k8s-node-image-nginx 1.17
+      - name: Build k8s-node-image+nginx container 1.18
+        run: ./containers/build k8s-node-image-nginx 1.18
+      - name: Build k8s-node-image+nginx container 1.19
+        run: ./containers/build k8s-node-image-nginx 1.19
+      - name: Build k8s-node-image+nginx container 1.20
+        run: ./containers/build k8s-node-image-nginx 1.20
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "$GITHUB_ACTOR"
+          git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Build image library charts
+        run: ./charts/image-library-charts/buildall
+
+      - name: Build charts
+        run: ./charts/charts/buildall
