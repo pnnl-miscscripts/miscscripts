@@ -49,9 +49,9 @@ index b3512a99..04dedf81 100644
 +      {{- if .Values.extraVolumes }}
 +{{ toYaml .Values.extraVolumes | indent 6 }}
 +      {{- end }}
-     {{- if .Values.affinity }}
-       affinity:
- {{ toYaml .Values.affinity | indent 8 }}
+     {{- if .Values.imagePullSecrets }}
+       imagePullSecrets:
+ {{ toYaml .Values.imagePullSecrets | indent 8 }}
 diff --git a/values.yaml b/values.yaml
 index 7ece3544..efc2335f 100644
 --- a/values.yaml
@@ -71,4 +71,3 @@ index 7ece3544..efc2335f 100644
 +extraVolumes: {}
 -- 
 2.24.1
-
