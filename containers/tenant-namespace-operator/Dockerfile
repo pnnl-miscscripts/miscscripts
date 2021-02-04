@@ -1,6 +1,6 @@
 FROM quay.io/operator-framework/ansible-operator:v0.17.0
 
-ARG helm_version=v3.2.0
+ARG helm_version=v3.3.4
 USER 0
 RUN \
   yum clean all && \
