@@ -67,7 +67,6 @@
   - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress is defined
   - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress.controller is defined
   - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress.controller.service is defined
-  - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress.controller.service is defined
   - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress.controller.service.loadBalancerIP is defined
 
 - name: Set initial defaults. They be overridden.
