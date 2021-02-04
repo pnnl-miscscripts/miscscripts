@@ -19,6 +19,57 @@
   when:
   - not dryrun
 
+- name: Set ingress ip if known
+  set_fact:
+    loadBalancerIP: "{{ _miscscripts_pnnl_gov_tenantnamespace.status.loadBalancerIP }}"
+  when:
+  - _miscscripts_pnnl_gov_tenantnamespace.status.loadBalancerIP is defined
+
+- name: Fetch ingress service
+  k8s_info:
+    api_version: v1
+    kind: Service
+    name: "{{ meta.name }}-ingress-controller"
+    namespace: "{{ meta.name }}-admin"
+  register: ingressService
+  when:
+  - _miscscripts_pnnl_gov_tenantnamespace.status.loadBalancerIP is not defined
+
+- name: Merge in existing ingress ip if exists
+  block:
+  - name: Set ingress ip.
+    set_fact:
+      loadBalancerIP: "{{ ingressService.resources[0].status.loadBalancer.ingress[0].ip }}"
+  - k8s_status:
+      api_version: miscscripts.pnnl.gov/v1beta1
+      kind: TenantNamespace
+      name: "{{ meta.name }}"
+      namespace: "{{ meta.namespace }}"
+      status:
+        loadBalancerIP: "{{ ingressService.resources[0].status.loadBalancer.ingress[0].ip }}"
+  when:
+  - _miscscripts_pnnl_gov_tenantnamespace.status.loadBalancerIP is not defined
+  - merged_values.ingress.controller.service.loadBalancerIP is not defined
+  - ingressService is defined
+  - ingressService.resources is defined
+  - ingressService.resources[0] is defined
+  - ingressService.resources[0].status is defined
+  - ingressService.resources[0].status.loadBalancer is defined
+  - ingressService.resources[0].status.loadBalancer.ingress is defined
+  - ingressService.resources[0].status.loadBalancer.ingress[0] is defined
+  - ingressService.resources[0].status.loadBalancer.ingress[0].ip is defined
+
+- name: Set ingress ip if specified
+  set_fact:
+    loadBalancerIP: "{{ _miscscripts_pnnl_gov_tenantnamespace.spec.ingress.controller.service.loadBalancerIP }}"
+  when:
+  - loadBalancerIP is not defined
+  - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress is defined
+  - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress.controller is defined
+  - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress.controller.service is defined
+  - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress.controller.service is defined
+  - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress.controller.service.loadBalancerIP is defined
+
 - name: Set initial defaults. They be overridden.
   set_fact:
     merged_values:
@@ -78,6 +129,21 @@
 - name: Force namespace settings. Can not be overridden.
   set_fact:
     merged_values: "{{ merged_values | combine(overrides, recursive=True) }}"
+
+- name: Force loadBalancerIP address setting
+  set_fact:
+    loadBalancerIP_overrides:
+      ingress:
+        controller:
+          service:
+            loadBalancerIP: "{{ loadBalancerIP }}"
+  when:
+  - loadBalancerIP is defined
+- name: Force loadBalancerIP. Can not be overridden.
+  set_fact:
+    merged_values: "{{ merged_values | combine(loadBalancerIP_overrides, recursive=True) }}"
+  when:
+  - loadBalancerIP is defined
 
 #FIXME Consider making a service account specifically for this so it can't cross namespaces as far as it can today
 - name: Run Helm
