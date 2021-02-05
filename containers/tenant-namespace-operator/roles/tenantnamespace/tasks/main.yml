@@ -58,7 +58,20 @@
         spec:
           runners:
             namespace: "{{ meta.name }}"
-            tags: "{{ (merged_values.gitlabRunner.spec.runners.tags | default([]) + [meta.name]) | unique | list }}"
+            tags: "{{ (merged_values.gitlabRunner.spec.runners.tags.split(',') + [meta.name]) | unique | list | join(",") }}"
+  when:
+  - merged_values.gitlabRunner.spec.runners.tags is defined
+- name: Setup gitlabRunner if needed
+  set_fact:
+    gitlabrunnerconfig:
+      gitlabRunner:
+        spec:
+          runners:
+            namespace: "{{ meta.name }}"
+            tags: "{{ meta.name }}"
+  when:
+  - merged_values.gitlabRunner.spec.runners.tags is not defined
+
 - name: Merge gitlabRunner values
   set_fact:
     merged_values: "{{ merged_values | combine(gitlabrunnerconfig, recursive=True) }}"
