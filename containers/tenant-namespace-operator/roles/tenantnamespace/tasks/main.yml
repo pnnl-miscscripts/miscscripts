@@ -58,7 +58,7 @@
         spec:
           runners:
             namespace: "{{ meta.name }}"
-            tags: "{{ (merged_values.gitlabRunner.spec.runners.tags.split(',') + [meta.name]) | unique | list | join(",") }}"
+            tags: "{{ (merged_values.gitlabRunner.spec.runners.tags.split(',') + [meta.name]) | unique | list | join(',') }}"
   when:
   - merged_values.gitlabRunner.spec.runners.tags is defined
 - name: Setup gitlabRunner if needed
