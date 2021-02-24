@@ -38,8 +38,8 @@ jobs:
         run: ./containers/build chronyd
       - name: Build debug-toolbox container
         run: ./containers/build debug-toolbox
-      - name: Build smartctl-exporter container
-        run: ./containers/build smartctl-exporter
+#      - name: Build smartctl-exporter container
+#        run: ./containers/build smartctl-exporter
       - name: Build rpms-containerd container
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
