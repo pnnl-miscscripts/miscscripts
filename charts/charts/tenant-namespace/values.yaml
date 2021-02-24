@@ -73,7 +73,7 @@ ingress:
   controller:
     ingressClass: public
     extraArgs: {}
-#     default-ssl-certificate=default/default-tls
+    ##   default-ssl-certificate: "<namespace>/<secret_name>"
     scope:
       enabled: true
       namespace: ""
@@ -81,6 +81,8 @@ ingress:
       enabled: true
     publishService:
       enabled: true
+    admissionWebhooks:
+      enabled: false
   rbac:
     scope: true
 

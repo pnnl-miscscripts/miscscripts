@@ -25,7 +25,7 @@ RUN \
   ansible-galaxy collection install -r ${HOME}/requirements.yml && \
   chmod -R ug+rwx ${HOME}/.ansible && \
   helm plugin install https://github.com/databus23/helm-diff --version master && \
-  helm pull --repo https://pnnl-miscscripts.github.io/charts tenant-namespace --untar && \
+  helm pull --repo https://pnnl-miscscripts.github.io/charts tenant-namespace --version 0.6.7 --untar && \
   find roles/ -type f -exec md5sum {} \; > /.extrafingerprints && \
   echo 0.1.8 >> /.extrafingerprints && \
   md5sum watches.yaml >> /.extrafingerprints

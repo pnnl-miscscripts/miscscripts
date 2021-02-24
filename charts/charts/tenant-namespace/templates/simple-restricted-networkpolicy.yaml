@@ -4,6 +4,8 @@ kind: NetworkPolicy
 metadata:
   name: default
   namespace: {{ .Values.magicnamespace.namespace }}
+  labels:
+    {{- include "namespace.labels" . | nindent 4 }}
 spec:
   podSelector: {}
   policyTypes:
