@@ -5,10 +5,7 @@ metadata:
   name: {{ .Values.gitlabRunner.name }}
   namespace: {{ .Values.magicnamespace.namespace }}
   labels:
-    app: {{ template "namespace.name" . }}
-    chart: {{ template "namespace.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    {{- include "namespace.labels" . | nindent 4 }}
 spec:
 {{ toYaml .Values.gitlabRunner.spec | indent 2 }}
 {{- end }}
