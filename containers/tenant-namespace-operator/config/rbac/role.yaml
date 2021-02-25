@@ -1,0 +1,124 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: manager-role
+rules:
+  - apiGroups:
+    - ""
+    resources:
+    - pods
+    - services
+    - services/finalizers
+    - endpoints
+    - events
+    - configmaps
+    verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+  - apiGroups:
+    - apps
+    resources:
+    - deployments
+    - replicasets
+    verbs:
+    - create
+    - delete
+    - get
+    - list
+    - patch
+    - update
+    - watch
+  - apiGroups:
+    - monitoring.coreos.com
+    resources:
+    - servicemonitors
+    verbs:
+    - get
+    - create
+    - list
+    - delete
+    - patch
+    - update
+    - watch
+  - apiGroups:
+    - apps
+    resourceNames:
+    - tenant-namespace-operator
+    resources:
+    - deployments/finalizers
+    verbs:
+    - update
+  ##
+  ## Base operator rules
+  ##
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+      - resourcequotas
+      - limitranges
+    verbs:
+      - "*"
+  - apiGroups:
+      - rbac.authorization.k8s.io
+    resources:
+      - rolebindings
+      - clusterroles
+      - clusterrolebindings
+    verbs:
+      - "*"
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - networkpolicies
+    verbs:
+      - "*"
+  - apiGroups:
+      - extensions
+      - networking.k8s.io
+    resources:
+      - ingresses/status
+    verbs:
+      - update
+  - apiGroups:
+      - operators.coreos.com
+    resources:
+      - operatorgroups
+      - subscriptions
+    verbs:
+      - "*"
+  ##
+  ## Rules for miscscripts.pnnl.gov/v1beta1, Kind: TenantNamespace
+  ##
+  - apiGroups:
+      - miscscripts.pnnl.gov
+    resources:
+      - tenantnamespaces
+      - tenantnamespaces/status
+      - tenantnamespaces/finalizers
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  ##
+  ## Rules for miscscripts.pnnl.gov/v1beta1, Kind: TenantNamespaceFlavor
+  ##
+  - apiGroups:
+      - miscscripts.pnnl.gov
+    resources:
+      - tenantnamespaceflavors
+    verbs:
+      - get
+      - list
+      - watch
+# +kubebuilder:scaffold:rules

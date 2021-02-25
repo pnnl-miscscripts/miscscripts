@@ -1,0 +1,24 @@
+# permissions for end users to edit tenantnamespaceflavors.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: tenantnamespaceflavor-editor-role
+rules:
+- apiGroups:
+  - miscscripts.pnnl.gov
+  resources:
+  - tenantnamespaceflavors
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - miscscripts.pnnl.gov
+  resources:
+  - tenantnamespaceflavors/status
+  verbs:
+  - get

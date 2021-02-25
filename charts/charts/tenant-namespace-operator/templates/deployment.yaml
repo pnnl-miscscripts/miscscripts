@@ -32,7 +32,24 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 6789
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 6789
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          args:
+            - "--enable-leader-election"
+            - "--leader-election-id=tenant-namespace-operator"
           env:
+            - name: ANSIBLE_GATHERING
+              value: explicit
             - name: WATCH_NAMESPACE
 {{- if eq .Values.mode "cluster" }}
               value: ""
@@ -41,14 +58,6 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
 {{- end }}
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: OPERATOR_NAME
-              value: "tenant-namespace-operator"
-            - name: ANSIBLE_GATHERING
-              value: explicit
             - name: SERVICE_ACCOUNT_NAME
               value: {{ include "tenant-namespace-operator.serviceAccountName" . }}
             - name: NAMESPACE
