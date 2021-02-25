@@ -17,6 +17,8 @@ spec:
     metadata:
       labels:
         {{- include "kubeupdater.selectorLabels" . | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/bin-configmap.yaml") . | sha256sum | quote }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

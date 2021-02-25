@@ -8,7 +8,11 @@ export KUBECONFIG=/etc/kubernetes/kubelet.conf
 [ -f /etc/sysconfig/kubeupdater ] && . /etc/sysconfig/kubeupdater
 
 if [ "x$flag" == "x-b" ]; then
-	kubectl label node $HOSTNAME miscscripts.pnnl.gov/upgrade-
+	for x in `seq 1 5`; do
+		kubectl label node $HOSTNAME miscscripts.pnnl.gov/upgrade- && break
+		echo Failed to unlabel. Waiting and trying again.
+		sleep $x
+	done
 fi
 
 if [ "x$flag" == "x-u" ]; then
@@ -76,6 +80,9 @@ EOF
 	cat > /etc/systemd/system/kubeupdater-updater.service <<EOF
 [Unit]
 Description=kubeupdater-updater: The Kube Updater updater
+After=network-online.target nss-lookup.target kubeupdater-boot.service
+Before=kubelet.service
+Wants=network-online.target
 
 [Service]
 ExecStart=/usr/bin/kubeupdater -u
@@ -88,9 +95,9 @@ WantedBy=multi-user.target
 EOF
 	cat > /etc/systemd/system/kubeupdater-boot.service <<EOF
 [Unit]
-Description=kubeupdater-updater: The Kube Updater on boot service
+Description=kubeupdater-boot: The Kube Updater on boot service
 After=network-online.target nss-lookup.target
-Before=kubelet.service
+Before=kubelet.service kubeupdater-updater.service
 Wants=network-online.target
 
 [Service]
