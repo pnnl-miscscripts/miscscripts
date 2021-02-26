@@ -6,40 +6,100 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+env:
+  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
 jobs:
-  build:
+  buildc-curl-jq:
     runs-on: ubuntu-20.04
-    env:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      GITHUB_LIBRARY_CHARTS_TOKEN: ${{ secrets.GIT_LIBRARY_CHARTS_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build curl-jq container
         run: ./containers/build curl-jq
+  buildc-gitlab-runner-operator:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build gitlab-runner-operator container
         run: ./containers/build gitlab-runner-operator
+  buildc-tenant-namespace-operator:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build tenant-namespace-operator container
         run: ./containers/build tenant-namespace-operator
+  buildc-py2lint:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build py2lint container
         run: ./containers/build py2lint
+  buildc-pixiecore:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build pixiecore container
         run: ./containers/build pixiecore
+  buildc-ipmitool:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build ipmitool container
         run: ./containers/build ipmitool
+  buildc-ipmi-exporter:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build ipmi-exporter container
         run: ./containers/build ipmi-exporter
+  buildc-dhcpd:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build dhcpd container
         run: ./containers/build dhcpd
+  buildc-inotify-tools:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build inotify-tools container
         run: ./containers/build inotify-tools
+  buildc-chronyd:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build chronyd container
         run: ./containers/build chronyd
+  buildc-debug-toolbox:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build debug-toolbox container
         run: ./containers/build debug-toolbox
+#  buildc-smartctl-exporter:
+#    runs-on: ubuntu-20.04
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
 #      - name: Build smartctl-exporter container
 #        run: ./containers/build smartctl-exporter
+  buildc-rpms-containerd:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build rpms-containerd container
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -47,6 +107,11 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-containerd
           rm -f rpm.priv
+  buildc-rpms-node-base:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build rpms-node-base container
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -54,6 +119,11 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-node-base
           rm -f rpm.priv
+  buildc-rpms-openvswitch:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build rpms-openvswitch container
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -61,6 +131,11 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-openvswitch
           rm -f rpm.priv
+  buildc-rpms-k8s-16:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build rpms-kubernetes container 1.16
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -68,6 +143,11 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.16
           rm -f rpm.priv
+  buildc-rpms-k8s-17:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build rpms-kubernetes container 1.17
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -75,6 +155,11 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.17
           rm -f rpm.priv
+  buildc-rpms-k8s-18:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build rpms-kubernetes container 1.18
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -82,6 +167,11 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.18
           rm -f rpm.priv
+  buildc-rpms-k8s-19:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build rpms-kubernetes container 1.19
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -89,6 +179,11 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.19
           rm -f rpm.priv
+  buildc-rpms-k8s-20:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build rpms-kubernetes container 1.20
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -96,9 +191,24 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.20
           rm -f rpm.priv
+  buildc-anaconda:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build anaconda container
         run: ./containers/build anaconda
 
+  build-node-image-16:
+    runs-on: ubuntu-20.04
+    needs:
+    - buildc-rpms-node-base
+    - buildc-rpms-containerd
+    - buildc-rpms-openvswitch
+    - buildc-rpms-k8s-16
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build full k8s node image 1.16
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -106,6 +216,16 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.16
           rm -f rpm.priv
+  build-node-image-17:
+    runs-on: ubuntu-20.04
+    needs:
+    - buildc-rpms-node-base
+    - buildc-rpms-containerd
+    - buildc-rpms-openvswitch
+    - buildc-rpms-k8s-17
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build full k8s node image 1.17
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -113,6 +233,16 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.17
           rm -f rpm.priv
+  build-node-image-18:
+    runs-on: ubuntu-20.04
+    needs:
+    - buildc-rpms-node-base
+    - buildc-rpms-containerd
+    - buildc-rpms-openvswitch
+    - buildc-rpms-k8s-18
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build full k8s node image 1.18
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -120,6 +250,16 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.18
           rm -f rpm.priv
+  build-node-image-19:
+    runs-on: ubuntu-20.04
+    needs:
+    - buildc-rpms-node-base
+    - buildc-rpms-containerd
+    - buildc-rpms-openvswitch
+    - buildc-rpms-k8s-19
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build full k8s node image 1.19
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -127,6 +267,16 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.19
           rm -f rpm.priv
+  build-node-image-20:
+    runs-on: ubuntu-20.04
+    needs:
+    - buildc-rpms-node-base
+    - buildc-rpms-containerd
+    - buildc-rpms-openvswitch
+    - buildc-rpms-k8s-20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build full k8s node image 1.20
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -135,26 +285,104 @@ jobs:
           ./containers/build k8s-node-image 1.20
           rm -f rpm.priv
 
+  buildc-anaconda-nginx:
+    runs-on: ubuntu-20.04
+    needs:
+    - buildc-anaconda
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build anaconda+nginx container
         run: ./containers/build anaconda-nginx
+  build-node-image-16-nginx:
+    runs-on: ubuntu-20.04
+    needs:
+    - build-node-image-16
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build k8s-node-image+nginx container 1.16
         run: ./containers/build k8s-node-image-nginx 1.16
+  build-node-image-17-nginx:
+    runs-on: ubuntu-20.04
+    needs:
+    - build-node-image-17
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build k8s-node-image+nginx container 1.17
         run: ./containers/build k8s-node-image-nginx 1.17
+  build-node-image-18-nginx:
+    runs-on: ubuntu-20.04
+    needs:
+    - build-node-image-18
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build k8s-node-image+nginx container 1.18
         run: ./containers/build k8s-node-image-nginx 1.18
+  build-node-image-19-nginx:
+    runs-on: ubuntu-20.04
+    needs:
+    - build-node-image-19
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build k8s-node-image+nginx container 1.19
         run: ./containers/build k8s-node-image-nginx 1.19
+  build-node-image-20-nginx:
+    runs-on: ubuntu-20.04
+    needs:
+    - build-node-image-20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Build k8s-node-image+nginx container 1.20
         run: ./containers/build k8s-node-image-nginx 1.20
 
+  build-image-library-charts:
+    runs-on: ubuntu-20.04
+    needs:
+    - buildc-anaconda-nginx
+    - buildc-chronyd
+    - buildc-debug-toolbox
+    - buildc-dhcpd
+    - buildc-inotify-tools
+    - buildc-ipmi-exporter
+    - buildc-ipmitool
+    - build-node-image-16-nginx
+    - build-node-image-17-nginx
+    - build-node-image-18-nginx
+    - build-node-image-19-nginx
+    - build-node-image-20-nginx
+    - buildc-pixiecore
+#    - buildc-smartctl-exporter
+    env:
+      GITHUB_LIBRARY_CHARTS_TOKEN: ${{ secrets.GIT_LIBRARY_CHARTS_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Configure Git
         run: |
           git config --global user.name "$GITHUB_ACTOR"
           git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com"
-
       - name: Build image library charts
         run: ./charts/image-library-charts/buildall
 
+  build-charts:
+    runs-on: ubuntu-20.04
+    needs:
+    - build-image-library-charts
+    - buildc-gitlab-runner-operator
+    - buildc-tenant-namespace-operator
+    env:
+      GITHUB_LIBRARY_CHARTS_TOKEN: ${{ secrets.GIT_LIBRARY_CHARTS_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Configure Git
+        run: |
+          git config --global user.name "$GITHUB_ACTOR"
+          git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com"
       - name: Build charts
         run: ./charts/charts/buildall
