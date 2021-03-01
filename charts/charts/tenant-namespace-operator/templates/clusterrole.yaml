@@ -49,6 +49,7 @@ rules:
   - "*"
 - apiGroups:
   - extensions
+  - "networking.k8s.io" # k8s 1.14+
   resources:
   - ingresses/status
   verbs:
@@ -56,9 +57,11 @@ rules:
 - apiGroups:
   - networking.k8s.io
   resources:
-  - ingresses/status
+  - ingressclasses
   verbs:
-  - update
+  - get
+  - list
+  - watch
 - apiGroups:
   - operators.coreos.com
   resources:
