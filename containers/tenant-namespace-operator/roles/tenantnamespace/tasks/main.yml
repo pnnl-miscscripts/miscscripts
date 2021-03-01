@@ -32,8 +32,6 @@
     name: "{{ meta.name }}-ingress-controller"
     namespace: "{{ meta.name }}-admin"
   register: ingressService
-  when:
-  - _miscscripts_pnnl_gov_tenantnamespace.status.loadBalancerIP is not defined
 
 - name: Merge in existing ingress ip if exists
   block:
@@ -156,6 +154,44 @@
     merged_values: "{{ merged_values | combine(loadBalancerIP_overrides, recursive=True) }}"
   when:
   - loadBalancerIP is defined
+
+# Delete resources that have selectors that need to be updated
+- name: Remove upgrade resources
+  k8s:
+    state: absent
+    api_version: "{{ item.api_version }}"
+    kind: "{{ item.kind }}"
+    namespace: "{{ item.namespace }}"
+    name: "{{ item.name }}"
+  loop:
+  - api_version: apps/v1
+    kind: Deployment
+    namespace: "{{ meta.name }}-admin"
+    name: "{{ meta.name }}-ingress-controller"
+  - api_version: v1
+    kind: Service
+    namespace: "{{ meta.name }}-admin"
+    name: "{{ meta.name }}-ingress-controller"
+  - api_version: v1
+    kind: Service
+    namespace: "{{ meta.name }}-admin"
+    name: "{{ meta.name }}-ingress-controller-metrics"
+  - api_version: apps/v1
+    kind: Deployment
+    namespace: "{{ meta.name }}-admin"
+    name: "{{ meta.name }}-ingress-default-backend"
+  - api_version: v1
+    kind: Service
+    namespace: "{{ meta.name }}-admin"
+    name: "{{ meta.name }}-ingress-default-backend"
+  when:
+  - not dryrun
+  - ingressService is defined
+  - ingressService.resources is defined
+  - ingressService.resources[0] is defined
+  - ingressService.resources[0].metadata is defined
+  - ingressService.resources[0].metadata.labels is defined
+  - ingressService.resources[0].metadata.labels.chart == "ingress-1.34.2"
 
 #FIXME Consider making a service account specifically for this so it can't cross namespaces as far as it can today
 - name: Run Helm
