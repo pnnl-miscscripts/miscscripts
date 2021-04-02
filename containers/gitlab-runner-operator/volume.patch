@@ -57,9 +57,9 @@ index 7ece3544..efc2335f 100644
 --- a/values.yaml
 +++ b/values.yaml
 @@ -363,3 +363,12 @@ podLabels: {}
-   #   pods:
-   #     metricName: gitlab_runner_jobs
-   #     targetAverageValue: 400m
+ ## See https://gitlab.com/gitlab-org/charts/gitlab-runner/-/blob/master/templates/configmap.yaml
+ ## for a current list.
+ configMaps: {}
 +
 +## extra containers to run
 +extraContainers: {}
