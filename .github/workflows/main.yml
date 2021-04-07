@@ -11,6 +11,13 @@ env:
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
 jobs:
+  buildc-git:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build git container
+        run: ./containers/build git
   buildc-curl-jq:
     runs-on: ubuntu-20.04
     steps:
