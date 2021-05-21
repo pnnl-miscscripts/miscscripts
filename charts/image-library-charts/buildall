@@ -23,7 +23,7 @@ CHANGE=0
 for CONTAINER in ipmitool ipmi-exporter dhcpd inotify-tools chronyd debug-toolbox anaconda-nginx k8s-node-image-nginx pixiecore smartctl-exporter; do
 	case "$CONTAINER" in
 	k8s-node-image-nginx)
-		SUBBUILDS="1.16 1.17 1.18 1.19 1.20"
+		SUBBUILDS="1.16 1.17 1.18 1.19 1.20 1.21"
 		;;
 	*)
 		SUBBUILDS="latest"
