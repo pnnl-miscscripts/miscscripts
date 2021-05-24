@@ -357,7 +357,6 @@ jobs:
     - buildc-inotify-tools
     - buildc-ipmi-exporter
     - buildc-ipmitool
-    - build-node-image-16-nginx
     - build-node-image-17-nginx
     - build-node-image-18-nginx
     - build-node-image-19-nginx
