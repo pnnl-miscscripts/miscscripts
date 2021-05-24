@@ -138,18 +138,6 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-openvswitch
           rm -f rpm.priv
-  buildc-rpms-k8s-16:
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Build rpms-kubernetes container 1.16
-        env:
-          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
-        run: |
-          printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          ./containers/build rpms-kubernetes 1.16
-          rm -f rpm.priv
   buildc-rpms-k8s-17:
     runs-on: ubuntu-20.04
     steps:
@@ -218,23 +206,6 @@ jobs:
       - name: Build anaconda container
         run: ./containers/build anaconda
 
-  build-node-image-16:
-    runs-on: ubuntu-20.04
-    needs:
-    - buildc-rpms-node-base
-    - buildc-rpms-containerd
-    - buildc-rpms-openvswitch
-    - buildc-rpms-k8s-16
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Build full k8s node image 1.16
-        env:
-          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
-        run: |
-          printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          ./containers/build k8s-node-image 1.16
-          rm -f rpm.priv
   build-node-image-17:
     runs-on: ubuntu-20.04
     needs:
@@ -330,15 +301,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Build anaconda+nginx container
         run: ./containers/build anaconda-nginx
-  build-node-image-16-nginx:
-    runs-on: ubuntu-20.04
-    needs:
-    - build-node-image-16
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Build k8s-node-image+nginx container 1.16
-        run: ./containers/build k8s-node-image-nginx 1.16
   build-node-image-17-nginx:
     runs-on: ubuntu-20.04
     needs:
