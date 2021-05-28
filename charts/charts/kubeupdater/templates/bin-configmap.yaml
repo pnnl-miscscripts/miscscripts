@@ -6,4 +6,13 @@ metadata:
     {{- include "kubeupdater.labels" . | nindent 4 }}
 data:
   kubeupdater: |
+    #!/bin/bash
+    function pre_upgrade {
+{{ .Values.extraPreUpgradeScript | indent 6 }}
+    }
+
+    function post_upgrade {
+{{ .Values.extraPostUpgradeScript | indent 6 }}
+    }
+
 {{ .Files.Get "bin/kubeupdater" | indent 4 }}

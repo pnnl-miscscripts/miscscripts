@@ -31,9 +31,10 @@ if [ "x$flag" == "x-u" ]; then
 			systemctl stop kubelet
 			yum install kubeadm -y
 			kubeadm upgrade node
+			pre_upgrade
 			yum upgrade -y
+			post_upgrade
 			kubectl label node $HOSTNAME miscscripts.pnnl.gov/upgrade-needed-
-			echo "Done upgrading"
 			reboot
 		fi
 	done
