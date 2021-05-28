@@ -1,4 +1,4 @@
 export AUTO_PREFIX=rpmrepo-version
-export AUTO_PREFIX_PACKAGE=containerd
+export AUTO_PREFIX_PACKAGE=containerd.io
 export DOCKER_BUILDKIT=1
 export GPGSIGN=1

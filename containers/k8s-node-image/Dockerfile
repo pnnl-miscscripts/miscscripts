@@ -1,15 +1,15 @@
 # syntax = docker/dockerfile:1.0-experimental
 ARG SUBBUILD=1.13
-FROM pnnlmiscscripts/rpms-node-base:latest
-FROM pnnlmiscscripts/rpms-containerd:latest
-FROM pnnlmiscscripts/rpms-openvswitch:latest
-FROM pnnlmiscscripts/rpms-kubernetes:$SUBBUILD
+FROM pnnlmiscscripts/rpms-node-base:latest as base
+FROM pnnlmiscscripts/rpms-containerd:latest as containerd
+FROM pnnlmiscscripts/rpms-openvswitch:latest as openvswitch
+FROM pnnlmiscscripts/rpms-kubernetes:$SUBBUILD as kubernetes
 
-FROM centos:centos7
-COPY --from=0 /data /rpmdata
-COPY --from=1 /data /data/containerd
-COPY --from=2 /data /data/openvswitch
-COPY --from=3 /data /data/kubernetes
+FROM centos:centos7 as repobuild
+COPY --from=base /data /rpmdata
+COPY --from=containerd /data /data/containerd
+COPY --from=openvswitch /data /data/openvswitch
+COPY --from=kubernetes /data /data/kubernetes
 ADD rpm.pub /root/rpm.pub
 RUN --mount=type=secret,id=gpg \
   yum install -y createrepo yum-utils gnupg2 && \
@@ -24,8 +24,8 @@ RUN --mount=type=secret,id=gpg \
   echo Done building repo.
 
 FROM pnnlmiscscripts/rpms-node-base:latest
-COPY --from=2 /data /data/openvswitch
-COPY --from=1 /data /data/containerd
-COPY --from=3 /data /data/kubernetes
-COPY --from=4 /data/repodata /data/repodata
+COPY --from=openvswitch /data /data/openvswitch
+COPY --from=containerd /data /data/containerd
+COPY --from=kubernetes /data /data/kubernetes
+COPY --from=repobuild /data/repodata /data/repodata
 
