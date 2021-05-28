@@ -50,3 +50,8 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+extraPreUpgradeScript: |
+  echo "About to upgrade everything"
+extraPostUpgradeScript: |
+  echo "Done upgrading"
