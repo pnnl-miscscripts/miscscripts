@@ -1,0 +1,76 @@
+diff --git a/charts/ingress-nginx/templates/controller-daemonset.yaml b/charts/ingress-nginx/templates/controller-daemonset.yaml
+index 991dc4f3653..b20ada1f434 100644
+--- a/charts/ingress-nginx/templates/controller-daemonset.yaml
++++ b/charts/ingress-nginx/templates/controller-daemonset.yaml
+@@ -80,15 +80,15 @@ spec:
+           {{- end }}
+             - --election-id={{ .Values.controller.electionID }}
+             - --ingress-class={{ .Values.controller.ingressClass }}
+-            - --configmap={{ .Release.Namespace }}/{{ include "ingress-nginx.controller.fullname" . }}
++            - --configmap={{ default "$(POD_NAMESPACE)" .Values.controller.configMapNamespace }}/{{ include "ingress-nginx.controller.fullname" . }}
+           {{- if .Values.tcp }}
+-            - --tcp-services-configmap={{ .Release.Namespace }}/{{ include "ingress-nginx.fullname" . }}-tcp
++            - --tcp-services-configmap={{ default "$(POD_NAMESPACE)" .Values.controller.tcp.configMapNamespace }}/{{ include "ingress-nginx.fullname" . }}-tcp
+           {{- end }}
+           {{- if .Values.udp }}
+-            - --udp-services-configmap={{ .Release.Namespace }}/{{ include "ingress-nginx.fullname" . }}-udp
++            - --udp-services-configmap={{ default "$(POD_NAMESPACE)" .Values.controller.udp.configMapNamespace }}/{{ include "ingress-nginx.fullname" . }}-udp
+           {{- end }}
+           {{- if .Values.controller.scope.enabled }}
+-            - --watch-namespace={{ default .Release.Namespace .Values.controller.scope.namespace }}
++            - --watch-namespace={{ default "$(POD_NAMESPACE)" .Values.controller.scope.namespace }}
+           {{- end }}
+           {{- if and .Values.controller.reportNodeInternalIp .Values.controller.hostNetwork }}
+             - --report-node-internal-ip-address={{ .Values.controller.reportNodeInternalIp }}
+diff --git a/charts/ingress-nginx/templates/controller-deployment.yaml b/charts/ingress-nginx/templates/controller-deployment.yaml
+index fe3b56a73ce..97dc7251557 100644
+--- a/charts/ingress-nginx/templates/controller-deployment.yaml
++++ b/charts/ingress-nginx/templates/controller-deployment.yaml
+@@ -84,12 +84,12 @@ spec:
+           {{- end }}
+             - --election-id={{ .Values.controller.electionID }}
+             - --ingress-class={{ .Values.controller.ingressClass }}
+-            - --configmap=$(POD_NAMESPACE)/{{ include "ingress-nginx.controller.fullname" . }}
++            - --configmap={{ default "$(POD_NAMESPACE)" .Values.controller.configMapNamespace }}/{{ include "ingress-nginx.controller.fullname" . }}
+           {{- if .Values.tcp }}
+-            - --tcp-services-configmap=$(POD_NAMESPACE)/{{ include "ingress-nginx.fullname" . }}-tcp
++            - --tcp-services-configmap={{ default "$(POD_NAMESPACE)" .Values.controller.tcp.configMapNamespace }}/{{ include "ingress-nginx.fullname" . }}-tcp
+           {{- end }}
+           {{- if .Values.udp }}
+-            - --udp-services-configmap=$(POD_NAMESPACE)/{{ include "ingress-nginx.fullname" . }}-udp
++            - --udp-services-configmap={{ default "$(POD_NAMESPACE)" .Values.controller.udp.configMapNamespace }}/{{ include "ingress-nginx.fullname" . }}-udp
+           {{- end }}
+           {{- if .Values.controller.scope.enabled }}
+             - --watch-namespace={{ default "$(POD_NAMESPACE)" .Values.controller.scope.namespace }}
+diff --git a/charts/ingress-nginx/values.yaml b/charts/ingress-nginx/values.yaml
+index 0f66c48ef47..944d00ab704 100644
+--- a/charts/ingress-nginx/values.yaml
++++ b/charts/ingress-nginx/values.yaml
+@@ -109,23 +109,23 @@ controller:
+   ##
+   scope:
+     enabled: false
+-    namespace: ""   # defaults to .Release.Namespace
++    namespace: ""   # defaults to $(POD_NAMESPACE)
+ 
+   ## Allows customization of the configmap / nginx-configmap namespace
+   ##
+-  configMapNamespace: ""   # defaults to .Release.Namespace
++  configMapNamespace: ""   # defaults to $(POD_NAMESPACE)
+ 
+   ## Allows customization of the tcp-services-configmap
+   ##
+   tcp:
+-    configMapNamespace: ""   # defaults to .Release.Namespace
++    configMapNamespace: ""   # defaults to $(POD_NAMESPACE)
+     ## Annotations to be added to the tcp config configmap
+     annotations: {}
+ 
+   ## Allows customization of the udp-services-configmap
+   ##
+   udp:
+-    configMapNamespace: ""   # defaults to .Release.Namespace
++    configMapNamespace: ""   # defaults to $(POD_NAMESPACE)
+     ## Annotations to be added to the udp config configmap
+     annotations: {}
+ 
