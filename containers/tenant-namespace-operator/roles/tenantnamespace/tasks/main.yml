@@ -5,6 +5,10 @@
   set_fact:
     dryrun: "{{ lookup('env','DRYRUN') | default('False') | bool }}"
 
+- name: Set admin labels
+  set_fact:
+    adminlabels: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceLabels | default({}) | combine({'name': meta.name + '-admin', 'miscscripts.pnnl.gov/namespace-type': 'admin'}, recursive=True) }}"
+
 - name: Create the k8s admin namespace
   k8s:
     state: present
@@ -13,9 +17,8 @@
       kind: Namespace
       metadata:
         name: "{{ meta.name }}-admin"
-        labels:
-          name: "{{ meta.name }}-admin"
-          miscscripts.pnnl.gov/namespace-type: admin
+        labels: "{{ adminlabels }}"
+        annotations: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceAnnotations | default({}) }}"
   when:
   - not dryrun
 
@@ -217,7 +220,7 @@
   - ingressService.resources[0].metadata is defined
   - ingressService.resources[0].metadata.labels is defined
   - ingressService.resources[0].metadata.labels["helm.sh/chart"] is defined
-  - ingressService.resources[0].metadata.labels["helm.sh/chart"] == "ingress-3.23.0"
+  - ingressService.resources[0].metadata.labels["helm.sh/chart"] == "ingress-3.34.0"
 
 #FIXME Consider making a service account specifically for this so it can't cross namespaces as far as it can today
 - name: Run Helm
@@ -269,6 +272,10 @@
     status:
       diff: "{{ differ | b64encode }}"
 
+- name: Set user labels
+  set_fact:
+    userlabels: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceLabels | default({}) | combine({'name': meta.name, 'miscscripts.pnnl.gov/namespace-type': 'user'}, recursive=True) }}"
+
 - name: Create the k8s user namespace
   k8s:
     state: present
@@ -277,9 +284,8 @@
       kind: Namespace
       metadata:
         name: "{{ meta.name }}"
-        labels:
-          name: "{{ meta.name }}"
-          miscscripts.pnnl.gov/namespace-type: user
+        labels: "{{ userlabels }}"
+        annotations: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceAnnotations | default({}) }}"
   when:
   - not dryrun
 
