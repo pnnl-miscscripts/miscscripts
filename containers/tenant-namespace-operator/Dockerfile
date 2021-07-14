@@ -27,7 +27,7 @@ RUN \
   helm plugin install https://github.com/databus23/helm-diff --version master && \
   helm pull --repo https://pnnl-miscscripts.github.io/charts tenant-namespace --version 0.6.9 --untar && \
   cd tenant-namespace/charts/ingress-nginx/ && \
-  patch -p3 <${HOME}/configmap.patch && \
+  patch -p3 --no-backup-if-mismatch <${HOME}/configmap.patch && \
   cd - && \
   find roles/ -type f -exec md5sum {} \; > /.extrafingerprints && \
   echo 0.1.11 >> /.extrafingerprints && \

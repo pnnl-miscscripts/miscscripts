@@ -73,4 +73,3 @@ index 0f66c48ef47..944d00ab704 100644
 +    configMapNamespace: ""   # defaults to $(POD_NAMESPACE)
      ## Annotations to be added to the udp config configmap
      annotations: {}
- 
