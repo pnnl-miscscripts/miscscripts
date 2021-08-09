@@ -1,7 +1,7 @@
 # Copied from helm stable repo. Maintainer switched.
 apiVersion: v1
-appVersion: 2.8.1
-description: Elegantly enables a Tiller per namespace in RBAC-enabled clusters
+appVersion: 2.8.2
+description: Manage resources per namespace using Helm
 home: https://github.com/kubernetes/charts/tree/master/stable/magic-namespace
 maintainers:
 - email: kevin.fox@pnnl.gov
@@ -9,4 +9,4 @@ maintainers:
 #- email: kent.rancourt@microsoft.com
 #  name: krancour
 name: magic-namespace
-version: 0.5.3
+version: 0.5.4
