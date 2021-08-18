@@ -37,7 +37,7 @@ for ver in 1-17 1-18 1-19 1-20 1-21; do
 done
 
 CHANGE=0
-for CHART in nginx-app console chronyd dhcpd ipmi-exporter kubeupdater k8s-node-image pixiecore pixiecore-simpleconfig gitlab-runner-operator tenant-namespace-operator smartctl-exporter grafana-misc-dashboards magic-namespace; do
+for CHART in nginx-app console chronyd dhcpd ipmi-exporter kubeupdater k8s-node-image tenant-namespace pixiecore pixiecore-simpleconfig gitlab-runner-operator tenant-namespace-operator smartctl-exporter grafana-misc-dashboards magic-namespace; do
 	RAWCHART=$CHART
 	case "$CHART" in
 	k8s-node-image)
