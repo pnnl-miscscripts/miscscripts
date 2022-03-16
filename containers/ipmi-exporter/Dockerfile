@@ -1,4 +1,4 @@
-FROM centos:centos8
+FROM rockylinux:8
 MAINTAINER Kevin Fox <Kevin.Fox@pnnl.gov>
 
 RUN \
