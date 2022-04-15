@@ -1,5 +1,5 @@
 {{- if .Values.ingress.enabled -}}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ include "pnnlmiscscripts.pixiecore.simpleconfig.fullname" . }}
@@ -11,13 +11,18 @@ metadata:
   annotations:
 {{- toYaml .Values.ingress.annotations | nindent 4 }}
 spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
   rules:
     - http:
         paths:
           - path: {{ .Values.ingress.path }}
             backend:
-              serviceName: {{ .Values.service.name }}
-              servicePort: http
+              service:
+                name: {{ .Values.service.name }}
+                port:
+                  name: http
 {{- if .Values.ingress.host }}
       host: {{ .Values.ingress.host | quote }}
 {{- end }}

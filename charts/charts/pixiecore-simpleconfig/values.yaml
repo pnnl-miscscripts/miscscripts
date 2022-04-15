@@ -35,6 +35,7 @@ affinity: {}
 
 ingress:
   enabled: false
+  #className: ""
   annotations: {}
   path: /v1/boot
 #  host: example.com
