@@ -2,7 +2,7 @@ apiVersion: v2
 type: application
 description: Chart for setting up a tenants namespace with all the goodies
 name: tenant-namespace
-version: 0.7.9
+version: 0.7.10
 appVersion: "1.0"
 dependencies:
 - name: magic-namespace
@@ -16,6 +16,6 @@ dependencies:
   repository: "https://pnnl-miscscripts.github.io/charts"
 - name: ingress-nginx
   alias: ingress
-  version: "3.34.0"
+  version: "4.0.19"
   repository: "https://kubernetes.github.io/ingress-nginx"
   condition: ingress.nginx.enabled
