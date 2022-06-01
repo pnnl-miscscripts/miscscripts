@@ -35,7 +35,7 @@ if [ "x$flag" == "x-u" ]; then
 			yum upgrade -y
 			post_upgrade
 			kubectl label node $HOSTNAME miscscripts.pnnl.gov/upgrade-needed-
-			reboot
+			finish_upgrade
 		fi
 	done
 	sleep 1

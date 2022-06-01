@@ -55,3 +55,6 @@ extraPreUpgradeScript: |
   echo "About to upgrade everything"
 extraPostUpgradeScript: |
   echo "Done upgrading"
+
+finishUpgradeScript: |
+  reboot

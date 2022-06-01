@@ -15,4 +15,8 @@ data:
 {{ .Values.extraPostUpgradeScript | indent 6 }}
     }
 
+    function finish_upgrade {
+{{ .Values.finishUpgradeScript | indent 6 }}
+    }
+
 {{ .Files.Get "bin/kubeupdater" | indent 4 }}
