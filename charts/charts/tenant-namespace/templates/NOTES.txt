@@ -21,7 +21,7 @@ You need to ensure there is a ClusterRoleBinding that lets ingress-nginx read in
 ```
 subjects:
 - kind: ServiceAccount
-  name: example-ingress
-  namespace: "example-admin"
+  name: {{ .Release.Name }}-ingress
+  namespace: {{ .Release.Namespace }}
 ```
 {{ end }}
