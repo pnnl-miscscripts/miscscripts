@@ -21,12 +21,12 @@ spec:
 # Allow admin namespace to access this namespace
     - namespaceSelector:
         matchLabels:
-          name: {{ .Release.Namespace }}
+          kubernetes.io/metadata.name: {{ .Release.Namespace }}
       podSelector: {}
 # Allow access to the kube-system namespace for service discovery
     - namespaceSelector:
         matchLabels:
-          name: kube-system
+          kubernetes.io/metadata.name: kube-system
       podSelector: {}
 # Allow this namespace to access itself
     - podSelector: {}
@@ -40,12 +40,12 @@ spec:
 # Allow admin namespace to access this namespace
     - namespaceSelector:
         matchLabels:
-          name: {{ .Release.Namespace }}
+          kubernetes.io/metadata.name: {{ .Release.Namespace }}
       podSelector: {}
 # Allow access to the kube-system namespace for service discovery
     - namespaceSelector:
         matchLabels:
-          name: kube-system
+          kubernetes.io/metadata.name: kube-system
       podSelector: {}
 # Allow this namespace to access itself
     - podSelector: {}

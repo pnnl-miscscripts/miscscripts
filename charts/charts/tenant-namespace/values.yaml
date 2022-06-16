@@ -83,6 +83,8 @@ ingress:
       enabled: true
     admissionWebhooks:
       enabled: false
+    ingressClassResource:
+      enabled: false
   rbac:
     scope: true
 

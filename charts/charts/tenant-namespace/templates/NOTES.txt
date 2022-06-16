@@ -1,2 +1,27 @@
-Remember to:
-kubectl label namespace kube-system name=kube-system
+{{ $nks := lookup "v1" "Namespace" "" "kube-system" }}
+{{ if gt (len $nks) 0 }}
+{{ if $nks.metadata.labels }}
+{{ if not (index $nks.metadata.labels "kubernetes.io/metadata.name") }}
+{{ fail "You must first run: kubectl label namespace kube-system kubernetes.io/metadata.name=kube-system"}}
+{{ end }}
+{{ end }}
+{{ end }}
+
+{{ $nks := lookup "v1" "Namespace" "" .Values.magicnamespace.namespace }}
+{{ if gt (len $nks) 0 }}
+{{ if $nks.metadata.labels }}
+{{ if not (index $nks.metadata.labels "kubernetes.io/metadata.name") }}
+{{ fail (printf "You must first run: kubectl label namespace %s kubernetes.io/metadata.name=%s" .Values.magicnamespace.namespace .Values.magicnamespace.namespace) }}
+{{ end }}
+{{ end }}
+{{ end }}
+
+{{ if not .Values.ingress.clusterRole }}
+You need to ensure there is a ClusterRoleBinding that lets ingress-nginx read ingress classes globally bound to:
+```
+subjects:
+- kind: ServiceAccount
+  name: example-ingress
+  namespace: "example-admin"
+```
+{{ end }}
