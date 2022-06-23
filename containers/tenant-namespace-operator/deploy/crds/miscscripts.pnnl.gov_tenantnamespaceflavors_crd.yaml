@@ -11,6 +11,7 @@ spec:
     plural: tenantnamespaceflavors
     singular: tenantnamespaceflavor
   scope: Cluster
+  preserveUnknownFields: false
   versions:
   - name: v1beta1
     schema:
