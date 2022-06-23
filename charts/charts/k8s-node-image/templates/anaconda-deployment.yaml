@@ -3,25 +3,29 @@ kind: Deployment
 metadata:
   name: {{ include "pnnlmiscscripts.k8s-node-image-full.anaconda.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "pnnlmiscscripts.k8s-node-image-full.name" . }}
-    helm.sh/chart: {{ include "pnnlmiscscripts.k8s-node-image-full.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "pnnlmiscscripts.k8s-node-image-full.labels" . | nindent 4 }}
+    app.kubernetes.io/component: anaconda
     svc: anaconda
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "pnnlmiscscripts.k8s-node-image-full.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+      {{- include "pnnlmiscscripts.k8s-node-image-full.selectorLabels" . | nindent 6 }}
       svc: anaconda
   template:
     metadata:
+      {{- with .Values.anaconda.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
-        app.kubernetes.io/name: {{ include "pnnlmiscscripts.k8s-node-image-full.name" . }}
-        app.kubernetes.io/instance: {{ .Release.Name }}
+        {{- include "pnnlmiscscripts.k8s-node-image-full.selectorLabels" . | nindent 8 }}
         svc: anaconda
     spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: main
           command: ["nginx", "-g", "daemon off;"]
@@ -52,11 +56,11 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.affinity }}
+      {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
-    {{- with .Values.tolerations }}
+      {{- end }}
+      {{- with .Values.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
+      {{- end }}

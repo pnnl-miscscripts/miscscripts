@@ -3,7 +3,9 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 2
+minAvailable: 1
 
+imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
@@ -14,6 +16,8 @@ anaconda:
   service:
     type: ClusterIP
     port: 80
+  
+  podAnnotations: {}
 
 k8sNode:
   prefix: "pnnlmiscscripts.k8s-node-image-nginx-1-14"
@@ -23,6 +27,8 @@ k8sNode:
   service:
     type: ClusterIP
     port: 80
+  
+  podAnnotations: {}
 
 ingress:
   enabled: true
