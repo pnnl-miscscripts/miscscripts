@@ -3,10 +3,8 @@ kind: Service
 metadata:
   name: {{ include "pnnlmiscscripts.k8s-node-image-full.anaconda.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "pnnlmiscscripts.k8s-node-image-full.name" . }}
-    helm.sh/chart: {{ include "pnnlmiscscripts.k8s-node-image-full.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "pnnlmiscscripts.k8s-node-image-full.labels" . | nindent 4 }}
+    app.kubernetes.io/component: anaconda
     svc: anaconda
 spec:
   type: {{ .Values.anaconda.service.type }}
@@ -16,6 +14,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/name: {{ include "pnnlmiscscripts.k8s-node-image-full.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- include "pnnlmiscscripts.k8s-node-image-full.selectorLabels" . | nindent 4 }}
     svc: anaconda

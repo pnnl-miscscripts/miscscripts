@@ -1,7 +1,0 @@
-dependencies:
-- name: k8s-node-image-nginx-1-14
-  version: 2.0.0
-  repository: https://pnnl-miscscripts.github.io/image-library-charts/
-- name: anaconda-nginx
-  version: 2.0.0
-  repository: https://pnnl-miscscripts.github.io/image-library-charts/

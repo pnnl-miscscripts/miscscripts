@@ -1,0 +1,17 @@
+{{- if (gt (.Values.replicaCount | int) 1) }}
+apiVersion: {{ ternary "policy/v1" "policy/v1beta1" (semverCompare ">=1.21.0-0" .Capabilities.KubeVersion.Version) }}
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    {{- include "pnnlmiscscripts.k8s-node-image-full.labels" . | nindent 4 }}
+    app.kubernetes.io/component: k8s-node
+    svc: k8s-node
+  name: {{ include "pnnlmiscscripts.k8s-node-image-full.k8s-node.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "pnnlmiscscripts.k8s-node-image-full.selectorLabels" . | nindent 6 }}
+      svc: k8s-node
+  minAvailable: {{ .Values.minAvailable }}
+{{- end }}

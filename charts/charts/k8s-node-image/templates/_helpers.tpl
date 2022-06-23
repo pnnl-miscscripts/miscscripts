@@ -81,3 +81,22 @@ takes dot, prefix, suffix, and type. type can be either f or d.
 {{- end }}
 {{- end -}}
 
+{{/*
+Common labels
+*/}}
+{{- define "pnnlmiscscripts.k8s-node-image-full.labels" -}}
+helm.sh/chart: {{ include "pnnlmiscscripts.k8s-node-image-full.chart" . }}
+{{ include "pnnlmiscscripts.k8s-node-image-full.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Selector labels
+*/}}
+{{- define "pnnlmiscscripts.k8s-node-image-full.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "pnnlmiscscripts.k8s-node-image-full.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

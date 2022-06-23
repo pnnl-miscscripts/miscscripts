@@ -25,7 +25,7 @@ helm repo update
 
 for ver in 1-20 1-21 1-22 1-23 1-24; do
 	cp -a k8s-node-image k8s-node-image-$ver
-	sed -i "s@k8s-node-image-nginx-1-14@k8s-node-image-nginx-$ver@g" k8s-node-image-$ver/requirements.yaml k8s-node-image-$ver/values.yaml
+	sed -i "s@k8s-node-image-nginx-1-14@k8s-node-image-nginx-$ver@g" k8s-node-image-$ver/Chart.yaml k8s-node-image-$ver/values.yaml
 	sed -i "s@^name:.*@name: k8s-node-image-$ver@g" k8s-node-image-$ver/Chart.yaml
 	pushd k8s-node-image-$ver 2>/dev/null
 	helm dep up --skip-refresh

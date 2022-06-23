@@ -20,10 +20,7 @@ kind: Ingress
 metadata:
   name: {{ include "pnnlmiscscripts.k8s-node-image-full.fullname" . }}
   labels:
-    app.kubernetes.io/name: {{ include "pnnlmiscscripts.k8s-node-image-full.name" . }}
-    helm.sh/chart: {{ include "pnnlmiscscripts.k8s-node-image-full.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "pnnlmiscscripts.k8s-node-image-full.labels" . | nindent 4 }}
   annotations:
 {{- if .Values.ingress.regex }}
     nginx.ingress.kubernetes.io/rewrite-target: /$1
