@@ -24,13 +24,13 @@ RUN \
   helm pull gitlab/gitlab-runner --untar && \
   cd gitlab-runner && \
   awk -F: '{if($1 == "version"){print $2}}' Chart.yaml | sed 's/ //g' && \
-  echo Applying volume.patch && \
-  patch -p1 < /volume.patch && \
+  echo Skipping volume.patch && \
+  echo patch -p1 /volume.patch && \
   cd .. && \
   yum remove -y patch git && \
   cd ${HOME} && \
   find roles/ -type f -exec md5sum {} \; > /.extrafingerprints && \
-  echo 0.1.3 >> /.extrafingerprints && \
+  echo 0.1.4 >> /.extrafingerprints && \
   awk -F: '{if($1 == "version"){print $2}}' /gitlab-runner/Chart.yaml | sed 's/ //g' >> /.extrafingerprints && \
   md5sum watches.yaml >> /.extrafingerprints
 
