@@ -91,6 +91,8 @@
       magicnamespace:
         namespace: "{{ meta.name }}"
       ingress:
+        nginx:
+          clusterRole: "{{ lookup('env','INGRESS_CLUSTERROLE') | default('tenant-namespace-operator-ingress-controller') }}"
         controller:
           scope:
             namespace: "{{ meta.name }}"

@@ -56,3 +56,7 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+ingressClass:
+  enabled: true
+  name: nginx
