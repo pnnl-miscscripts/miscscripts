@@ -2,7 +2,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: pmstn-{{ template "namespace.name" . }}-ic
+  name: pmstn-{{ .Values.magicnamespace.namespace }}-ic
   labels:
     {{- include "namespace.labels" . | nindent 4 }}
 roleRef:
