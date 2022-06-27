@@ -23,7 +23,7 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ include "tenant-namespace-operator.fullname" . }}
-          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
           - mountPath: /tmp/ansible-operator/runner
@@ -57,6 +57,8 @@ spec:
             - name: DRYRUN
               value: "yes"
 {{- end }}
+            - name: INGRESS_CLUSTERROLE
+              value: {{ include "tenant-namespace-operator.fullname" . }}-ic
       volumes:
         - name: runner
           emptyDir: {}
