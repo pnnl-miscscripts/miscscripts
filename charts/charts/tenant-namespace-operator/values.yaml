@@ -59,4 +59,4 @@ affinity: {}
 
 ingressClass:
   enabled: true
-  name: nginx
+  name: public
