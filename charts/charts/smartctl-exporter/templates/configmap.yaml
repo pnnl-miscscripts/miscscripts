@@ -1,13 +1,26 @@
+{{- if hasKey . "config" }}
+{{ toYaml .config }}
+{{- else }}
+
+{{- $global := . }}
+{{- $base := dict "config" .Values.config }}
+{{- $items := prepend .Values.extraInstances $base }}
+{{- range $idx, $item := $items }}
+{{- $config := mergeOverwrite $item.config $global.Values.common.config }}
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ template "pnnlmiscscripts.smartctl-exporter.fullname" . }}
+  name: {{ template "pnnlmiscscripts.smartctl-exporter.fullname" $global }}-{{ $idx }}
   labels:
-    app: {{ template "pnnlmiscscripts.smartctl-exporter.name" . }}
-    chart: {{ template "pnnlmiscscripts.smartctl-exporter.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    app: {{ template "pnnlmiscscripts.smartctl-exporter.name" $global }}
+    chart: {{ template "pnnlmiscscripts.smartctl-exporter.chart" $global }}
+    release: {{ $global.Release.Name }}
+    heritage: {{ $global.Release.Service }}
+    idx: i{{ $idx }}
 data:
   smartctl_exporter.yaml: |
     smartctl_exporter:
-{{ toYaml .Values.config | indent 6 }}
+{{ toYaml $config | indent 6 }}
+{{- end }}
+{{- end }}

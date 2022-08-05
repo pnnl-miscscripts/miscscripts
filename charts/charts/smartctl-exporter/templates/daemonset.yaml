@@ -1,33 +1,42 @@
+{{- $global := . }}
+{{- $base := dict "resources" .Values.resources "nodeSelector" .Values.nodeSelector "affinity" .Values.affinity "tolerations" .Values.tolerations "config" .Values.config }}
+{{- $items := prepend .Values.extraInstances $base }}
+{{- range $idx, $item := $items }}
+{{- $config := mergeOverwrite $item.config $global.Values.common.config }}
+{{- $res := set $item "config" $config }}
+---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: {{ template "pnnlmiscscripts.smartctl-exporter.fullname" . }}
+  name: {{ template "pnnlmiscscripts.smartctl-exporter.fullname" $global }}-{{ $idx }}
   labels:
-    app: {{ template "pnnlmiscscripts.smartctl-exporter.name" . }}
-    chart: {{ template "pnnlmiscscripts.smartctl-exporter.chart" . }}
-    release: {{ .Release.Name }}
-    heritage: {{ .Release.Service }}
+    app: {{ template "pnnlmiscscripts.smartctl-exporter.name" $global }}
+    chart: {{ template "pnnlmiscscripts.smartctl-exporter.chart" $global }}
+    release: {{ $global.Release.Name }}
+    heritage: {{ $global.Release.Service }}
+    idx: i{{ $idx }}
 spec:
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 1
     type: RollingUpdate
-  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ template "pnnlmiscscripts.smartctl-exporter.name" . }}
-      release: {{ .Release.Name }}
+      app: {{ template "pnnlmiscscripts.smartctl-exporter.name" $global }}
+      release: {{ $global.Release.Name }}
+      idx: i{{ $idx }}
   template:
     metadata:
       labels:
-        app: {{ template "pnnlmiscscripts.smartctl-exporter.name" . }}
-        release: {{ .Release.Name }}
+        app: {{ template "pnnlmiscscripts.smartctl-exporter.name" $global }}
+        release: {{ $global.Release.Name }}
+        idx: i{{ $idx }}
       annotations:
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum | quote }}
     spec:
       containers:
-      - image: {{ dict "dot" . "section" .Values.image | include "pnnlmiscscripts.smartctl-exporter.image" }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+      - image: {{ dict "dot" . "section" $global.Values.image | include "pnnlmiscscripts.smartctl-exporter.image" }}
+        imagePullPolicy: {{ $global.Values.image.pullPolicy }}
         name: main
         securityContext:
           privileged: true
@@ -36,7 +45,7 @@ spec:
           containerPort: 9633
           protocol: TCP
         resources:
-{{ toYaml .Values.resources | indent 10 }}
+{{ toYaml $item.resources | indent 10 }}
         volumeMounts:
         - mountPath: /hostdev
           name: dev
@@ -46,23 +55,24 @@ spec:
       dnsPolicy: ClusterFirst
       hostNetwork: true
       restartPolicy: Always
-      serviceAccountName: {{ template "pnnlmiscscripts.smartctl-exporter.fullname" . }}
+      serviceAccountName: {{ template "pnnlmiscscripts.smartctl-exporter.fullname" $global }}
       volumes:
       - configMap:
-          name: {{ template "pnnlmiscscripts.smartctl-exporter.fullname" . }}
+          name: {{ template "pnnlmiscscripts.smartctl-exporter.fullname" $global }}-{{ $idx }}
         name: config
       - hostPath:
           path: /dev
         name: dev
-    {{- with .Values.nodeSelector }}
+    {{- with $item.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
     {{- end }}
-    {{- with .Values.affinity }}
+    {{- with $item.affinity }}
       affinity:
 {{ toYaml . | indent 8 }}
     {{- end }}
-    {{- with .Values.tolerations }}
+    {{- with $item.tolerations }}
       tolerations:
 {{ toYaml . | indent 8 }}
     {{- end }}
+{{- end }}
