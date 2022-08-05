@@ -24,6 +24,14 @@ serviceMonitor:
   extraLabels: {}
   # release: prometheus-operator
 
+prometheusRules:
+  enabled: false
+  # Specify namespace to load the monitor if not in the same namespace
+  # namespace: prometheus-operator
+  # Add Extra labels if needed. Prometeus operator may need them to find it.
+  extraLabels: {}
+  # release: prometheus-operator
+
 image:
   pullPolicy: IfNotPresent
 

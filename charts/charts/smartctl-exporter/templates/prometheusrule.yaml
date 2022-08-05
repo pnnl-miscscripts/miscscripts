@@ -1,0 +1,22 @@
+{{- if .Values.prometheusRules.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: {{ template "pnnlmiscscripts.smartctl-exporter.fullname" . }}.rules
+  labels:
+    app.kubernetes.io/name: {{ include "foobar.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    chart: {{ template "pnnlmiscscripts.smartctl-exporter.chart" . }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+{{- if ne (len .Values.prometheusRules.extraLabels) 0 }}
+{{ toYaml .Values.prometheusRules.extraLabels | indent 4 }}
+{{- end }}
+{{- if hasKey .Values.prometheusRules "namespace" }}
+  namespace: {{ .Values.prometheusRules.namespace }}
+{{- end }}
+spec:
+  groups:
+  - name: smartctl-exporter.rules
+{{ .Files.Get "rules/rules.txt" | indent 4 }}
+{{- end }}
