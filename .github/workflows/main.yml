@@ -88,13 +88,13 @@ jobs:
         uses: actions/checkout@v2
       - name: Build debug-toolbox container
         run: ./containers/build debug-toolbox
-#  buildc-smartctl-exporter:
-#    runs-on: ubuntu-20.04
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#      - name: Build smartctl-exporter container
-#        run: ./containers/build smartctl-exporter
+  buildc-smartctl-exporter:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build smartctl-exporter container
+        run: ./containers/build smartctl-exporter
   buildc-rpms-containerd:
     runs-on: ubuntu-20.04
     steps:
