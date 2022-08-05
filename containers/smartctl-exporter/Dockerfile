@@ -1,16 +1,9 @@
-FROM golang
-RUN \
-  wget -q -O /tmp/exporter.tar.gz https://github.com/Sheridan/smartctl_exporter/archive/smartctl_exporter_0.5.tar.gz && \
-  tar -zxvf /tmp/exporter.tar.gz && \
-  cd smartctl* && \
-  export CGO_ENABLED=0 && \
-  make && \
-  make install && \
-  mv bin/smartctl* /bin/smartctl_exporter
-
 FROM alpine
-COPY --from=0 /bin/smartctl_exporter /bin/smartctl_exporter
 RUN \
+  wget -O exporter.tar.gz https://github.com/prometheus-community/smartctl_exporter/releases/download/v0.7.0/smartctl_exporter-0.7.0.linux-amd64.tar.gz && \
+  tar -zxvf exporter.tar.gz && \
+  mv smartctl_exporter*/smartctl_exporter /bin/ && \
+  rm -rf smartctl_exporter* && \
   apk add --no-cache --update smartmontools
 
 COPY smartctl_exporter.yaml /etc/smartctl_exporter.yaml
