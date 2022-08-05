@@ -315,10 +315,9 @@ jobs:
     - build-node-image-22-nginx
     - build-node-image-23-nginx
     - build-node-image-24-nginx
-    - build-node-image-20-nginx
     - build-node-image-21-nginx
     - buildc-pixiecore
-#    - buildc-smartctl-exporter
+    - buildc-smartctl-exporter
     env:
       GITHUB_LIBRARY_CHARTS_TOKEN: ${{ secrets.GIT_LIBRARY_CHARTS_TOKEN }}
     steps:
