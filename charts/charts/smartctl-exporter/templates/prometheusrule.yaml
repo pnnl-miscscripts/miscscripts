@@ -4,7 +4,7 @@ kind: PrometheusRule
 metadata:
   name: {{ template "pnnlmiscscripts.smartctl-exporter.fullname" . }}.rules
   labels:
-    app.kubernetes.io/name: {{ include "foobar.name" . }}
+    app.kubernetes.io/name: {{ include "pnnlmiscscripts.smartctl-exporter.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     chart: {{ template "pnnlmiscscripts.smartctl-exporter.chart" . }}
     release: {{ .Release.Name }}
