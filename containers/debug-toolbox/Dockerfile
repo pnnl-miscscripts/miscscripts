@@ -21,4 +21,5 @@ RUN \
     conntrack-tools \
     procps \
     iotop \
-    ipvsadm
+    ipvsadm \
+    openssl
