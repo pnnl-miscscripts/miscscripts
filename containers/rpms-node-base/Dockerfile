@@ -14,7 +14,7 @@ RUN --mount=type=secret,id=gpg \
     --destdir rpms --setopt cachedir=/tmp/cache \
     @Base @Core @anaconda-tools grub2-efi-x64 kernel grub2 docker e2fsprogs \
     container-selinux nspr nss-util openssh-server openssh iptables-services \
-    nfs-utils authconfig psmisc libibverbs && \
+    nfs-utils authconfig psmisc libibverbs qemu-guest-agent && \
   gpg --import /run/secrets/gpg && \
   gpg --import /root/rpm.pub && \
   rpm --addsign $(find rpms -type f -name '*.rpm') && \
