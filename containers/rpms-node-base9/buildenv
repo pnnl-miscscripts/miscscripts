@@ -1,0 +1,6 @@
+export AUTO_PREFIX=rpmrepo-version-release
+export AUTO_PREFIX_PACKAGE=rocky-release
+export AUTO_PREFIX_FILTER='cut -d . -f 1 | tr '-' .'
+export DOCKER_BUILDKIT=1
+export GPGSIGN=1
+export NEW_BUILD=1
