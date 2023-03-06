@@ -22,7 +22,7 @@ RUN --mount=type=secret,id=gpg \
   find /rpms-base -maxdepth 1 -type f -name '*.rpm' -printf '%f\n' | while read line; do rm -f $line; done && \
   gpg --import /run/secrets/gpg && \
   gpg --import /root/rpm.pub && \
-  rpm --addsign $(find rpms -type f -name '*.rpm') && \
+  rpm --addsign $(find . -type f -name '*.rpm') && \
   createrepo /rpms && \
   gpg --detach-sign --armor rpms/repodata/repomd.xml && \
   rm -rf ~/.gnupg && \
