@@ -108,6 +108,7 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-containerd
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-containerd9
           rm -f rpm.priv
   buildc-rpms-node-base:
@@ -121,6 +122,7 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-node-base
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-node-base9
           rm -f rpm.priv
   buildc-rpms-openvswitch:
@@ -136,6 +138,7 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-openvswitch
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-openvswitch9
           rm -f rpm.priv
   buildc-rpms-k8s-22:
@@ -151,6 +154,7 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.22
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes9 1.22
           rm -f rpm.priv
   buildc-rpms-k8s-23:
@@ -166,6 +170,7 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.23
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes9 1.23
           rm -f rpm.priv
   buildc-rpms-k8s-24:
@@ -181,6 +186,7 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.24
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes9 1.24
           rm -f rpm.priv
   buildc-rpms-k8s-21:
@@ -196,6 +202,7 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.21
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes9 1.21
           rm -f rpm.priv
   buildc-anaconda:
@@ -224,6 +231,7 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.22
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image9 1.22
           rm -f rpm.priv
   build-node-image-23:
@@ -242,6 +250,7 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.23
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image9 1.23
           rm -f rpm.priv
   build-node-image-24:
@@ -260,6 +269,7 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.24
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image9 1.24
           rm -f rpm.priv
   build-node-image-21:
@@ -278,6 +288,7 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.21
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image9 1.21
           rm -f rpm.priv
 
