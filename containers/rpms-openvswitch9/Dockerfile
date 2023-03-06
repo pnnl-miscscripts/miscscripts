@@ -24,7 +24,7 @@ RUN --mount=type=secret,id=gpg \
   gpg --import /root/rpm.pub && \
   rpm --addsign $(find . -type f -name '*.rpm') && \
   createrepo /rpms && \
-  gpg --detach-sign --armor rpms/repodata/repomd.xml && \
+  gpg --detach-sign --armor /rpms/repodata/repomd.xml && \
   rm -rf ~/.gnupg && \
   cp /root/rpm.pub /rpms/repodata/RPM-GPG-KEY && \
   ls -l /rpms
