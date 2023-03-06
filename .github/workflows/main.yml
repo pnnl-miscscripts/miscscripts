@@ -205,6 +205,7 @@ jobs:
         uses: actions/checkout@v3.3.0
       - name: Build anaconda container
         run: ./containers/build anaconda
+      - name: Build anaconda9 container
         run: ./containers/build anaconda9
 
   build-node-image-22:
