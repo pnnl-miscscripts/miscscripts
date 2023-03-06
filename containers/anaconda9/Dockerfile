@@ -10,7 +10,7 @@ RUN \
   curl http://dl.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/LICENSE -o /data/LICENSE && \
   sed -i 's/AppStream,BaseOS/BaseOS/' /data/.treeinfo && \
   curl -s http://download.rockylinux.org/pub/rocky/9/BaseOS/x86_64/os/media.repo | grep mediaid | awk -F= '{print $2}' > /data/RockyLinux_BuildTag && \
-  cat /data/RockyLinux_BuildTag /.extrafingerprints 
+  cat /data/RockyLinux_BuildTag /.extrafingerprints && \
   md5sum /data/images/pxeboot/vmlinuz /data/images/pxeboot/initrd.img /data/images/efiboot.img /data/images/install.img | base64 > /.extrafingerprints
 
 FROM scratch
