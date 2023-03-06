@@ -97,6 +97,8 @@ jobs:
         run: ./containers/build smartctl-exporter
   buildc-rpms-containerd:
     runs-on: ubuntu-20.04
+    needs:
+    - buildc-rpms-node-base
     steps:
       - name: Checkout
         uses: actions/checkout@v3.3.0
@@ -106,6 +108,7 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-containerd
+          ./containers/build rpms-containerd9
           rm -f rpm.priv
   buildc-rpms-node-base:
     runs-on: ubuntu-20.04
@@ -118,9 +121,12 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-node-base
+          ./containers/build rpms-node-base9
           rm -f rpm.priv
   buildc-rpms-openvswitch:
     runs-on: ubuntu-20.04
+    needs:
+    - buildc-rpms-node-base
     steps:
       - name: Checkout
         uses: actions/checkout@v3.3.0
@@ -130,9 +136,12 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-openvswitch
+          ./containers/build rpms-openvswitch9
           rm -f rpm.priv
   buildc-rpms-k8s-22:
     runs-on: ubuntu-20.04
+    needs:
+    - buildc-rpms-node-base
     steps:
       - name: Checkout
         uses: actions/checkout@v3.3.0
@@ -142,9 +151,12 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.22
+          ./containers/build rpms-kubernetes9 1.22
           rm -f rpm.priv
   buildc-rpms-k8s-23:
     runs-on: ubuntu-20.04
+    needs:
+    - buildc-rpms-node-base
     steps:
       - name: Checkout
         uses: actions/checkout@v3.3.0
@@ -154,9 +166,12 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.23
+          ./containers/build rpms-kubernetes9 1.23
           rm -f rpm.priv
   buildc-rpms-k8s-24:
     runs-on: ubuntu-20.04
+    needs:
+    - buildc-rpms-node-base
     steps:
       - name: Checkout
         uses: actions/checkout@v3.3.0
@@ -166,9 +181,12 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.24
+          ./containers/build rpms-kubernetes9 1.24
           rm -f rpm.priv
   buildc-rpms-k8s-21:
     runs-on: ubuntu-20.04
+    needs:
+    - buildc-rpms-node-base
     steps:
       - name: Checkout
         uses: actions/checkout@v3.3.0
@@ -178,6 +196,7 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes 1.21
+          ./containers/build rpms-kubernetes9 1.21
           rm -f rpm.priv
   buildc-anaconda:
     runs-on: ubuntu-20.04
@@ -186,6 +205,7 @@ jobs:
         uses: actions/checkout@v3.3.0
       - name: Build anaconda container
         run: ./containers/build anaconda
+        run: ./containers/build anaconda9
 
   build-node-image-22:
     runs-on: ubuntu-20.04
@@ -203,6 +223,7 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.22
+          ./containers/build k8s-node-image9 1.22
           rm -f rpm.priv
   build-node-image-23:
     runs-on: ubuntu-20.04
@@ -220,6 +241,7 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.23
+          ./containers/build k8s-node-image9 1.23
           rm -f rpm.priv
   build-node-image-24:
     runs-on: ubuntu-20.04
@@ -237,6 +259,7 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.24
+          ./containers/build k8s-node-image9 1.24
           rm -f rpm.priv
   build-node-image-21:
     runs-on: ubuntu-20.04
@@ -254,6 +277,7 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.21
+          ./containers/build k8s-node-image9 1.21
           rm -f rpm.priv
 
   buildc-anaconda-nginx:
@@ -265,6 +289,8 @@ jobs:
         uses: actions/checkout@v3.3.0
       - name: Build anaconda+nginx container
         run: ./containers/build anaconda-nginx
+      - name: Build anaconda+nginx9 container
+        run: ./containers/build anaconda-nginx9
   build-node-image-22-nginx:
     runs-on: ubuntu-20.04
     needs:
@@ -274,6 +300,8 @@ jobs:
         uses: actions/checkout@v3.3.0
       - name: Build k8s-node-image+nginx container 1.22
         run: ./containers/build k8s-node-image-nginx 1.22
+      - name: Build k8s-node-image+nginx9 container 1.22
+        run: ./containers/build k8s-node-image-nginx9 1.22
   build-node-image-23-nginx:
     runs-on: ubuntu-20.04
     needs:
@@ -283,6 +311,8 @@ jobs:
         uses: actions/checkout@v3.3.0
       - name: Build k8s-node-image+nginx container 1.23
         run: ./containers/build k8s-node-image-nginx 1.23
+      - name: Build k8s-node-image+nginx9 container 1.23
+        run: ./containers/build k8s-node-image-nginx9 1.23
   build-node-image-24-nginx:
     runs-on: ubuntu-20.04
     needs:
@@ -292,6 +322,8 @@ jobs:
         uses: actions/checkout@v3.3.0
       - name: Build k8s-node-image+nginx container 1.24
         run: ./containers/build k8s-node-image-nginx 1.24
+      - name: Build k8s-node-image+nginx9 container 1.24
+        run: ./containers/build k8s-node-image-nginx9 1.24
   build-node-image-21-nginx:
     runs-on: ubuntu-20.04
     needs:
@@ -301,6 +333,8 @@ jobs:
         uses: actions/checkout@v3.3.0
       - name: Build k8s-node-image+nginx container 1.21
         run: ./containers/build k8s-node-image-nginx 1.21
+      - name: Build k8s-node-image+nginx9 container 1.21
+        run: ./containers/build k8s-node-image-nginx9 1.21
 
   build-image-library-charts:
     runs-on: ubuntu-20.04
