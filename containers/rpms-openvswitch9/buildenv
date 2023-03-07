@@ -1,5 +1,5 @@
 export AUTO_PREFIX=rpmrepo-version
-export AUTO_PREFIX_PACKAGE=openvswitch
+export AUTO_PREFIX_PACKAGE=openvswitch2.17
 export DOCKER_BUILDKIT=1
 export GPGSIGN=1
 export NEW_BUILD=1
