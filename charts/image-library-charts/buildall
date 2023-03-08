@@ -25,6 +25,9 @@ for CONTAINER in ipmitool ipmi-exporter dhcpd inotify-tools chronyd debug-toolbo
 	k8s-node-image-nginx)
 		SUBBUILDS="1.21 1.22 1.23 1.24"
 		;;
+	k8s-node-image-nginx9)
+		SUBBUILDS="1.21 1.22 1.23 1.24"
+		;;
 	*)
 		SUBBUILDS="latest"
 		;;
