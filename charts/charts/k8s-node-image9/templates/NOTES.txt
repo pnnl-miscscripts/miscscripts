@@ -1,0 +1,21 @@
+{{- $dot := . }}
+{{- $prefix := include "pnnlmiscscripts.k8s-node-image-full.ingress.prefix" . }}
+Contact information
+
+{{- range .Values.ingress.hosts }}
+{{- if . }}
+Repo:
+http://{{ . }}{{ $prefix }}
+Kernel:
+http://{{ . }}{{ $prefix }}/vmlinuz
+Initrd:
+http://{{ . }}{{ $prefix }}/initrd.img
+{{- else }}
+Repo:
+http://xx.xx.xx.xx{{ $prefix }}
+Kernel:
+http://xx.xx.xx.xx{{ $prefix }}/vmlinuz
+Initrd:
+http://xx.xx.xx.xx{{ $prefix }}/initrd.img
+{{- end }}
+{{- end }}

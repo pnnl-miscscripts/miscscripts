@@ -1,5 +1,5 @@
 export AUTO_PREFIX=filecontent
 export AUTO_PREFIX_FILE=/data/RockyLinux_BuildTag
 export AUTO_PREFIX_FILTER='sed "s/$/-nginx/g"'
-export DOCKER_REPO=pnnlmiscscripts/anaconda
+export DOCKER_REPO=pnnlmiscscripts/anaconda9
 export DOCKER_TAG=latest-nginx

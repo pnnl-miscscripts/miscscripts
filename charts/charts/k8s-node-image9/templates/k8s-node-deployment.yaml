@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "pnnlmiscscripts.k8s-node-image-full.k8s-node.fullname" . }}
+  labels:
+    {{- include "pnnlmiscscripts.k8s-node-image-full.labels" . | nindent 4 }}
+    app.kubernetes.io/component: k8s-node
+    svc: k8s-node
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "pnnlmiscscripts.k8s-node-image-full.selectorLabels" . | nindent 6 }}
+      svc: k8s-node
+  template:
+    metadata:
+      {{- with .Values.k8sNode.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "pnnlmiscscripts.k8s-node-image-full.selectorLabels" . | nindent 8 }}
+        svc: k8s-node
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: main
+          command: ["nginx", "-g", "daemon off;"]
+          image: {{ dict "dot" . "section" (index .Values "k8sNode").image | include (printf "%s.image" .Values.k8sNode.prefix) }}
+          imagePullPolicy: {{ .Values.k8sNode.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                - /bin/sh
+                - -c
+                - nginx -s quit
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

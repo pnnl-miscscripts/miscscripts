@@ -1,0 +1,13 @@
+apiVersion: v2
+appVersion: "1.0"
+description: A Helm chart for Kubernetes
+type: application
+name: k8s-node-image9
+version: 0.2.0
+dependencies:
+- name: k8s-node-image-nginx9-1-24
+  version: 2.0.0
+  repository: https://pnnl-miscscripts.github.io/image-library-charts/
+- name: anaconda-nginx9
+  version: 2.0.0
+  repository: https://pnnl-miscscripts.github.io/image-library-charts/
