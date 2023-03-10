@@ -24,7 +24,7 @@ RUN --mount=type=secret,id=gpg \
   mkdir -p rpms/ && \
   cd /rpms && \
   cp -a /rpms-base/*.rpm . && \
-  dnf download --resolve --destdir /rpms "kubelet-$FULLVERSION" "kubeadm-$FULLVERSION" "kubectl-$FULLVERSION" && \
+  dnf install -y --downloadonly --destdir /rpms "kubelet-$FULLVERSION" "kubeadm-$FULLVERSION" "kubectl-$FULLVERSION" && \
   find /rpms-base -maxdepth 1 -type f -name '*.rpm' -printf '%f\n' | while read line; do rm -f $line; done && \
   gpg --import /run/secrets/gpg && \
   gpg --import /root/rpm.pub && \
