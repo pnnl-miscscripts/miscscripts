@@ -64,7 +64,7 @@ Create chart name and version as used by the chart label.
 {{- define "pnnlmiscscripts.k8s-node-image-full.ingress.prefix" -}}
 {{- if .Values.ingress.enableVersionPrefix -}}
 {{- $tag := dict "dot" . "section" .Values.k8sNode.image | include (printf "%s.tag" .Values.k8sNode.prefix) -}}
-{{- printf "%s/%s" .Values.ingress.prefix $tag -}}
+{{- printf "%s/9-%s" .Values.ingress.prefix $tag -}}
 {{- else }}
 {{- .Values.ingress.prefix -}}
 {{- end }}

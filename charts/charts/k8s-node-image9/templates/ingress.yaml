@@ -1,7 +1,6 @@
 {{- if .Values.ingress.enabled -}}
 {{- $dot := . }}
 {{- $prefix := include "pnnlmiscscripts.k8s-node-image-full.ingress.prefix" . }}
-{{- $pxeprefix := printf "%s/images/pxeboot" $prefix }}
 {{- $aFullName := include "pnnlmiscscripts.k8s-node-image-full.anaconda.fullname" . -}}
 {{- $nFullName := include "pnnlmiscscripts.k8s-node-image-full.k8s-node.fullname" . -}}
 {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
@@ -48,35 +47,7 @@ spec:
                 name: {{ $nFullName }}
                 port:
                   name: http
-          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "vmlinuz" "type" "f" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ $aFullName }}
-                port:
-                  name: http
-          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "initrd.img" "type" "f" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ $aFullName }}
-                port:
-                  name: http
-          - path: {{ dict "dot" $dot "prefix" $pxeprefix "suffix" "vmlinuz" "type" "f" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ $aFullName }}
-                port:
-                  name: http
-          - path: {{ dict "dot" $dot "prefix" $pxeprefix "suffix" "initrd.img" "type" "f" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ $aFullName }}
-                port:
-                  name: http
-          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "LiveOS" "type" "d" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
+          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "images" "type" "d" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
             pathType: Prefix
             backend:
               service:
@@ -84,6 +55,20 @@ spec:
                 port:
                   name: http
           - path: {{ dict "dot" $dot "prefix" $prefix "suffix" ".treeinfo" "type" "f" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $aFullName }}
+                port:
+                  name: http
+          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "LICENSE" "type" "f" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ $aFullName }}
+                port:
+                  name: http
+          - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "RockyLinux_BuildTag" "type" "f" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
             pathType: Prefix
             backend:
               service:
