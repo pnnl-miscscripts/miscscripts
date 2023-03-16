@@ -1,4 +1,4 @@
-# syntax = docker/dockerfile:1.0-experimental
+# syntax = docker/dockerfile:1.2
 FROM rockylinux:9
 MAINTAINER Kevin Fox <Kevin.Fox@pnnl.gov>
 
@@ -10,14 +10,10 @@ RUN --mount=type=secret,id=gpg \
   set -e && \
   yum install -y createrepo yum-utils gnupg2 rpm-sign && \
   mkdir -p rpms/ && \
-  BASE=$(dnf group info base | grep '^   \w' | awk '{print $1}') && \
-  CORE=$(dnf group info core | grep '^   \w' | awk '{print $1}') && \
-  ANACONDA_TOOLS=$(dnf group info anaconda-tools | grep '^   \w' | awk '{print $1}') && \
-  repotrack --alldeps --resolve --installroot=/tmp/root --releasever=/ \
-    --destdir rpms --setopt cachedir=/tmp/cache --downloadonly \
-    $BASE $CORE $ANACONDA_TOOLS grub2-efi-x64 kernel grub2 e2fsprogs \
-    nspr nss-util openssh-server openssh iptables-services \
-    nfs-utils authconfig psmisc libibverbs qemu-guest-agent libsss_sudo && \
+  dnf install --installroot=/tmp/root --releasever=/ --downloadonly \
+    --destdir rpms -y @core grub2-efi-x64 kernel grub2 e2fsprogs nspr nss-util \
+    openssh-server openssh iptables-services nfs-utils authconfig psmisc \
+    libibverbs qemu-guest-agent libsss_sudo && \
   gpg --import /run/secrets/gpg && \
   gpg --import /root/rpm.pub && \
   rpm --addsign $(find rpms -type f -name '*.rpm') && \
