@@ -14,7 +14,7 @@ RUN --mount=type=secret,id=gpg \
     --destdir rpms -y @core grub2-efi-x64 kernel grub2 e2fsprogs nspr nss-util \
     openssh-server openssh iptables-services nfs-utils authconfig psmisc \
     libibverbs qemu-guest-agent libsss_sudo bzip2 chrony dosfstools efibootmgr \
-    langpacks-en mdadm shim-x64 && \
+    langpacks-en mdadm shim-x64 glibc-minimal-langpack && \
   gpg --import /run/secrets/gpg && \
   gpg --import /root/rpm.pub && \
   rpm --addsign $(find rpms -type f -name '*.rpm') && \
