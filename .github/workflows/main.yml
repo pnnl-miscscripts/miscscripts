@@ -205,6 +205,20 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes9 1.21
           rm -f rpm.priv
+  buildc-rpms-k8s-28:
+    runs-on: ubuntu-20.04
+    needs:
+    - buildc-rpms-node-base
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.5.3
+      - name: Build rpms-kubernetes container 1.28
+        env:
+          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
+        run: |
+          printf "%s" "$RPM_GPG_KEY" > rpm.priv
+          ./containers/build rpms-kubernetes9 1.28
+          rm -f rpm.priv
   buildc-anaconda:
     runs-on: ubuntu-20.04
     steps:
