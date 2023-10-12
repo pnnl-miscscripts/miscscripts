@@ -25,11 +25,11 @@ RUN \
   ansible-galaxy collection install -r ${HOME}/requirements.yml && \
   chmod -R ug+rwx ${HOME}/.ansible && \
   helm plugin install https://github.com/databus23/helm-diff --version master && \
-  helm pull --repo https://pnnl-miscscripts.github.io/charts tenant-namespace --version 0.6.12 --untar && \
+  helm pull --repo https://pnnl-miscscripts.github.io/charts tenant-namespace --version 0.6.13 --untar && \
   cd tenant-namespace/charts/ingress-nginx/ && \
   cd - && \
   find roles/ -type f -exec md5sum {} \; > /.extrafingerprints && \
-  echo 0.1.12 >> /.extrafingerprints && \
+  echo 0.1.13 >> /.extrafingerprints && \
   md5sum watches.yaml >> /.extrafingerprints
 
 ENTRYPOINT ["/usr/local/bin/entrypoint", "--inject-owner-ref=false"]
