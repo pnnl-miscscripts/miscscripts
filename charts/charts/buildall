@@ -37,7 +37,7 @@ for ver in 1-21 1-22 1-23 1-24; do
 	#sed IMAGETAG into README.md
 done
 
-for ver in 1-21 1-22 1-23 1-24 1-28; do
+for ver in 1-24 1-25 1-28; do
 	cp -a k8s-node-image9 k8s-node-image9-$ver
 	sed -i "s@k8s-node-image-nginx9-1-24@k8s-node-image-nginx9-$ver@g" k8s-node-image9-$ver/Chart.yaml k8s-node-image9-$ver/values.yaml
 	sed -i "s@^name:.*@name: k8s-node-image9-$ver@g" k8s-node-image9-$ver/Chart.yaml
@@ -59,7 +59,7 @@ for CHART in nginx-app console chronyd dhcpd ipmi-exporter kubeupdater k8s-node-
 		SUBBUILDS="1-21 1-22 1-23 1-24"
 		;;
 	k8s-node-image9)
-		SUBBUILDS="1-21 1-22 1-23 1-24 1-28"
+		SUBBUILDS="1-24 1-25 1-28"
 		;;
 	*)
 		SUBBUILDS="latest"
