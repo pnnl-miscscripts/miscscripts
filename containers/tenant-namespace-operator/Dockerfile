@@ -1,6 +1,6 @@
-FROM quay.io/operator-framework/ansible-operator:v0.17.0
+FROM quay.io/operator-framework/ansible-operator:v1.4.0
 
-ARG helm_version=v3.3.4
+ARG helm_version=v3.5.2
 USER 0
 RUN \
   yum clean all && \
@@ -32,4 +32,4 @@ RUN \
   echo 0.1.13 >> /.extrafingerprints && \
   md5sum watches.yaml >> /.extrafingerprints
 
-ENTRYPOINT ["/usr/local/bin/entrypoint", "--inject-owner-ref=false"]
+ENTRYPOINT ["/usr/local/bin/ansible-operator", "run", "--watches-file=./watches.yaml", "--inject-owner-ref=false"]

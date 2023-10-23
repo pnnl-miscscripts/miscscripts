@@ -1,0 +1,14 @@
+domain: pnnl.gov
+layout: ansible.sdk.operatorframework.io/v1
+projectName: tenant-namespace-operator
+resources:
+- group: miscscripts
+  kind: TenantNamespace
+  version: v1beta1
+- group: miscscripts
+  kind: TenantNamespaceFlavor
+  version: v1beta1
+version: 3-alpha
+plugins:
+  manifests.sdk.operatorframework.io/v2: {}
+  scorecard.sdk.operatorframework.io/v2: {}

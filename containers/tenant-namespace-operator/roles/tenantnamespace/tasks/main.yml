@@ -1,5 +1,5 @@
 ---
-# tasks file for tenantnamespace
+# tasks file for TenantNamespace
 
 - name: Set dryrun value
   set_fact:
@@ -7,7 +7,7 @@
 
 - name: Set admin labels
   set_fact:
-    adminlabels: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceLabels | default({}) | combine({'name': meta.name + '-admin', 'miscscripts.pnnl.gov/namespace-type': 'admin'}, recursive=True) }}"
+    adminlabels: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceLabels | default({}) | combine({'name': ansible_operator_meta.name + '-admin', 'miscscripts.pnnl.gov/namespace-type': 'admin'}, recursive=True) }}"
 
 - name: Create the k8s admin namespace
   k8s:
@@ -16,7 +16,7 @@
       apiVersion: v1
       kind: Namespace
       metadata:
-        name: "{{ meta.name }}-admin"
+        name: "{{ ansible_operator_meta.name }}-admin"
         labels: "{{ adminlabels }}"
         annotations: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceAnnotations | default({}) }}"
   when:
@@ -63,8 +63,8 @@
       gitlabRunner:
         spec:
           runners:
-            namespace: "{{ meta.name }}"
-            tags: "{{ (merged_values.gitlabRunner.spec.runners.tags.split(',') + [meta.name]) | unique | list | join(',') }}"
+            namespace: "{{ ansible_operator_meta.name }}"
+            tags: "{{ (merged_values.gitlabRunner.spec.runners.tags.split(',') + [ansible_operator_meta.name]) | unique | list | join(',') }}"
   when:
   - merged_values.gitlabRunner.spec.runners.tags is defined
 - name: Setup gitlabRunner if needed
@@ -73,8 +73,8 @@
       gitlabRunner:
         spec:
           runners:
-            namespace: "{{ meta.name }}"
-            tags: "{{ meta.name }}"
+            namespace: "{{ ansible_operator_meta.name }}"
+            tags: "{{ ansible_operator_meta.name }}"
   when:
   - merged_values.gitlabRunner.spec.runners.tags is not defined
 
@@ -87,15 +87,15 @@
 - name: Set value for forced settings
   set_fact:
     overrides:
-      namespace: "{{ meta.name }}"
+      namespace: "{{ ansible_operator_meta.name }}"
       magicnamespace:
-        namespace: "{{ meta.name }}"
+        namespace: "{{ ansible_operator_meta.name }}"
       ingress:
         nginx:
           clusterRole: "{{ lookup('env','INGRESS_CLUSTERROLE') | default('tenant-namespace-operator-ingress-controller') }}"
         controller:
           scope:
-            namespace: "{{ meta.name }}"
+            namespace: "{{ ansible_operator_meta.name }}"
 - name: Force namespace settings. Can not be overridden.
   set_fact:
     merged_values: "{{ merged_values | combine(overrides, recursive=True) }}"
@@ -110,8 +110,8 @@
   k8s_info:
     api_version: v1
     kind: Service
-    name: "{{ meta.name }}-ingress-controller"
-    namespace: "{{ meta.name }}-admin"
+    name: "{{ ansible_operator_meta.name }}-ingress-controller"
+    namespace: "{{ ansible_operator_meta.name }}-admin"
   register: ingressService
   when: >
         merged_values.ingress.nginx.enabled and
@@ -126,8 +126,8 @@
   - k8s_status:
       api_version: miscscripts.pnnl.gov/v1beta1
       kind: TenantNamespace
-      name: "{{ meta.name }}"
-      namespace: "{{ meta.namespace }}"
+      name: "{{ ansible_operator_meta.name }}"
+      namespace: "{{ ansible_operator_meta.namespace }}"
       status:
         loadBalancerIP: "{{ ingressService.resources[0].status.loadBalancer.ingress[0].ip }}"
   when:
@@ -178,24 +178,24 @@
   loop:
   - api_version: apps/v1
     kind: Deployment
-    namespace: "{{ meta.name }}-admin"
-    name: "{{ meta.name }}-ingress-controller"
+    namespace: "{{ ansible_operator_meta.name }}-admin"
+    name: "{{ ansible_operator_meta.name }}-ingress-controller"
   - api_version: v1
     kind: Service
-    namespace: "{{ meta.name }}-admin"
-    name: "{{ meta.name }}-ingress-controller"
+    namespace: "{{ ansible_operator_meta.name }}-admin"
+    name: "{{ ansible_operator_meta.name }}-ingress-controller"
   - api_version: v1
     kind: Service
-    namespace: "{{ meta.name }}-admin"
-    name: "{{ meta.name }}-ingress-controller-metrics"
+    namespace: "{{ ansible_operator_meta.name }}-admin"
+    name: "{{ ansible_operator_meta.name }}-ingress-controller-metrics"
   - api_version: apps/v1
     kind: Deployment
-    namespace: "{{ meta.name }}-admin"
-    name: "{{ meta.name }}-ingress-default-backend"
+    namespace: "{{ ansible_operator_meta.name }}-admin"
+    name: "{{ ansible_operator_meta.name }}-ingress-default-backend"
   - api_version: v1
     kind: Service
-    namespace: "{{ meta.name }}-admin"
-    name: "{{ meta.name }}-ingress-default-backend"
+    namespace: "{{ ansible_operator_meta.name }}-admin"
+    name: "{{ ansible_operator_meta.name }}-ingress-default-backend"
   when:
   - not dryrun
   - ingressService is defined
@@ -210,8 +210,8 @@
   k8s_status:
     api_version: miscscripts.pnnl.gov/v1beta1
     kind: TenantNamespace
-    name: "{{ meta.name }}"
-    namespace: "{{ meta.namespace }}"
+    name: "{{ ansible_operator_meta.name }}"
+    namespace: "{{ ansible_operator_meta.namespace }}"
     status:
       ingressNginxUpgradeComplete: true
   when:
@@ -227,8 +227,8 @@
 #FIXME Consider making a service account specifically for this so it can't cross namespaces as far as it can today
 - name: Run Helm
   helm:
-    name: "{{ meta.name }}"
-    namespace: "{{ meta.name }}-admin"
+    name: "{{ ansible_operator_meta.name }}"
+    namespace: "{{ ansible_operator_meta.name }}-admin"
     chart_ref: ${HOME}/tenant-namespace
     values: "{{ merged_values }}"
   register: objs
@@ -252,9 +252,9 @@
       dest: "{{ temp_filename.path }}"
     no_log: True
   - name: Do dry run of helm
-    shell: "helm diff upgrade --install --detailed-exitcode --namespace {{ meta.name }}-admin {{ meta.name }} ${HOME}/tenant-namespace -f {{ temp_filename.path }}"
+    shell: "helm diff upgrade --install --detailed-exitcode --namespace {{ ansible_operator_meta.name }}-admin {{ ansible_operator_meta.name }} ${HOME}/tenant-namespace -f {{ temp_filename.path }}"
     register: diffhelm
-    ignore_errors: yes
+    ignore_errors: True
     no_log: True
   - name: Set diff
     set_fact:
@@ -269,14 +269,14 @@
 - k8s_status:
     api_version: miscscripts.pnnl.gov/v1beta1
     kind: TenantNamespace
-    name: "{{ meta.name }}"
-    namespace: "{{ meta.namespace }}"
+    name: "{{ ansible_operator_meta.name }}"
+    namespace: "{{ ansible_operator_meta.namespace }}"
     status:
       diff: "{{ differ | b64encode }}"
 
 - name: Set user labels
   set_fact:
-    userlabels: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceLabels | default({}) | combine({'name': meta.name, 'miscscripts.pnnl.gov/namespace-type': 'user'}, recursive=True) }}"
+    userlabels: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceLabels | default({}) | combine({'name': ansible_operator_meta.name, 'miscscripts.pnnl.gov/namespace-type': 'user'}, recursive=True) }}"
 
 - name: Create the k8s user namespace
   k8s:
@@ -285,7 +285,7 @@
       apiVersion: v1
       kind: Namespace
       metadata:
-        name: "{{ meta.name }}"
+        name: "{{ ansible_operator_meta.name }}"
         labels: "{{ userlabels }}"
         annotations: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceAnnotations | default({}) }}"
   when:
