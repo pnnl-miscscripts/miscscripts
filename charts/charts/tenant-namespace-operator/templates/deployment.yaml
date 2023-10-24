@@ -45,7 +45,7 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 10
           args:
-            - "--enable-leader-election"
+            - "--leader-elect"
             - "--leader-election-id=tenant-namespace-operator"
           env:
             - name: ANSIBLE_GATHERING

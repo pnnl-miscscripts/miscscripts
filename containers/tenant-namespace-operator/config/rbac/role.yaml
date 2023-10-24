@@ -121,4 +121,4 @@ rules:
       - get
       - list
       - watch
-# +kubebuilder:scaffold:rules
+#+kubebuilder:scaffold:rules
