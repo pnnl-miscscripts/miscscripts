@@ -2,15 +2,15 @@
 # tasks file for TenantNamespace
 
 - name: Set dryrun value
-  set_fact:
-    dryrun: "{{ lookup('env','DRYRUN') | default('False') | bool }}"
+  ansible.builtin.set_fact:
+    dryrun: "{{ lookup('env', 'DRYRUN') | default('False') | bool }}"
 
 - name: Set admin labels
-  set_fact:
+  ansible.builtin.set_fact:
     adminlabels: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceLabels | default({}) | combine({'name': ansible_operator_meta.name + '-admin', 'miscscripts.pnnl.gov/namespace-type': 'admin'}, recursive=True) }}"
 
 - name: Create the k8s admin namespace
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition:
       apiVersion: v1
@@ -20,10 +20,10 @@
         labels: "{{ adminlabels }}"
         annotations: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceAnnotations | default({}) }}"
   when:
-  - not dryrun
+    - not dryrun
 
 - name: Set initial defaults. They be overridden.
-  set_fact:
+  ansible.builtin.set_fact:
     merged_values:
       magicnamespace:
         tiller:
@@ -35,30 +35,31 @@
       ingress:
         nginx:
           enabled: true
+
 - name: Load in Flavor values if referenced
   block:
-  - name: Fetch referenced flavor
-    k8s_info:
-      api_version: miscscripts.pnnl.gov/v1beta1
-      kind: TenantNamespaceFlavor
-      name: "{{ flavor_ref.name }}"
-    register: flavor
-    # Failures immediately trigger another reconciliation
-    failed_when:
-    - flavor.resources | length == 0
-  - name: Merge in flavor values
-    set_fact:
-      merged_values: "{{ merged_values | combine(flavor.resources[0].spec, recursive=True) }}"
+    - name: Fetch referenced flavor
+      community.kubernetes.k8s_info:
+        api_version: miscscripts.pnnl.gov/v1beta1
+        kind: TenantNamespaceFlavor
+        name: "{{ flavor_ref.name }}"
+      register: flavor
+      # Failures immediately trigger another reconciliation
+      failed_when:
+        - flavor.resources | length == 0
+    - name: Merge in flavor values
+      ansible.builtin.set_fact:
+        merged_values: "{{ merged_values | combine(flavor.resources[0].spec, recursive=True) }}"
   when:
-  - flavor_ref is defined
-  - flavor_ref.kind == "TenantNamespaceFlavor"
-  - flavor_ref.group == "miscscripts.pnnl.gov"
+    - flavor_ref is defined
+    - flavor_ref.kind == "TenantNamespaceFlavor"
+    - flavor_ref.group == "miscscripts.pnnl.gov"
 - name: Set values from CR
-  set_fact:
+  ansible.builtin.set_fact:
     merged_values: "{{ merged_values | combine(_miscscripts_pnnl_gov_tenantnamespace_spec, recursive=True) }}"
 
 - name: Setup gitlabRunner if needed
-  set_fact:
+  ansible.builtin.set_fact:
     gitlabrunnerconfig:
       gitlabRunner:
         spec:
@@ -66,9 +67,9 @@
             namespace: "{{ ansible_operator_meta.name }}"
             tags: "{{ (merged_values.gitlabRunner.spec.runners.tags.split(',') + [ansible_operator_meta.name]) | unique | list | join(',') }}"
   when:
-  - merged_values.gitlabRunner.spec.runners.tags is defined
+    - merged_values.gitlabRunner.spec.runners.tags is defined
 - name: Setup gitlabRunner if needed
-  set_fact:
+  ansible.builtin.set_fact:
     gitlabrunnerconfig:
       gitlabRunner:
         spec:
@@ -76,38 +77,39 @@
             namespace: "{{ ansible_operator_meta.name }}"
             tags: "{{ ansible_operator_meta.name }}"
   when:
-  - merged_values.gitlabRunner.spec.runners.tags is not defined
+    - merged_values.gitlabRunner.spec.runners.tags is not defined
 
 - name: Merge gitlabRunner values
-  set_fact:
+  ansible.builtin.set_fact:
     merged_values: "{{ merged_values | combine(gitlabrunnerconfig, recursive=True) }}"
   when:
-  - merged_values.gitlabRunner.autoSetNamespaceAndTags
+    - merged_values.gitlabRunner.autoSetNamespaceAndTags
 
 - name: Set value for forced settings
-  set_fact:
+  ansible.builtin.set_fact:
     overrides:
       namespace: "{{ ansible_operator_meta.name }}"
       magicnamespace:
         namespace: "{{ ansible_operator_meta.name }}"
       ingress:
         nginx:
-          clusterRole: "{{ lookup('env','INGRESS_CLUSTERROLE') | default('tenant-namespace-operator-ingress-controller') }}"
+          clusterRole: "{{ lookup('env', 'INGRESS_CLUSTERROLE') | default('tenant-namespace-operator-ingress-controller') }}"
         controller:
           scope:
             namespace: "{{ ansible_operator_meta.name }}"
+
 - name: Force namespace settings. Can not be overridden.
-  set_fact:
+  ansible.builtin.set_fact:
     merged_values: "{{ merged_values | combine(overrides, recursive=True) }}"
 
 - name: Set ingress ip if known
-  set_fact:
+  ansible.builtin.set_fact:
     loadBalancerIP: "{{ _miscscripts_pnnl_gov_tenantnamespace.status.loadBalancerIP }}"
   when:
-  - _miscscripts_pnnl_gov_tenantnamespace.status.loadBalancerIP is defined
+    - _miscscripts_pnnl_gov_tenantnamespace.status.loadBalancerIP is defined
 
 - name: Fetch ingress service
-  k8s_info:
+  community.kubernetes.k8s_info:
     api_version: v1
     kind: Service
     name: "{{ ansible_operator_meta.name }}-ingress-controller"
@@ -120,94 +122,95 @@
 
 - name: Merge in existing ingress ip if exists
   block:
-  - name: Set ingress ip.
-    set_fact:
-      loadBalancerIP: "{{ ingressService.resources[0].status.loadBalancer.ingress[0].ip }}"
-  - k8s_status:
-      api_version: miscscripts.pnnl.gov/v1beta1
-      kind: TenantNamespace
-      name: "{{ ansible_operator_meta.name }}"
-      namespace: "{{ ansible_operator_meta.namespace }}"
-      status:
+    - name: Set ingress ip.
+      ansible.builtin.set_fact:
         loadBalancerIP: "{{ ingressService.resources[0].status.loadBalancer.ingress[0].ip }}"
+    - name: Set ingress ip in CR status
+      operator_sdk.util.k8s_status:
+        api_version: miscscripts.pnnl.gov/v1beta1
+        kind: TenantNamespace
+        name: "{{ ansible_operator_meta.name }}"
+        namespace: "{{ ansible_operator_meta.namespace }}"
+        status:
+          loadBalancerIP: "{{ ingressService.resources[0].status.loadBalancer.ingress[0].ip }}"
   when:
-  - _miscscripts_pnnl_gov_tenantnamespace.status.loadBalancerIP is not defined
-  - merged_values.ingress.controller.service.loadBalancerIP is not defined
-  - ingressService is defined
-  - ingressService.resources is defined
-  - ingressService.resources[0] is defined
-  - ingressService.resources[0].status is defined
-  - ingressService.resources[0].status.loadBalancer is defined
-  - ingressService.resources[0].status.loadBalancer.ingress is defined
-  - ingressService.resources[0].status.loadBalancer.ingress[0] is defined
-  - ingressService.resources[0].status.loadBalancer.ingress[0].ip is defined
+    - _miscscripts_pnnl_gov_tenantnamespace.status.loadBalancerIP is not defined
+    - merged_values.ingress.controller.service.loadBalancerIP is not defined
+    - ingressService is defined
+    - ingressService.resources is defined
+    - ingressService.resources[0] is defined
+    - ingressService.resources[0].status is defined
+    - ingressService.resources[0].status.loadBalancer is defined
+    - ingressService.resources[0].status.loadBalancer.ingress is defined
+    - ingressService.resources[0].status.loadBalancer.ingress[0] is defined
+    - ingressService.resources[0].status.loadBalancer.ingress[0].ip is defined
 
 - name: Set ingress ip if specified
-  set_fact:
+  ansible.builtin.set_fact:
     loadBalancerIP: "{{ _miscscripts_pnnl_gov_tenantnamespace.spec.ingress.controller.service.loadBalancerIP }}"
   when:
-  - loadBalancerIP is not defined
-  - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress is defined
-  - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress.controller is defined
-  - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress.controller.service is defined
-  - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress.controller.service.loadBalancerIP is defined
+    - loadBalancerIP is not defined
+    - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress is defined
+    - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress.controller is defined
+    - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress.controller.service is defined
+    - _miscscripts_pnnl_gov_tenantnamespace.spec.ingress.controller.service.loadBalancerIP is defined
 
 - name: Force loadBalancerIP address setting
-  set_fact:
+  ansible.builtin.set_fact:
     loadBalancerIP_overrides:
       ingress:
         controller:
           service:
             loadBalancerIP: "{{ loadBalancerIP }}"
   when:
-  - loadBalancerIP is defined
+    - loadBalancerIP is defined
 - name: Force loadBalancerIP. Can not be overridden.
-  set_fact:
+  ansible.builtin.set_fact:
     merged_values: "{{ merged_values | combine(loadBalancerIP_overrides, recursive=True) }}"
   when:
-  - loadBalancerIP is defined
+    - loadBalancerIP is defined
 
 # Delete resources that have selectors that need to be updated
 - name: Remove upgrade resources
-  k8s:
+  community.kubernetes.k8s:
     state: absent
     api_version: "{{ item.api_version }}"
     kind: "{{ item.kind }}"
     namespace: "{{ item.namespace }}"
     name: "{{ item.name }}"
   loop:
-  - api_version: apps/v1
-    kind: Deployment
-    namespace: "{{ ansible_operator_meta.name }}-admin"
-    name: "{{ ansible_operator_meta.name }}-ingress-controller"
-  - api_version: v1
-    kind: Service
-    namespace: "{{ ansible_operator_meta.name }}-admin"
-    name: "{{ ansible_operator_meta.name }}-ingress-controller"
-  - api_version: v1
-    kind: Service
-    namespace: "{{ ansible_operator_meta.name }}-admin"
-    name: "{{ ansible_operator_meta.name }}-ingress-controller-metrics"
-  - api_version: apps/v1
-    kind: Deployment
-    namespace: "{{ ansible_operator_meta.name }}-admin"
-    name: "{{ ansible_operator_meta.name }}-ingress-default-backend"
-  - api_version: v1
-    kind: Service
-    namespace: "{{ ansible_operator_meta.name }}-admin"
-    name: "{{ ansible_operator_meta.name }}-ingress-default-backend"
+    - api_version: apps/v1
+      kind: Deployment
+      namespace: "{{ ansible_operator_meta.name }}-admin"
+      name: "{{ ansible_operator_meta.name }}-ingress-controller"
+    - api_version: v1
+      kind: Service
+      namespace: "{{ ansible_operator_meta.name }}-admin"
+      name: "{{ ansible_operator_meta.name }}-ingress-controller"
+    - api_version: v1
+      kind: Service
+      namespace: "{{ ansible_operator_meta.name }}-admin"
+      name: "{{ ansible_operator_meta.name }}-ingress-controller-metrics"
+    - api_version: apps/v1
+      kind: Deployment
+      namespace: "{{ ansible_operator_meta.name }}-admin"
+      name: "{{ ansible_operator_meta.name }}-ingress-default-backend"
+    - api_version: v1
+      kind: Service
+      namespace: "{{ ansible_operator_meta.name }}-admin"
+      name: "{{ ansible_operator_meta.name }}-ingress-default-backend"
   when:
-  - not dryrun
-  - ingressService is defined
-  - ingressService.resources is defined
-  - ingressService.resources[0] is defined
-  - ingressService.resources[0].metadata is defined
-  - ingressService.resources[0].metadata.labels is defined
-  - ingressService.resources[0].metadata.labels.chart is defined
-  - ingressService.resources[0].metadata.labels.chart == "ingress-1.34.2"
+    - not dryrun
+    - ingressService is defined
+    - ingressService.resources is defined
+    - ingressService.resources[0] is defined
+    - ingressService.resources[0].metadata is defined
+    - ingressService.resources[0].metadata.labels is defined
+    - ingressService.resources[0].metadata.labels.chart is defined
+    - ingressService.resources[0].metadata.labels.chart == "ingress-1.34.2"
 
 - name: Add upgrade status marker
-  k8s_status:
+  operator_sdk.util.k8s_status:
     api_version: miscscripts.pnnl.gov/v1beta1
     kind: TenantNamespace
     name: "{{ ansible_operator_meta.name }}"
@@ -215,58 +218,59 @@
     status:
       ingressNginxUpgradeComplete: true
   when:
-  - not dryrun
-  - ingressService is defined
-  - ingressService.resources is defined
-  - ingressService.resources[0] is defined
-  - ingressService.resources[0].metadata is defined
-  - ingressService.resources[0].metadata.labels is defined
-  - ingressService.resources[0].metadata.labels["helm.sh/chart"] is defined
-  - ingressService.resources[0].metadata.labels["helm.sh/chart"] == "ingress-3.34.0"
+    - not dryrun
+    - ingressService is defined
+    - ingressService.resources is defined
+    - ingressService.resources[0] is defined
+    - ingressService.resources[0].metadata is defined
+    - ingressService.resources[0].metadata.labels is defined
+    - ingressService.resources[0].metadata.labels["helm.sh/chart"] is defined
+    - ingressService.resources[0].metadata.labels["helm.sh/chart"] == "ingress-3.34.0"
 
-#FIXME Consider making a service account specifically for this so it can't cross namespaces as far as it can today
+# FIXME Consider making a service account specifically for this so it can't cross namespaces as far as it can today
 - name: Run Helm
-  helm:
+  community.kubernetes.helm:
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.name }}-admin"
     chart_ref: ${HOME}/tenant-namespace
     values: "{{ merged_values }}"
   register: objs
   when:
-  - not dryrun
+    - not dryrun
 
 - name: Set diff
-  set_fact:
+  ansible.builtin.set_fact:
     differ: ""
 
 - name: Dry Run Helm
-  block:
-  - name: Make temp file
-    tempfile:
-      state: file
-      suffix: .yaml
-    register: temp_filename
-  - name: Copy values to temp file
-    copy:
-      content: "{{ merged_values | to_yaml }}"
-      dest: "{{ temp_filename.path }}"
-    no_log: True
-  - name: Do dry run of helm
-    shell: "helm diff upgrade --install --detailed-exitcode --namespace {{ ansible_operator_meta.name }}-admin {{ ansible_operator_meta.name }} ${HOME}/tenant-namespace -f {{ temp_filename.path }}"
-    register: diffhelm
-    ignore_errors: True
-    no_log: True
-  - name: Set diff
-    set_fact:
-      differ: "{{ diffhelm.stdout }}\n"
-  - name: Remove temp file
-    file:
-      path: "{{ temp_filename.path }}"
-      state: absent
   when:
-  - dryrun
+    - dryrun
+  block:
+    - name: Make temp file
+      ansible.builtin.tempfile:
+        state: file
+        suffix: .yaml
+      register: temp_filename
+    - name: Copy values to temp file
+      ansible.builtin.copy:
+        content: "{{ merged_values | to_yaml }}"
+        dest: "{{ temp_filename.path }}"
+      no_log: true
+    - name: Do dry run of helm
+      ansible.builtin.shell: "helm diff upgrade --install --detailed-exitcode --namespace {{ ansible_operator_meta.name }}-admin {{ ansible_operator_meta.name }} ${HOME}/tenant-namespace -f {{ temp_filename.path }}"
+      register: diffhelm
+      ignore_errors: true
+      no_log: true
+    - name: Set diff
+      ansible.builtin.set_fact:
+        differ: "{{ diffhelm.stdout }}\n"
+    - name: Remove temp file
+      ansible.builtin.file:
+        path: "{{ temp_filename.path }}"
+        state: absent
 
-- k8s_status:
+- name: Set diff output on status
+  operator_sdk.util.k8s_status:
     api_version: miscscripts.pnnl.gov/v1beta1
     kind: TenantNamespace
     name: "{{ ansible_operator_meta.name }}"
@@ -275,11 +279,11 @@
       diff: "{{ differ | b64encode }}"
 
 - name: Set user labels
-  set_fact:
+  ansible.builtin.set_fact:
     userlabels: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceLabels | default({}) | combine({'name': ansible_operator_meta.name, 'miscscripts.pnnl.gov/namespace-type': 'user'}, recursive=True) }}"
 
 - name: Create the k8s user namespace
-  k8s:
+  community.kubernetes.k8s:
     state: present
     definition:
       apiVersion: v1
@@ -289,5 +293,4 @@
         labels: "{{ userlabels }}"
         annotations: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceAnnotations | default({}) }}"
   when:
-  - not dryrun
-
+    - not dryrun
