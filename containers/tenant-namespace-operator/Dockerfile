@@ -1,4 +1,4 @@
-FROM quay.io/operator-framework/ansible-operator:v1.7.2
+FROM quay.io/operator-framework/ansible-operator:v1.11.0
 
 ARG helm_version=v3.5.2
 USER 0
