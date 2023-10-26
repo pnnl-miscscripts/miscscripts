@@ -117,8 +117,7 @@
   register: ingressService
   when: >
         merged_values.ingress.nginx.enabled and
-        (_miscscripts_pnnl_gov_tenantnamespace.status.loadBalancerIP is not defined or
-        _miscscripts_pnnl_gov_tenantnamespace.status.ingressNginxUpgradeComplete is not defined)
+        _miscscripts_pnnl_gov_tenantnamespace.status.loadBalancerIP is not defined
 
 - name: Merge in existing ingress ip if exists
   block:
@@ -169,63 +168,6 @@
     merged_values: "{{ merged_values | combine(loadBalancerIP_overrides, recursive=True) }}"
   when:
     - loadBalancerIP is defined
-
-# Delete resources that have selectors that need to be updated
-- name: Remove upgrade resources
-  community.kubernetes.k8s:
-    state: absent
-    api_version: "{{ item.api_version }}"
-    kind: "{{ item.kind }}"
-    namespace: "{{ item.namespace }}"
-    name: "{{ item.name }}"
-  loop:
-    - api_version: apps/v1
-      kind: Deployment
-      namespace: "{{ ansible_operator_meta.name }}-admin"
-      name: "{{ ansible_operator_meta.name }}-ingress-controller"
-    - api_version: v1
-      kind: Service
-      namespace: "{{ ansible_operator_meta.name }}-admin"
-      name: "{{ ansible_operator_meta.name }}-ingress-controller"
-    - api_version: v1
-      kind: Service
-      namespace: "{{ ansible_operator_meta.name }}-admin"
-      name: "{{ ansible_operator_meta.name }}-ingress-controller-metrics"
-    - api_version: apps/v1
-      kind: Deployment
-      namespace: "{{ ansible_operator_meta.name }}-admin"
-      name: "{{ ansible_operator_meta.name }}-ingress-default-backend"
-    - api_version: v1
-      kind: Service
-      namespace: "{{ ansible_operator_meta.name }}-admin"
-      name: "{{ ansible_operator_meta.name }}-ingress-default-backend"
-  when:
-    - not dryrun
-    - ingressService is defined
-    - ingressService.resources is defined
-    - ingressService.resources[0] is defined
-    - ingressService.resources[0].metadata is defined
-    - ingressService.resources[0].metadata.labels is defined
-    - ingressService.resources[0].metadata.labels.chart is defined
-    - ingressService.resources[0].metadata.labels.chart == "ingress-1.34.2"
-
-- name: Add upgrade status marker
-  operator_sdk.util.k8s_status:
-    api_version: miscscripts.pnnl.gov/v1beta1
-    kind: TenantNamespace
-    name: "{{ ansible_operator_meta.name }}"
-    namespace: "{{ ansible_operator_meta.namespace }}"
-    status:
-      ingressNginxUpgradeComplete: true
-  when:
-    - not dryrun
-    - ingressService is defined
-    - ingressService.resources is defined
-    - ingressService.resources[0] is defined
-    - ingressService.resources[0].metadata is defined
-    - ingressService.resources[0].metadata.labels is defined
-    - ingressService.resources[0].metadata.labels["helm.sh/chart"] is defined
-    - ingressService.resources[0].metadata.labels["helm.sh/chart"] == "ingress-3.34.0"
 
 # FIXME Consider making a service account specifically for this so it can't cross namespaces as far as it can today
 - name: Run Helm
