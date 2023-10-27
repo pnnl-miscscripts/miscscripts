@@ -1,4 +1,4 @@
-## Append samples you want in your CSV to this file as resources ##
+## Append samples of your project ##
 resources:
 - miscscripts_v1beta1_tenantnamespace.yaml
 - miscscripts_v1beta1_tenantnamespaceflavor.yaml

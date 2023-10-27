@@ -1,16 +1,17 @@
-FROM quay.io/operator-framework/ansible-operator:v1.22.2
+FROM quay.io/operator-framework/ansible-operator:v1.28.1
 
 ARG helm_version=v3.5.2
 USER 0
 RUN \
-  yum clean all && \
-  yum install -y git patch && \
-  yum clean all && \
-  curl -o helm.tar.gz https://get.helm.sh/helm-${helm_version}-linux-amd64.tar.gz && \
+  dnf clean all && \
+  dnf install -y git patch && \
+  dnf clean all && \
+  ARCH=$(uname -m | sed 's/x86_64/amd64/' | sed 's/aarch64/arm64/') && \
+  curl -o helm.tar.gz https://get.helm.sh/helm-${helm_version}-linux-${ARCH}.tar.gz && \
   tar -zxvf helm.tar.gz && \
-  mv linux-amd64/helm /usr/local/bin/helm && \
+  mv linux-${ARCH}/helm /usr/local/bin/helm && \
   rm -f helm.tar.gz && \
-  rm -rf linux-amd64 && \
+  rm -rf linux-${ARCH} && \
   touch /.extrafingerprints && \
   chown ${USER_UID}:0 /.extrafingerprints
 
