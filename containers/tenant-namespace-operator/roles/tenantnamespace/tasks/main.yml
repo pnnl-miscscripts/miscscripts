@@ -10,7 +10,7 @@
     adminlabels: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceLabels | default({}) | combine({'name': ansible_operator_meta.name + '-admin', 'miscscripts.pnnl.gov/namespace-type': 'admin'}, recursive=True) }}"
 
 - name: Create the k8s admin namespace
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     state: present
     definition:
       apiVersion: v1
@@ -39,7 +39,7 @@
 - name: Load in Flavor values if referenced
   block:
     - name: Fetch referenced flavor
-      community.kubernetes.k8s_info:
+      kubernetes.core.k8s_info:
         api_version: miscscripts.pnnl.gov/v1beta1
         kind: TenantNamespaceFlavor
         name: "{{ flavor_ref.name }}"
@@ -109,7 +109,7 @@
     - _miscscripts_pnnl_gov_tenantnamespace.status.loadBalancerIP is defined
 
 - name: Fetch ingress service
-  community.kubernetes.k8s_info:
+  kubernetes.core.k8s_info:
     api_version: v1
     kind: Service
     name: "{{ ansible_operator_meta.name }}-ingress-controller"
@@ -171,7 +171,7 @@
 
 # FIXME Consider making a service account specifically for this so it can't cross namespaces as far as it can today
 - name: Run Helm
-  community.kubernetes.helm:
+  kubernetes.core.helm:
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.name }}-admin"
     chart_ref: ${HOME}/tenant-namespace
@@ -225,7 +225,7 @@
     userlabels: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceLabels | default({}) | combine({'name': ansible_operator_meta.name, 'miscscripts.pnnl.gov/namespace-type': 'user'}, recursive=True) }}"
 
 - name: Create the k8s user namespace
-  community.kubernetes.k8s:
+  kubernetes.core.k8s:
     state: present
     definition:
       apiVersion: v1
