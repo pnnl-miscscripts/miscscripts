@@ -36,6 +36,10 @@
           enabled: true
 
 - name: Load in Flavor values if referenced
+  when:
+    - flavor_ref is defined
+    - flavor_ref.kind == "TenantNamespaceFlavor"
+    - flavor_ref.group == "miscscripts.pnnl.gov"
   block:
     - name: Fetch referenced flavor
       kubernetes.core.k8s_info:
@@ -49,10 +53,6 @@
     - name: Merge in flavor values
       ansible.builtin.set_fact:
         merged_values: "{{ merged_values | combine(flavor.resources[0].spec, recursive=True) }}"
-  when:
-    - flavor_ref is defined
-    - flavor_ref.kind == "TenantNamespaceFlavor"
-    - flavor_ref.group == "miscscripts.pnnl.gov"
 - name: Set values from CR
   ansible.builtin.set_fact:
     merged_values: "{{ merged_values | combine(_miscscripts_pnnl_gov_tenantnamespace_spec, recursive=True) }}"
@@ -119,6 +119,17 @@
         _miscscripts_pnnl_gov_tenantnamespace.status.loadBalancerIP is not defined
 
 - name: Merge in existing ingress ip if exists
+  when:
+    - _miscscripts_pnnl_gov_tenantnamespace.status.loadBalancerIP is not defined
+    - merged_values.ingress.controller.service.loadBalancerIP is not defined
+    - ingressService is defined
+    - ingressService.resources is defined
+    - ingressService.resources[0] is defined
+    - ingressService.resources[0].status is defined
+    - ingressService.resources[0].status.loadBalancer is defined
+    - ingressService.resources[0].status.loadBalancer.ingress is defined
+    - ingressService.resources[0].status.loadBalancer.ingress[0] is defined
+    - ingressService.resources[0].status.loadBalancer.ingress[0].ip is defined
   block:
     - name: Set ingress ip.
       ansible.builtin.set_fact:
@@ -131,17 +142,6 @@
         namespace: "{{ ansible_operator_meta.namespace }}"
         status:
           loadBalancerIP: "{{ ingressService.resources[0].status.loadBalancer.ingress[0].ip }}"
-  when:
-    - _miscscripts_pnnl_gov_tenantnamespace.status.loadBalancerIP is not defined
-    - merged_values.ingress.controller.service.loadBalancerIP is not defined
-    - ingressService is defined
-    - ingressService.resources is defined
-    - ingressService.resources[0] is defined
-    - ingressService.resources[0].status is defined
-    - ingressService.resources[0].status.loadBalancer is defined
-    - ingressService.resources[0].status.loadBalancer.ingress is defined
-    - ingressService.resources[0].status.loadBalancer.ingress[0] is defined
-    - ingressService.resources[0].status.loadBalancer.ingress[0].ip is defined
 
 - name: Set ingress ip if specified
   ansible.builtin.set_fact:
