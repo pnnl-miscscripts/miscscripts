@@ -205,7 +205,7 @@
       no_log: true
     - name: Set diff
       ansible.builtin.set_fact:
-        differ: "{{ diffhelm.stdout }}\n"
+        differ: "{{ (diffhelm.stdout + '\n') | b64encode }}"
     - name: Remove temp file
       ansible.builtin.file:
         path: "{{ temp_filename.path }}"
@@ -218,7 +218,7 @@
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
     status:
-      diff: "{{ differ | b64encode }}"
+      diff: "{{ differ }}"
 
 - name: Set user labels
   ansible.builtin.set_fact:
