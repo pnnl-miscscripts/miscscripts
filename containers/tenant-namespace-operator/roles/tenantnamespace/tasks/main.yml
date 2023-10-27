@@ -19,8 +19,7 @@
         name: "{{ ansible_operator_meta.name }}-admin"
         labels: "{{ adminlabels }}"
         annotations: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceAnnotations | default({}) }}"
-  when:
-    - not dryrun
+  check_mode: "{{ dryrun }}"
 
 - name: Set initial defaults. They be overridden.
   ansible.builtin.set_fact:
@@ -177,39 +176,8 @@
     chart_ref: ${HOME}/tenant-namespace
     values: "{{ merged_values }}"
   register: objs
-  when:
-    - not dryrun
-
-- name: Set diff
-  ansible.builtin.set_fact:
-    differ: ""
-
-- name: Dry Run Helm
-  when:
-    - dryrun
-  block:
-    - name: Make temp file
-      ansible.builtin.tempfile:
-        state: file
-        suffix: .yaml
-      register: temp_filename
-    - name: Copy values to temp file
-      ansible.builtin.copy:
-        content: "{{ merged_values | to_yaml }}"
-        dest: "{{ temp_filename.path }}"
-      no_log: true
-    - name: Do dry run of helm
-      ansible.builtin.shell: "helm diff upgrade --install --detailed-exitcode --namespace {{ ansible_operator_meta.name }}-admin {{ ansible_operator_meta.name }} ${HOME}/tenant-namespace -f {{ temp_filename.path }}"
-      register: diffhelm
-      ignore_errors: true
-      no_log: true
-    - name: Set diff
-      ansible.builtin.set_fact:
-        differ: "{{ (diffhelm.stdout + '\n') | b64encode }}"
-    - name: Remove temp file
-      ansible.builtin.file:
-        path: "{{ temp_filename.path }}"
-        state: absent
+  check_mode: "{{ dryrun }}"
+  diff: "{{ dryrun }}"
 
 - name: Set diff output on status
   operator_sdk.util.k8s_status:
@@ -218,7 +186,7 @@
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.namespace }}"
     status:
-      diff: "{{ differ }}"
+      diff: "{{ ((objs.diff.prepared | default('')) + '\n') | b64encode }}"
 
 - name: Set user labels
   ansible.builtin.set_fact:
@@ -234,5 +202,4 @@
         name: "{{ ansible_operator_meta.name }}"
         labels: "{{ userlabels }}"
         annotations: "{{ _miscscripts_pnnl_gov_tenantnamespace_spec.extraNamespaceAnnotations | default({}) }}"
-  when:
-    - not dryrun
+  check_mode: "{{ dryrun }}"
