@@ -30,13 +30,15 @@ serviceAccount:
 
 podSecurityContext:
   runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
   # fsGroup: 2000
 
 securityContext:
   allowPrivilegeEscalation: false
-  # capabilities:
-  #   drop:
-  #   - ALL
+  capabilities:
+    drop:
+      - ALL
   # readOnlyRootFilesystem: true
   # runAsUser: 1000
 
