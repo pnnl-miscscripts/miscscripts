@@ -8,7 +8,7 @@ rules:
 - apiGroups:
   - miscscripts.pnnl.gov
   resources:
-  - 'tenantnamespaceflavors'
+  - tenantnamespaceflavors
   verbs:
   - get
   - list
@@ -16,35 +16,23 @@ rules:
 - apiGroups:
   - ""
   resources:
-  - 'namespaces'
-  - 'resourcequotas'
-  - 'limitranges'
+  - namespaces
+  - resourcequotas
+  - limitranges
   verbs:
   - "*"
 - apiGroups:
   - rbac.authorization.k8s.io
   resources:
-  - 'rolebindings'
+  - rolebindings
+  - clusterroles
+  - clusterrolebindings
   verbs:
   - "*"
 - apiGroups:
-  - rbac.authorization.k8s.io
-  resources:
-  - 'clusterroles'
-  - 'clusterrolebindings'
-  verbs:
-  - "*"
-- apiGroups:
-  - networking.k8s.io/v1
+  - networking.k8s.io
   resources:
   - networkpolicies
-  verbs:
-  - "*"
-- apiGroups:
-  - rbac.authorization.k8s.io
-  resources:
-  - 'clusterroles'
-  - 'clusterrolebindings'
   verbs:
   - "*"
 - apiGroups:
