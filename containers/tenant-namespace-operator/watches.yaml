@@ -8,4 +8,4 @@
   finalizer:
     name: finalizer.tenantnamespace.miscscripts.pnnl.gov
     role: tenantnamespacefin
-# +kubebuilder:scaffold:watch
+#+kubebuilder:scaffold:watch

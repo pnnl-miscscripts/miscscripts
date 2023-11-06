@@ -21,6 +21,19 @@ rules:
     - patch
     - update
     - watch
+  # needed for ingress leader election pre 1.24
+  - apiGroups:
+    - coordination.k8s.io
+    resources:
+    - leases
+    verbs:
+    - get
+    - list
+    - watch
+    - create
+    - update
+    - patch
+    - delete
   - apiGroups:
     - apps
     resources:
@@ -38,6 +51,7 @@ rules:
     - monitoring.coreos.com
     resources:
     - servicemonitors
+    - prometheusrules
     verbs:
     - get
     - create
@@ -121,4 +135,4 @@ rules:
       - get
       - list
       - watch
-# +kubebuilder:scaffold:rules
+#+kubebuilder:scaffold:rules

@@ -4,4 +4,4 @@
 resources:
 - bases/miscscripts.pnnl.gov_tenantnamespaces.yaml
 - bases/miscscripts.pnnl.gov_tenantnamespaceflavors.yaml
-# +kubebuilder:scaffold:crdkustomizeresource
+#+kubebuilder:scaffold:crdkustomizeresource

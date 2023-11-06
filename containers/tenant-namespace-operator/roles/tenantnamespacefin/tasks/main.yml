@@ -1,16 +1,16 @@
 ---
 # tasks file for tenantnamespace
 
-#Check to see release exists. If it doesnt continue on. If it does, delete it.
+# Check to see release exists. If it doesnt continue on. If it does, delete it.
 - name: Delete the helm release
-  helm:
+  kubernetes.core.helm:
     name: "{{ ansible_operator_meta.name }}"
     namespace: "{{ ansible_operator_meta.name }}-admin"
     state: absent
   register: objs
 
 - name: Delete the k8s user namespace
-  k8s:
+  kubernetes.core.k8s:
     state: absent
     definition:
       apiVersion: v1
@@ -19,11 +19,10 @@
         name: "{{ ansible_operator_meta.name }}"
 
 - name: Delete the k8s admin namespace
-  k8s:
+  kubernetes.core.k8s:
     state: absent
     definition:
       apiVersion: v1
       kind: Namespace
       metadata:
         name: "{{ ansible_operator_meta.name }}-admin"
-
