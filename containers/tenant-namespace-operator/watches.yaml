@@ -5,6 +5,7 @@
   kind: TenantNamespace
   role: tenantnamespace
   reconcilePeriod: "60s"
+  markUnsafe: true
   finalizer:
     name: finalizer.tenantnamespace.miscscripts.pnnl.gov
     role: tenantnamespacefin
