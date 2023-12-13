@@ -23,4 +23,6 @@ RUN \
     iotop \
     ipvsadm \
     openssl \
-    nvme
+    nvme-cli \
+    smartmontools \
+    dmidecode
