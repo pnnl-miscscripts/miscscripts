@@ -141,34 +141,6 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-openvswitch9
           rm -f rpm.priv
-  buildc-rpms-k8s-22:
-    runs-on: ubuntu-20.04
-    needs:
-    - buildc-rpms-node-base
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.1
-      - name: Build rpms-kubernetes container 1.22
-        env:
-          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
-        run: |
-          printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          ./containers/build rpms-kubernetes 1.22
-          rm -f rpm.priv
-  buildc-rpms-k8s-23:
-    runs-on: ubuntu-20.04
-    needs:
-    - buildc-rpms-node-base
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.1
-      - name: Build rpms-kubernetes container 1.23
-        env:
-          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
-        run: |
-          printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          ./containers/build rpms-kubernetes 1.23
-          rm -f rpm.priv
   buildc-rpms-k8s-24:
     runs-on: ubuntu-20.04
     needs:
@@ -180,8 +152,6 @@ jobs:
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
-          printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          ./containers/build rpms-kubernetes 1.24
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes9 1.24
           rm -f rpm.priv
@@ -227,20 +197,6 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-kubernetes9 1.27
           rm -f rpm.priv
-  buildc-rpms-k8s-21:
-    runs-on: ubuntu-20.04
-    needs:
-    - buildc-rpms-node-base
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.1
-      - name: Build rpms-kubernetes container 1.21
-        env:
-          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
-        run: |
-          printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          ./containers/build rpms-kubernetes 1.21
-          rm -f rpm.priv
   buildc-rpms-k8s-28:
     runs-on: ubuntu-20.04
     needs:
@@ -271,7 +227,6 @@ jobs:
     - buildc-rpms-node-base
     - buildc-rpms-containerd
     - buildc-rpms-openvswitch
-    - buildc-rpms-k8s-22
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
@@ -288,7 +243,6 @@ jobs:
     - buildc-rpms-node-base
     - buildc-rpms-containerd
     - buildc-rpms-openvswitch
-    - buildc-rpms-k8s-23
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
@@ -375,7 +329,6 @@ jobs:
     - buildc-rpms-node-base
     - buildc-rpms-containerd
     - buildc-rpms-openvswitch
-    - buildc-rpms-k8s-21
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
