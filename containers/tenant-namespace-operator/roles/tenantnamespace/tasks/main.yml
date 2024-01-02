@@ -19,21 +19,7 @@
   ansible.builtin.set_fact:
     _safe_cr: "{{ _cr_response.resources[0] }}"
 
-- name: Set admin labels
-  ansible.builtin.set_fact:
-    _adminlabels: "{{ _safe_cr.spec.extraNamespaceLabels | default({}) | combine({'name': ansible_operator_meta.name + '-admin', 'miscscripts.pnnl.gov/namespace-type': 'admin'}, recursive=True) }}"
 
-- name: Create the k8s admin namespace
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: "{{ ansible_operator_meta.name }}-admin"
-        labels: "{{ _adminlabels }}"
-        annotations: "{{ _safe_cr.spec.extraNamespaceAnnotations | default({}) }}"
-  check_mode: "{{ _dryrun }}"
 
 - name: Set initial defaults. They be overridden.
   ansible.builtin.set_fact:
@@ -48,6 +34,12 @@
       ingress:
         nginx:
           enabled: true
+      extraNamespaceLabels: {}
+      adminNamespaceLabels: {}
+      userNamespaceLabels: {}
+      extraNamespaceAnnotations: {}
+      adminNamespaceAnnotations: {}
+      userNamespaceAnnotations: {}
 
 - name: Load in Flavor values if referenced
   when:
@@ -111,6 +103,12 @@
         controller:
           scope:
             namespace: "{{ ansible_operator_meta.name }}"
+      adminNamespaceLabels:
+        name: "{{ ansible_operator_meta.name + '-admin' }}"
+        miscscripts.pnnl.gov/namespace-type: "admin"
+      userNamespaceLabels:
+        name: "{{ ansible_operator_meta.name }}"
+        miscscripts.pnnl.gov/namespace-type: "user"
 
 - name: Force namespace settings. Can not be overridden.
   ansible.builtin.set_fact:
@@ -173,6 +171,18 @@
   when:
     - _load_balancer_ip is defined
 
+- name: Create the k8s admin namespace
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ ansible_operator_meta.name }}-admin"
+        labels: "{{ _merged_values.extraNamespaceLabels | combine(_merged_values.adminNamespaceLabels, recursive=True) }}"
+        annotations: "{{ _merged_values.extraNamespaceAnnotations | combine(_merged_values.adminNamespaceAnnotations, recursive=True) }}"
+  check_mode: "{{ _dryrun }}"
+
 # FIXME Consider making a service account specifically for this so it can't cross namespaces as far as it can today
 - name: Run Helm
   kubernetes.core.helm:
@@ -193,10 +203,6 @@
     status:
       diff: "{{ ((_objs.diff.prepared | default('')) + '\n') | b64encode }}"
 
-- name: Set user labels
-  ansible.builtin.set_fact:
-    _userlabels: "{{ _safe_cr.spec.extraNamespaceLabels | default({}) | combine({'name': ansible_operator_meta.name, 'miscscripts.pnnl.gov/namespace-type': 'user'}, recursive=True) }}"
-
 - name: Create the k8s user namespace
   kubernetes.core.k8s:
     state: present
@@ -205,6 +211,6 @@
       kind: Namespace
       metadata:
         name: "{{ ansible_operator_meta.name }}"
-        labels: "{{ _userlabels }}"
-        annotations: "{{ _safe_cr.spec.extraNamespaceAnnotations | default({}) }}"
+        labels: "{{ _merged_values.extraNamespaceLabels | combine(_merged_values.userNamespaceLabels, recursive=True) }}"
+        annotations: "{{ _merged_values.extraNamespaceAnnotations | combine(_merged_values.userNamespaceAnnotations, recursive=True) }}"
   check_mode: "{{ _dryrun }}"
