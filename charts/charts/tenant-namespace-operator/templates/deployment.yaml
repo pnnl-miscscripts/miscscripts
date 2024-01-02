@@ -66,6 +66,18 @@ spec:
             - name: DRYRUN
               value: "yes"
 {{- end }}
+{{- if .Values.debug }}
+            - name: ANSIBLE_DEBUG_LOGS
+              value: "True"
+{{- end }}
+{{- if .Values.verbosity }}
+            - name: ANSIBLE_VERBOSITY_TENANTNAMESPACE_MISCSCRIPTS_PNNL_GOV
+              value: {{ .Values.verbosity | quote }}
+{{- end }}
+{{- if .Values.maxConcurrentReconciles }}
+            - name: MAX_CONCURRENT_RECONCILES_TENANTNAMESPACE_MISCSCRIPTS_PNNL_GOV
+              value: {{ .Values.maxConcurrentReconciles | quote }}
+{{- end }}
             - name: INGRESS_CLUSTERROLE
               value: {{ include "tenant-namespace-operator.fullname" . }}-ic
       volumes:
