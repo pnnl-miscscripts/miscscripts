@@ -13,6 +13,15 @@ replicaCount: 1
 # Set if the operator will only dryrun actions
 dryrun: false
 
+# Set for ansible debug logs
+debug: false
+
+# Set operator verbosity
+#verbosity: 2
+
+# Set operator max concurrent reconciles
+#maxConcurrentReconciles: 16
+
 image:
   repository: pnnlmiscscripts/tenant-namespace-operator
   pullPolicy: IfNotPresent
