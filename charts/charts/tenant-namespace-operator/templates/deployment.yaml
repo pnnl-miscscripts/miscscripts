@@ -26,8 +26,10 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
-          - mountPath: /tmp/ansible-operator/runner
-            name: runner
+            - mountPath: /tmp
+              name: temp
+            - mountPath: /tmp/ansible-operator/runner
+              name: runner
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           resources:
@@ -81,6 +83,10 @@ spec:
             - name: INGRESS_CLUSTERROLE
               value: {{ include "tenant-namespace-operator.fullname" . }}-ic
       volumes:
+        - name: temp
+          emptyDir:
+            medium: Memory
+            sizeLimit: 64Mi
         - name: runner
           emptyDir: {}
       {{- with .Values.nodeSelector }}
