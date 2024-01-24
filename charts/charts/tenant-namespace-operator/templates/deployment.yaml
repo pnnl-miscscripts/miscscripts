@@ -86,7 +86,7 @@ spec:
         - name: temp
           emptyDir:
             medium: Memory
-            sizeLimit: 64Mi
+            sizeLimit: {{ .Values.tmpSizeLimit | quote }}
         - name: runner
           emptyDir: {}
       {{- with .Values.nodeSelector }}

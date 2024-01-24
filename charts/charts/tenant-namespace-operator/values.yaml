@@ -22,6 +22,9 @@ debug: false
 # Set operator max concurrent reconciles
 #maxConcurrentReconciles: 16
 
+# EmptyDir /tmp mount size limit
+tmpSizeLimit: 64Mi
+
 image:
   repository: pnnlmiscscripts/tenant-namespace-operator
   pullPolicy: IfNotPresent
