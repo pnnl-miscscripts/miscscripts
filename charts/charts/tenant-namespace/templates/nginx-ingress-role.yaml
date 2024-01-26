@@ -32,7 +32,6 @@ rules:
   - list
   - watch
 - apiGroups:
-  - extensions
   - "networking.k8s.io" # k8s 1.14+
   resources:
   - ingresses
@@ -41,7 +40,6 @@ rules:
   - list
   - watch
 - apiGroups:
-  - extensions
   - "networking.k8s.io" # k8s 1.14+
   resources:
   - ingresses/status
@@ -62,3 +60,11 @@ rules:
   verbs:
   - create
   - patch
+- apiGroups:
+  - discovery.k8s.io
+  resources:
+  - endpointslices
+  verbs:
+  - get
+  - list
+  - watch
