@@ -13,8 +13,8 @@ ADD rpmmacros /root/.rpmmacros
 RUN --mount=type=secret,id=gpg \
   cd / && \
   set -e && \
-  yum install -y 'dnf-command(download)' createrepo gnupg2 rpm-sign findutils && \
-  yum install -y https://repos.fedorapeople.org/repos/openstack/openstack-zed/rdo-release-zed-1.el9s.noarch.rpm && \
+  dnf install -y 'dnf-command(download)' createrepo gnupg2 rpm-sign findutils && \
+  dnf install -y centos-release-nfv-openvswitch && \
   mkdir -p /rpms && \
   cd /rpms && \
   cp -a /rpms-base/*.rpm . && \
