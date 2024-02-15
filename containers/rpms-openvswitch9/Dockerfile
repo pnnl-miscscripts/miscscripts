@@ -15,6 +15,7 @@ RUN --mount=type=secret,id=gpg \
   set -e && \
   dnf install -y 'dnf-command(download)' createrepo gnupg2 rpm-sign findutils && \
   dnf install -y centos-release-nfv-openvswitch && \
+  sed -i 's/common-$releasever/2-9-stream/g' /etc/yum.repos.d/CentOS-NFV-OpenvSwitch.repo && \
   mkdir -p /rpms && \
   cd /rpms && \
   cp -a /rpms-base/*.rpm . && \
