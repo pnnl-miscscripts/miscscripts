@@ -141,75 +141,22 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build rpms-openvswitch9
           rm -f rpm.priv
-  buildc-rpms-k8s-24:
+  buildc-rpms-k8s:
     runs-on: ubuntu-20.04
     needs:
     - buildc-rpms-node-base
+    strategy:
+      matrix:
+        kube_version: [1.24, 1.25, 1.26, 1.27, 1.28, 1.29]
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
-      - name: Build rpms-kubernetes container 1.24
+      - name: Build rpms-kubernetes container ${{ matrix.kube_version }}
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          ./containers/build rpms-kubernetes9 1.24
-          rm -f rpm.priv
-  buildc-rpms-k8s-25:
-    runs-on: ubuntu-20.04
-    needs:
-    - buildc-rpms-node-base
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.1
-      - name: Build rpms-kubernetes container 1.25
-        env:
-          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
-        run: |
-          printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          ./containers/build rpms-kubernetes9 1.25
-          rm -f rpm.priv
-  buildc-rpms-k8s-26:
-    runs-on: ubuntu-20.04
-    needs:
-    - buildc-rpms-node-base
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.1
-      - name: Build rpms-kubernetes container 1.26
-        env:
-          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
-        run: |
-          printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          ./containers/build rpms-kubernetes9 1.26
-          rm -f rpm.priv
-  buildc-rpms-k8s-27:
-    runs-on: ubuntu-20.04
-    needs:
-    - buildc-rpms-node-base
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.1
-      - name: Build rpms-kubernetes container 1.27
-        env:
-          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
-        run: |
-          printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          ./containers/build rpms-kubernetes9 1.27
-          rm -f rpm.priv
-  buildc-rpms-k8s-28:
-    runs-on: ubuntu-20.04
-    needs:
-    - buildc-rpms-node-base
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.1
-      - name: Build rpms-kubernetes container 1.28
-        env:
-          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
-        run: |
-          printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          ./containers/build rpms-kubernetes9 1.28
+          ./containers/build rpms-kubernetes9 ${{ matrix.kube_version }}
           rm -f rpm.priv
   buildc-anaconda:
     runs-on: ubuntu-20.04
@@ -259,7 +206,7 @@ jobs:
     - buildc-rpms-node-base
     - buildc-rpms-containerd
     - buildc-rpms-openvswitch
-    - buildc-rpms-k8s-24
+    - buildc-rpms-k8s
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
@@ -272,56 +219,25 @@ jobs:
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image9 1.24
           rm -f rpm.priv
-  build-node-image-25:
+  build-node-image:
     runs-on: ubuntu-20.04
     needs:
     - buildc-rpms-node-base
     - buildc-rpms-containerd
     - buildc-rpms-openvswitch
-    - buildc-rpms-k8s-25
+    - buildc-rpms-k8s
+    strategy:
+      matrix:
+        kube_version: [1.25, 1.26, 1.27, 1.28, 1.29]
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
-      - name: Build full k8s node image 1.25
+      - name: Build full k8s node image ${{ matrix.kube_version }}
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          ./containers/build k8s-node-image9 1.25
-          rm -f rpm.priv
-  build-node-image-26:
-    runs-on: ubuntu-20.04
-    needs:
-    - buildc-rpms-node-base
-    - buildc-rpms-containerd
-    - buildc-rpms-openvswitch
-    - buildc-rpms-k8s-26
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.1
-      - name: Build full k8s node image 1.26
-        env:
-          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
-        run: |
-          printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          ./containers/build k8s-node-image9 1.26
-          rm -f rpm.priv
-  build-node-image-27:
-    runs-on: ubuntu-20.04
-    needs:
-    - buildc-rpms-node-base
-    - buildc-rpms-containerd
-    - buildc-rpms-openvswitch
-    - buildc-rpms-k8s-27
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.1
-      - name: Build full k8s node image 1.27
-        env:
-          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
-        run: |
-          printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          ./containers/build k8s-node-image9 1.27
+          ./containers/build k8s-node-image9 ${{ matrix.kube_version }}
           rm -f rpm.priv
   build-node-image-21:
     runs-on: ubuntu-20.04
@@ -338,23 +254,6 @@ jobs:
         run: |
           printf "%s" "$RPM_GPG_KEY" > rpm.priv
           ./containers/build k8s-node-image 1.21
-          rm -f rpm.priv
-  build-node-image-28:
-    runs-on: ubuntu-20.04
-    needs:
-    - buildc-rpms-node-base
-    - buildc-rpms-containerd
-    - buildc-rpms-openvswitch
-    - buildc-rpms-k8s-28
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.1
-      - name: Build full k8s node image 1.28
-        env:
-          RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
-        run: |
-          printf "%s" "$RPM_GPG_KEY" > rpm.priv
-          ./containers/build k8s-node-image9 1.28
           rm -f rpm.priv
 
   buildc-anaconda-nginx:
@@ -397,33 +296,18 @@ jobs:
         run: ./containers/build k8s-node-image-nginx 1.24
       - name: Build k8s-node-image+nginx9 container 1.24
         run: ./containers/build k8s-node-image-nginx9 1.24
-  build-node-image-25-nginx:
+  build-node-image-nginx:
     runs-on: ubuntu-20.04
     needs:
-    - build-node-image-25
+    - build-node-image
+    strategy:
+      matrix:
+        kube_version: [1.25, 1.26, 1.27, 1.28, 1.29]
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
-      - name: Build k8s-node-image+nginx9 container 1.25
-        run: ./containers/build k8s-node-image-nginx9 1.25
-  build-node-image-26-nginx:
-    runs-on: ubuntu-20.04
-    needs:
-    - build-node-image-26
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.1
-      - name: Build k8s-node-image+nginx9 container 1.26
-        run: ./containers/build k8s-node-image-nginx9 1.26
-  build-node-image-27-nginx:
-    runs-on: ubuntu-20.04
-    needs:
-    - build-node-image-27
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.1
-      - name: Build k8s-node-image+nginx9 container 1.27
-        run: ./containers/build k8s-node-image-nginx9 1.27
+      - name: Build k8s-node-image+nginx9 container ${{ matrix.kube_version }} 
+        run: ./containers/build k8s-node-image-nginx9 ${{ matrix.kube_version }}
   build-node-image-21-nginx:
     runs-on: ubuntu-20.04
     needs:
@@ -433,15 +317,6 @@ jobs:
         uses: actions/checkout@v4.1.1
       - name: Build k8s-node-image+nginx container 1.21
         run: ./containers/build k8s-node-image-nginx 1.21
-  build-node-image-28-nginx:
-    runs-on: ubuntu-20.04
-    needs:
-    - build-node-image-28
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.1.1
-      - name: Build k8s-node-image+nginx9 container 1.28
-        run: ./containers/build k8s-node-image-nginx9 1.28
 
   build-image-library-charts:
     runs-on: ubuntu-20.04
@@ -456,11 +331,8 @@ jobs:
     - build-node-image-22-nginx
     - build-node-image-23-nginx
     - build-node-image-24-nginx
-    - build-node-image-25-nginx
-    - build-node-image-26-nginx
-    - build-node-image-27-nginx
+    - build-node-image-nginx
     - build-node-image-21-nginx
-    - build-node-image-28-nginx
     - buildc-pixiecore
     - buildc-smartctl-exporter
     env:
