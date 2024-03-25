@@ -15,84 +15,84 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build git container
         run: ./containers/build git
   buildc-curl-jq:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build curl-jq container
         run: ./containers/build curl-jq
   buildc-gitlab-runner-operator:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build gitlab-runner-operator container
         run: ./containers/build gitlab-runner-operator
   buildc-tenant-namespace-operator:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build tenant-namespace-operator container
         run: ./containers/build tenant-namespace-operator
   buildc-pixiecore:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build pixiecore container
         run: ./containers/build pixiecore
   buildc-ipmitool:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build ipmitool container
         run: ./containers/build ipmitool
   buildc-ipmi-exporter:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build ipmi-exporter container
         run: ./containers/build ipmi-exporter
   buildc-dhcpd:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build dhcpd container
         run: ./containers/build dhcpd
   buildc-inotify-tools:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build inotify-tools container
         run: ./containers/build inotify-tools
   buildc-chronyd:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build chronyd container
         run: ./containers/build chronyd
   buildc-debug-toolbox:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build debug-toolbox container
         run: ./containers/build debug-toolbox
   buildc-smartctl-exporter:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build smartctl-exporter container
         run: ./containers/build smartctl-exporter
   buildc-rpms-containerd:
@@ -101,7 +101,7 @@ jobs:
     - buildc-rpms-node-base
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build rpms-containerd container
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -115,7 +115,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build rpms-node-base container
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -131,7 +131,7 @@ jobs:
     - buildc-rpms-node-base
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build rpms-openvswitch container
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -150,7 +150,7 @@ jobs:
         kube_version: [1.24, 1.25, 1.26, 1.27, 1.28, 1.29]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build rpms-kubernetes container ${{ matrix.kube_version }}
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -162,7 +162,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build anaconda container
         run: ./containers/build anaconda
       - name: Build anaconda9 container
@@ -176,7 +176,7 @@ jobs:
     - buildc-rpms-openvswitch
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build full k8s node image 1.22
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -192,7 +192,7 @@ jobs:
     - buildc-rpms-openvswitch
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build full k8s node image 1.23
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -209,7 +209,7 @@ jobs:
     - buildc-rpms-k8s
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build full k8s node image 1.24
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -231,7 +231,7 @@ jobs:
         kube_version: [1.25, 1.26, 1.27, 1.28, 1.29]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build full k8s node image ${{ matrix.kube_version }}
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -247,7 +247,7 @@ jobs:
     - buildc-rpms-openvswitch
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build full k8s node image 1.21
         env:
           RPM_GPG_KEY: ${{ secrets.RPM_GPG_KEY }}
@@ -262,7 +262,7 @@ jobs:
     - buildc-anaconda
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build anaconda+nginx container
         run: ./containers/build anaconda-nginx
       - name: Build anaconda+nginx9 container
@@ -273,7 +273,7 @@ jobs:
     - build-node-image-22
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build k8s-node-image+nginx container 1.22
         run: ./containers/build k8s-node-image-nginx 1.22
   build-node-image-23-nginx:
@@ -282,7 +282,7 @@ jobs:
     - build-node-image-23
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build k8s-node-image+nginx container 1.23
         run: ./containers/build k8s-node-image-nginx 1.23
   build-node-image-24-nginx:
@@ -291,7 +291,7 @@ jobs:
     - build-node-image-24
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build k8s-node-image+nginx container 1.24
         run: ./containers/build k8s-node-image-nginx 1.24
       - name: Build k8s-node-image+nginx9 container 1.24
@@ -305,7 +305,7 @@ jobs:
         kube_version: [1.25, 1.26, 1.27, 1.28, 1.29]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build k8s-node-image+nginx9 container ${{ matrix.kube_version }} 
         run: ./containers/build k8s-node-image-nginx9 ${{ matrix.kube_version }}
   build-node-image-21-nginx:
@@ -314,7 +314,7 @@ jobs:
     - build-node-image-21
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Build k8s-node-image+nginx container 1.21
         run: ./containers/build k8s-node-image-nginx 1.21
 
@@ -339,7 +339,7 @@ jobs:
       GITHUB_LIBRARY_CHARTS_TOKEN: ${{ secrets.GIT_LIBRARY_CHARTS_TOKEN }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Configure Git
         run: |
           git config --global user.name "$GITHUB_ACTOR"
@@ -357,7 +357,7 @@ jobs:
       GITHUB_LIBRARY_CHARTS_TOKEN: ${{ secrets.GIT_LIBRARY_CHARTS_TOKEN }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.1.1
+        uses: actions/checkout@v4.1.2
       - name: Configure Git
         run: |
           git config --global user.name "$GITHUB_ACTOR"
