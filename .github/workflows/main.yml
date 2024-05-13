@@ -147,7 +147,7 @@ jobs:
     - buildc-rpms-node-base
     strategy:
       matrix:
-        kube_version: [1.24, 1.25, 1.26, 1.27, 1.28, 1.29, 1.30]
+        kube_version: ["1.24", "1.25", "1.26", "1.27", "1.28", "1.29", "1.30"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.5
@@ -228,7 +228,7 @@ jobs:
     - buildc-rpms-k8s
     strategy:
       matrix:
-        kube_version: [1.25, 1.26, 1.27, 1.28, 1.29, 1.30]
+        kube_version: ["1.25", "1.26", "1.27", "1.28", "1.29", "1.30"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.5
@@ -302,7 +302,7 @@ jobs:
     - build-node-image
     strategy:
       matrix:
-        kube_version: [1.25, 1.26, 1.27, 1.28, 1.29, 1.30]
+        kube_version: ["1.25", "1.26", "1.27", "1.28", "1.29", "1.30"]
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.5
