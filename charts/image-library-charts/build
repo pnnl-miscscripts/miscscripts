@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-RAWCONTAINER="$1"
+RAWCONTAINER="$1" goo
 SUBBUILD="$2"
 if [ "x$SUBBUILD" == "x" -o "x$SUBBUILD" == "xlatest" ]; then
 	CONTAINER="$RAWCONTAINER"
