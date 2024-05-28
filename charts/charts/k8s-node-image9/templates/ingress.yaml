@@ -41,35 +41,35 @@ spec:
     - http:
         paths:
           - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "" "type" "d" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
-            pathType: Prefix
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: {{ $nFullName }}
                 port:
                   name: http
           - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "images" "type" "d" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
-            pathType: Prefix
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: {{ $aFullName }}
                 port:
                   name: http
           - path: {{ dict "dot" $dot "prefix" $prefix "suffix" ".treeinfo" "type" "f" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
-            pathType: Prefix
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: {{ $aFullName }}
                 port:
                   name: http
           - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "LICENSE" "type" "f" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
-            pathType: Prefix
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: {{ $aFullName }}
                 port:
                   name: http
           - path: {{ dict "dot" $dot "prefix" $prefix "suffix" "RockyLinux_BuildTag" "type" "f" | include "pnnlmiscscripts.k8s-node-image-full.ingress" }}
-            pathType: Prefix
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: {{ $aFullName }}

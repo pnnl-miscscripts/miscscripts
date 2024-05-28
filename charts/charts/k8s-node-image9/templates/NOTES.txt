@@ -1,21 +1,45 @@
 {{- $dot := . }}
-{{- $prefix := include "pnnlmiscscripts.k8s-node-image-full.ingress.prefix" . }}
+
+{{- if .Values.ingress.enabled }}
+{{- $ingressPrefix := include "pnnlmiscscripts.k8s-node-image-full.ingress.prefix" . }}
 Contact information
 
 {{- range .Values.ingress.hosts }}
 {{- if . }}
 Repo:
-http://{{ . }}{{ $prefix }}
+http://{{ . }}{{ $ingressPrefix }}
 Kernel:
-http://{{ . }}{{ $prefix }}/vmlinuz
+http://{{ . }}{{ $ingressPrefix }}/vmlinuz
 Initrd:
-http://{{ . }}{{ $prefix }}/initrd.img
+http://{{ . }}{{ $ingressPrefix }}/initrd.img
 {{- else }}
 Repo:
-http://xx.xx.xx.xx{{ $prefix }}
+http://xx.xx.xx.xx{{ $ingressPrefix }}
 Kernel:
-http://xx.xx.xx.xx{{ $prefix }}/vmlinuz
+http://xx.xx.xx.xx{{ $ingressPrefix }}/vmlinuz
 Initrd:
-http://xx.xx.xx.xx{{ $prefix }}/initrd.img
+http://xx.xx.xx.xx{{ $ingressPrefix }}/initrd.img
+{{- end }}
+{{- end }}
+{{- end }}
+
+{{- if .Values.httpRoute.enabled }}
+{{- $httpRoutePrefix := include "pnnlmiscscripts.k8s-node-image-full.httpRoute.prefix" . }}
+Contact information
+
+{{- range .Values.httpRoute.hostnames }}
+Repo:
+http://{{ . }}{{ $httpRoutePrefix }}
+Kernel:
+http://{{ . }}{{ $httpRoutePrefix }}/vmlinuz
+Initrd:
+http://{{ . }}{{ $httpRoutePrefix }}/initrd.img
+{{- else }}
+Repo:
+http://xx.xx.xx.xx{{ $httpRoutePrefix }}
+Kernel:
+http://xx.xx.xx.xx{{ $httpRoutePrefix }}/vmlinuz
+Initrd:
+http://xx.xx.xx.xx{{ $httpRoutePrefix }}/initrd.img
 {{- end }}
 {{- end }}
