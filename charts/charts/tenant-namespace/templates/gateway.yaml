@@ -1,0 +1,13 @@
+{{- if .Values.gateway.enabled -}}
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: {{ .Values.gateway.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  gatewayClassName: {{ .Values.gateway.className }}
+  listeners:
+    {{- with .Values.gateway.listeners }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+{{- end }}
