@@ -1,0 +1,90 @@
+{{- if .Values.httpRoute.enabled -}}
+{{- $prefix := include "pnnlmiscscripts.k8s-node-image-full.httpRoute.prefix" . }}
+{{- $aFullName := include "pnnlmiscscripts.k8s-node-image-full.anaconda.fullname" . -}}
+{{- $nFullName := include "pnnlmiscscripts.k8s-node-image-full.k8s-node.fullname" . -}}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "pnnlmiscscripts.k8s-node-image-full.fullname" . }}
+  labels:
+    {{- include "pnnlmiscscripts.k8s-node-image-full.labels" . | nindent 4 }}
+  {{- with .Values.httpRoute.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  parentRefs:
+    {{- with .Values.httpRoute.parentRefs }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.httpRoute.hostnames }}
+  hostnames:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: {{ printf "%s/images" $prefix }}
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /images
+    backendRefs:
+    - name: {{ $aFullName }}
+      port: 80
+  - matches:
+    - path:
+        type: Exact
+        value: {{ printf "%s/.treeinfo" $prefix }}
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /.treeinfo
+    backendRefs:
+    - name: {{ $aFullName }}
+      port: 80
+  - matches:
+    - path:
+        type: Exact
+        value: {{ printf "%s/LICENSE" $prefix }}
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /LICENSE
+    backendRefs:
+    - name: {{ $aFullName }}
+      port: 80
+  - matches:
+    - path:
+        type: Exact
+        value: {{ printf "%s/RockyLinux_BuildTag" $prefix }}
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplaceFullPath
+          replaceFullPath: /RockyLinux_BuildTag
+    backendRefs:
+    - name: {{ $aFullName }}
+      port: 80
+  - matches:
+    - path:
+        type: PathPrefix
+        value: {{ $prefix }}
+    filters:
+    - type: URLRewrite
+      urlRewrite:
+        path:
+          type: ReplacePrefixMatch
+          replacePrefixMatch: /
+    backendRefs:
+    - name: {{ $nFullName }}
+      port: 80
+{{- end }}

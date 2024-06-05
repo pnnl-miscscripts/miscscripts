@@ -81,6 +81,15 @@ takes dot, prefix, suffix, and type. type can be either f or d.
 {{- end }}
 {{- end -}}
 
+{{- define "pnnlmiscscripts.k8s-node-image-full.httpRoute.prefix" -}}
+{{- if .Values.httpRoute.enableVersionPrefix -}}
+{{- $tag := dict "dot" . "section" .Values.k8sNode.image | include (printf "%s.tag" .Values.k8sNode.prefix) -}}
+{{- printf "%s/9-%s" .Values.httpRoute.prefix $tag -}}
+{{- else }}
+{{- .Values.httpRoute.prefix -}}
+{{- end }}
+{{- end }}
+
 {{/*
 Common labels
 */}}
