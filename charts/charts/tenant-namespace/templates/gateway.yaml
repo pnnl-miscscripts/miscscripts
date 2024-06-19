@@ -1,13 +1,47 @@
-{{- if .Values.gateway.enabled -}}
+{{- if .Values.gateway.enabled }}
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: {{ .Values.gateway.name }}
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "namespace.labels" . | nindent 4 }}
 spec:
   gatewayClassName: {{ .Values.gateway.className }}
   listeners:
-    {{- with .Values.gateway.listeners }}
+    {{- if .Values.gateway.httpListener.enabled }}
+    - allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Values.magicnamespace.namespace }}
+      name: http
+      port: 80
+      protocol: HTTP
+    {{- end }}
+    {{- if .Values.gateway.httpsListener.enabled }}
+    - allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              kubernetes.io/metadata.name: {{ .Values.magicnamespace.namespace }}
+      name: https
+      port: 443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          {{- with .Values.gateway.httpsListener.certificateRefs }}
+            {{- toYaml . | nindent 10 }}
+          {{- end }}
+    {{- end }}
+    {{- with .Values.gateway.extraListeners }}
       {{- toYaml . | nindent 4 }}
     {{- end }}
+  {{- with .Values.gateway.infrastructure }}
+  infrastructure:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 {{- end }}
