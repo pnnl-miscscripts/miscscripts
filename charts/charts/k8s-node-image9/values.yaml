@@ -53,7 +53,7 @@ httpRoute:
   prefix: ""
   annotations: {}
 
-  parentRefs: {}
+  parentRefs: []
   #- name: gateway
   #  sectionName: http
 
