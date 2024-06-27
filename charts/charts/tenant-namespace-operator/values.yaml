@@ -25,6 +25,12 @@ debug: false
 # EmptyDir /tmp mount size limit
 tmpSizeLimit: 64Mi
 
+# switch runner dir to tmpfs
+runnerDirAsTmpfs: false
+
+# set the size of runner dir tmpfs
+runnerDirTmpfsSizeLimit: 64Mi
+
 image:
   repository: pnnlmiscscripts/tenant-namespace-operator
   pullPolicy: IfNotPresent
