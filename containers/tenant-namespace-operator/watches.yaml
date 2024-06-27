@@ -4,7 +4,8 @@
   group: miscscripts.pnnl.gov
   kind: TenantNamespace
   role: tenantnamespace
-  reconcilePeriod: "60s"
+  reconcilePeriod: "1h"
+  maxRunnerArtifacts: 3
   markUnsafe: true
   finalizer:
     name: finalizer.tenantnamespace.miscscripts.pnnl.gov
