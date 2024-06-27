@@ -25,6 +25,13 @@ jobs:
         uses: actions/checkout@v4.1.7
       - name: Build curl-jq container
         run: ./containers/build curl-jq
+  buildc-xmlstarlet:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.7
+      - name: Build xmlstarlet container
+        run: ./containers/build xmlstarlet
   buildc-gitlab-runner-operator:
     runs-on: ubuntu-20.04
     steps:
