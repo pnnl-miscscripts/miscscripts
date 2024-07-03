@@ -23,20 +23,6 @@ helm repo add pnnl-miscscripts https://pnnl-miscscripts.github.io/charts/
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 
-for ver in 1-21 1-22 1-23 1-24; do
-	cp -a k8s-node-image k8s-node-image-$ver
-	sed -i "s@k8s-node-image-nginx-1-14@k8s-node-image-nginx-$ver@g" k8s-node-image-$ver/Chart.yaml k8s-node-image-$ver/values.yaml
-	sed -i "s@^name:.*@name: k8s-node-image-$ver@g" k8s-node-image-$ver/Chart.yaml
-	pushd k8s-node-image-$ver 2>/dev/null
-	helm dep up --skip-refresh
-	popd 2>/dev/null
-	APPVER=$(helm inspect chart k8s-node-image-$ver/charts/k8s-node-image-nginx-*.tgz | sort | awk '{if(/^(appVersion):/){print $2}}')
-	sed -i "s@^appVersion:.*@appVersion: k8s-node-image-$APPVER@g" k8s-node-image-$ver/Chart.yaml
-	#FIXME
-	#IMAGETAG=$(tar -zxOf k8s-node-image-$ver/charts/k8s-node-image-nginx-*.tgz k8s-node-image-nginx/files/metadata.json | jq -r .tag )
-	#sed IMAGETAG into README.md
-done
-
 for ver in 1-24 1-25 1-26 1-27 1-28 1-29 1-30; do
 	cp -a k8s-node-image9 k8s-node-image9-$ver
 	sed -i "s@k8s-node-image-nginx9-1-24@k8s-node-image-nginx9-$ver@g" k8s-node-image9-$ver/Chart.yaml k8s-node-image9-$ver/values.yaml
@@ -52,12 +38,9 @@ for ver in 1-24 1-25 1-26 1-27 1-28 1-29 1-30; do
 done
 
 CHANGE=0
-for CHART in nginx-app console chronyd dhcpd ipmi-exporter kubeupdater k8s-node-image k8s-node-image9 tenant-namespace pixiecore pixiecore-simpleconfig gitlab-runner-operator tenant-namespace-operator smartctl-exporter grafana-misc-dashboards magic-namespace; do
+for CHART in nginx-app console chronyd dhcpd ipmi-exporter kubeupdater k8s-node-image9 tenant-namespace pixiecore pixiecore-simpleconfig gitlab-runner-operator tenant-namespace-operator smartctl-exporter grafana-misc-dashboards magic-namespace; do
 	RAWCHART=$CHART
 	case "$CHART" in
-	k8s-node-image)
-		SUBBUILDS="1-21 1-22 1-23 1-24"
-		;;
 	k8s-node-image9)
 		SUBBUILDS="1-24 1-25 1-26 1-27 1-28 1-29 1-30"
 		;;
