@@ -23,7 +23,7 @@ helm repo add pnnl-miscscripts https://pnnl-miscscripts.github.io/charts/
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 
-for ver in 1-24 1-25 1-26 1-27 1-28 1-29 1-30; do
+for ver in 1-24 1-25 1-26 1-27 1-28 1-29 1-30 1-31; do
 	cp -a k8s-node-image9 k8s-node-image9-$ver
 	sed -i "s@k8s-node-image-nginx9-1-24@k8s-node-image-nginx9-$ver@g" k8s-node-image9-$ver/Chart.yaml k8s-node-image9-$ver/values.yaml
 	sed -i "s@^name:.*@name: k8s-node-image9-$ver@g" k8s-node-image9-$ver/Chart.yaml
@@ -42,7 +42,7 @@ for CHART in nginx-app console chronyd dhcpd ipmi-exporter kubeupdater k8s-node-
 	RAWCHART=$CHART
 	case "$CHART" in
 	k8s-node-image9)
-		SUBBUILDS="1-24 1-25 1-26 1-27 1-28 1-29 1-30"
+		SUBBUILDS="1-24 1-25 1-26 1-27 1-28 1-29 1-30 1-31"
 		;;
 	*)
 		SUBBUILDS="latest"
