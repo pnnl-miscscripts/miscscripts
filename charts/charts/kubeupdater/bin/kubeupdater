@@ -79,12 +79,12 @@ if [ "x$flag" == "x-c" ]; then
 fi
 
 if [ "x$flag" == "x-i" ]; then
-	cat > /etc/systemd/system/kubeupdater-checker.service <<EOF
+	sed "s:@BIN@:${BINDIR}:g" > /etc/systemd/system/kubeupdater-checker.service <<EOF
 [Unit]
 Description=kubeupdater-checker: The Kube Updater Checker
 
 [Service]
-ExecStart=/usr/bin/kubeupdater -c
+ExecStart=@BIN@/kubeupdater -c
 Restart=always
 StartLimitInterval=0
 RestartSec=10
@@ -92,7 +92,7 @@ RestartSec=10
 [Install]
 WantedBy=multi-user.target
 EOF
-	cat > /etc/systemd/system/kubeupdater-updater.service <<EOF
+	sed "s:@BIN@:${BINDIR}:g" > /etc/systemd/system/kubeupdater-updater.service <<EOF
 [Unit]
 Description=kubeupdater-updater: The Kube Updater updater
 After=network-online.target nss-lookup.target kubeupdater-boot.service
@@ -100,7 +100,7 @@ Before=kubelet.service
 Wants=network-online.target
 
 [Service]
-ExecStart=/usr/bin/kubeupdater -u
+ExecStart=@BIN@/kubeupdater -u
 Restart=always
 StartLimitInterval=0
 RestartSec=10
@@ -108,7 +108,7 @@ RestartSec=10
 [Install]
 WantedBy=multi-user.target
 EOF
-	cat > /etc/systemd/system/kubeupdater-boot.service <<EOF
+	sed "s:@BIN@:${BINDIR}:g" > /etc/systemd/system/kubeupdater-boot.service <<EOF
 [Unit]
 Description=kubeupdater-boot: The Kube Updater on boot service
 After=network-online.target nss-lookup.target time-sync.target
@@ -118,7 +118,7 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/kubeupdater -b
+ExecStart=@BIN@/kubeupdater -b
 RemainAfterExit=yes
 
 [Install]

@@ -8,6 +8,11 @@ data:
   kubeupdater: |
     #!/bin/bash
 
+{{- if eq .Values.mode "bootc" }}
+    BINDIR=/var/kubeupdater
+{{- else }}
+    BINDIR=/usr/bin
+{{- end }}
     MODE={{.Values.mode | quote}}
     CONFIGMAPNAME={{ include "kubeupdater.fullname-configmap" . }}
 
