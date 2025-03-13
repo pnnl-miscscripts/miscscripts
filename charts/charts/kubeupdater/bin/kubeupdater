@@ -53,7 +53,7 @@ if [ "x$flag" == "x-c" ]; then
 	while true; do
 		while read line; do
 			if [ "x$MODE" == "xbootc" ]; then
-				CONFIGMAP_IMAGE="$(kubectl get configmap -n kube-system "${CONFIGMAPNAME}" -ogo-template={{.image}})"
+				CONFIGMAP_IMAGE="$(kubectl get configmap -n kube-system "${CONFIGMAPNAME}" -ogo-template='{{.data.image}}')"
 				CURRENT_IMAGE="$(bootc status --format json | jq -r .spec.image.image)"
 				[ "x$CONFIGMAP_IMAGE" != "x$CURRENT_IMAGE" ] && kubectl label node $HOSTNAME miscscripts.pnnl.gov/upgrade-needed=true
 			else
