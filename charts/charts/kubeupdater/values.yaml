@@ -8,6 +8,12 @@
 
 mode: yum
 
+# When mode=bootc
+bootc:
+  image: ""
+  tag: ""
+
+# When mode=yum
 base: https://changeme/
 version: 1.16.8-nginx-2
 localGPGFileName: RPM-GPG-KEY-Rocky-9
