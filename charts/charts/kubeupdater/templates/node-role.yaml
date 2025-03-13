@@ -12,7 +12,7 @@ rules:
   resources:
   - configmaps
   resourceNames:
-  - kubeupdater
+  - {{ include "kubeupdater.fullname-configmap" . }}
   verbs:
   - get
   - watch

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: kubeupdater
+  name: {{ include "kubeupdater.fullname-configmap" . }}
   namespace: kube-system
   labels:
     {{- include "kubeupdater.labels" . | nindent 4 }}
