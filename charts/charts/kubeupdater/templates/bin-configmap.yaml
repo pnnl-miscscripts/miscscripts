@@ -7,6 +7,10 @@ metadata:
 data:
   kubeupdater: |
     #!/bin/bash
+
+    MODE={{.Values.mode | quote}}
+    CONFIGMAPNAME={{ include "kubeupdater.fullname-configmap" . }}
+
     function pre_upgrade {
 {{ .Values.extraPreUpgradeScript | indent 6 }}
     }

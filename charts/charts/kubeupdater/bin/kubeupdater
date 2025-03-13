@@ -29,10 +29,18 @@ if [ "x$flag" == "x-u" ]; then
 			echo "Doing upgrade"
 			systemctl stop kubeupdater-checker
 			systemctl stop kubelet
-			yum install kubeadm -y
-			kubeadm upgrade node
+			if [ "x$MODE" == "xbootc" ]; then
+				IMAGE=$(kubectl get configmap -n kube-system "$CONFIGMAPNAME" -o go-template='{{index .data "image"}}')
+				bootc switch "${IMAGE}"
+				/ostree/deploy/default/deploy/$(bootc status --format json | jq -r '.status.staged.ostree | .checksum + "." + (.deploySerial | tostring)')/usr/bin/kubeadm upgrade node
+			else
+				yum install kubeadm -y
+				kubeadm upgrade node
+			fi
 			pre_upgrade
-			yum upgrade -y
+			if [ "x$MODE" != "xbootc" ]; then
+				yum upgrade -y
+			fi
 			post_upgrade
 			kubectl label node $HOSTNAME miscscripts.pnnl.gov/upgrade-needed-
 			finish_upgrade
@@ -44,22 +52,28 @@ fi
 if [ "x$flag" == "x-c" ]; then
 	while true; do
 		while read line; do
-			while true; do
-				kubectl get configmap -n kube-system kubeupdater -o go-template='{{index .data "everything.repo"}}' > /etc/yum.repos.d/everything.repo.new
-				mv /etc/yum.repos.d/everything.repo.new /etc/yum.repos.d/everything.repo
-				echo Upgrade checking
-				yum check-update -y
-				res=$?
-				[ $res -eq 0 ] && break
-				if [ $res -eq 100 ]; then
-					echo Upgrade found. Informing the orchestrator.
-					kubectl label node $HOSTNAME miscscripts.pnnl.gov/upgrade-needed=true
-					break
-				fi
-				echo Failed to upgrade check. Retrying in 10 seconds.
-				sleep 10
-			done
-		done < <(kubectl get configmap -n kube-system kubeupdater --watch -ogo-template='{{printf "\n"}}')
+			if [ "x$MODE" == "xbootc" ]; then
+				CONFIGMAP_IMAGE="$(kubectl get configmap -n kube-system "${CONFIGMAPNAME}" -ogo-template={{.image}})"
+				CURRENT_IMAGE="$(bootc status --format json | jq -r .spec.image.image)"
+				[ "x$CONFIGMAP_IMAGE" != "x$CURRENT_IMAGE" ] && kubectl label node $HOSTNAME miscscripts.pnnl.gov/upgrade-needed=true
+			else
+				while true; do
+					kubectl get configmap -n kube-system "${CONFIGMAPNAME}" -o go-template='{{index .data "everything.repo"}}' > /etc/yum.repos.d/everything.repo.new
+					mv /etc/yum.repos.d/everything.repo.new /etc/yum.repos.d/everything.repo
+					echo Upgrade checking
+					yum check-update -y
+					res=$?
+					[ $res -eq 0 ] && break
+					if [ $res -eq 100 ]; then
+						echo Upgrade found. Informing the orchestrator.
+						kubectl label node $HOSTNAME miscscripts.pnnl.gov/upgrade-needed=true
+						break
+					fi
+					echo Failed to upgrade check. Retrying in 10 seconds.
+					sleep 10
+				done
+			fi
+		done < <(kubectl get configmap -n kube-system "${CONFIGMAPNAME}" --watch -ogo-template='{{printf "\n"}}')
 		sleep 1
 	done
 fi
