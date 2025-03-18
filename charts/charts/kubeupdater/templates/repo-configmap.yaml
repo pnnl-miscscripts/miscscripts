@@ -1,11 +1,14 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: kubeupdater
+  name: {{ include "kubeupdater.fullname-configmap" . }}
   namespace: kube-system
   labels:
     {{- include "kubeupdater.labels" . | nindent 4 }}
 data:
+{{- if eq .Values.mode "bootc" }}
+  image: {{ printf "%s:%s" .Values.bootc.image (.Values.bootc.tag | toString) | quote}}
+{{- else }}
   everything.repo: |
 {{- if hasKey .Values "rawConfig" }}
 {{ .Values.rawConfig | indent 4}}
@@ -19,4 +22,5 @@ data:
     gpgcheck = 1
     repo_gpgcheck = 1
     keepcache = 0
+{{- end }}
 {{- end }}

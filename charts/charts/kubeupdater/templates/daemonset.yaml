@@ -33,7 +33,11 @@ spec:
         - |
           cat /config/kubeupdater > /host-bin/kubeupdater
           chmod +x /host-bin/kubeupdater
+{{- if eq .Values.mode "bootc" }}
+          nsenter -m/proc/1/ns/mnt -- /var/kubeupdater/kubeupdater -i
+{{- else }}
           nsenter -m/proc/1/ns/mnt -- /usr/bin/kubeupdater -i
+{{- end }}
           while true; do sleep 10000; done
         name: main
         securityContext:
@@ -52,7 +56,12 @@ spec:
       hostIPC: true
       volumes:
       - hostPath:
+{{- if eq .Values.mode "bootc" }}
+          type: DirectoryOrCreate
+          path: /var/kubeupdater
+{{- else }}
           path: /usr/bin
+{{- end }}
         name: host-bin
       - configMap:
           name: {{ template "kubeupdater.fullname" . }}
