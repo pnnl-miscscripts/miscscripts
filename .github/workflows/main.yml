@@ -12,98 +12,98 @@ env:
 
 jobs:
   buildc-git:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
       - name: Build git container
         run: ./containers/build git
   buildc-curl-jq:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
       - name: Build curl-jq container
         run: ./containers/build curl-jq
   buildc-xmlstarlet:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
       - name: Build xmlstarlet container
         run: ./containers/build xmlstarlet
   buildc-gitlab-runner-operator:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
       - name: Build gitlab-runner-operator container
         run: ./containers/build gitlab-runner-operator
   buildc-tenant-namespace-operator:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
       - name: Build tenant-namespace-operator container
         run: ./containers/build tenant-namespace-operator
   buildc-pixiecore:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
       - name: Build pixiecore container
         run: ./containers/build pixiecore
   buildc-ipmitool:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
       - name: Build ipmitool container
         run: ./containers/build ipmitool
   buildc-ipmi-exporter:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
       - name: Build ipmi-exporter container
         run: ./containers/build ipmi-exporter
   buildc-dhcpd:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
       - name: Build dhcpd container
         run: ./containers/build dhcpd
   buildc-inotify-tools:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
       - name: Build inotify-tools container
         run: ./containers/build inotify-tools
   buildc-chronyd:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
       - name: Build chronyd container
         run: ./containers/build chronyd
   buildc-debug-toolbox:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
       - name: Build debug-toolbox container
         run: ./containers/build debug-toolbox
   buildc-smartctl-exporter:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
       - name: Build smartctl-exporter container
         run: ./containers/build smartctl-exporter
   buildc-rpms-containerd:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs:
     - buildc-rpms-node-base
     steps:
@@ -117,7 +117,7 @@ jobs:
           ./containers/build rpms-containerd9
           rm -f rpm.priv
   buildc-rpms-node-base:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
@@ -129,7 +129,7 @@ jobs:
           ./containers/build rpms-node-base9
           rm -f rpm.priv
   buildc-rpms-openvswitch:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs:
     - buildc-rpms-node-base
     steps:
@@ -143,7 +143,7 @@ jobs:
           ./containers/build rpms-openvswitch9
           rm -f rpm.priv
   buildc-rpms-k8s:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs:
     - buildc-rpms-node-base
     strategy:
@@ -160,7 +160,7 @@ jobs:
           ./containers/build rpms-kubernetes9 ${{ matrix.kube_version }}
           rm -f rpm.priv
   buildc-anaconda:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
@@ -168,7 +168,7 @@ jobs:
         run: ./containers/build anaconda9
 
   build-node-image:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs:
     - buildc-rpms-node-base
     - buildc-rpms-containerd
@@ -189,7 +189,7 @@ jobs:
           rm -f rpm.priv
 
   buildc-anaconda-nginx:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs:
     - buildc-anaconda
     steps:
@@ -198,7 +198,7 @@ jobs:
       - name: Build anaconda+nginx9 container
         run: ./containers/build anaconda-nginx9
   build-node-image-nginx:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs:
     - build-node-image
     strategy:
@@ -211,7 +211,7 @@ jobs:
         run: ./containers/build k8s-node-image-nginx9 ${{ matrix.kube_version }}
 
   build-image-library-charts:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs:
     - buildc-anaconda-nginx
     - buildc-chronyd
@@ -236,7 +236,7 @@ jobs:
         run: ./charts/image-library-charts/buildall
 
   build-charts:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs:
     - build-image-library-charts
     - buildc-gitlab-runner-operator
