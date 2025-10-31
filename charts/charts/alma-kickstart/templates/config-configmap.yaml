@@ -1,0 +1,17 @@
+{{ $root := . }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "alma-kickstart.fullname" . }}-config
+  labels:
+    {{- include "alma-kickstart.labels" . | nindent 4 }}
+    component: grub
+data:
+  {{- range $key, $value := .Values.config }}
+  {{ $key | replace ":" "" | quote }}: |
+    {{- tpl $value $root | nindent 4 }}
+  {{- end }}
+  {{- range $key, $value := .Values.extraFiles }}
+  {{ $key | quote }}: |
+    {{- tpl $value $root | nindent 4 }}
+  {{- end }}

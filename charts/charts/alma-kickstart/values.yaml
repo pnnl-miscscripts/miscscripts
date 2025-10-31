@@ -1,0 +1,210 @@
+# Default values for alma-kickstart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: docker.io/pnnlmiscscripts/anaconda9:alma-kickstart
+    #pullPolicy: IfNotPresent
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+grub:
+  config: |
+    set default="0"
+    function load_video {
+      insmod efi_gop
+      insmod efi_uga
+      insmod video_bochs
+      insmod video_cirrus
+      insmod all_video
+    }
+    load_video
+    set gfxpayload=keep
+    insmod gzio
+    insmod part_gpt
+    insmod ext2
+    set timeout=5
+    set prefix=(http,${net_default_server}){{ .Values.prefix }}/EFI/BOOT
+    set imagepath=(http,${net_default_server}){{ .Values.prefix }}/images/pxeboot
+    configfile ${prefix}/config/${net_default_mac}
+
+# Plaace your boot entries here
+config: []
+#  "00:11:22:33:44:55": |
+#    menuentry 'Install AlmaLinux 9.5 in text mode' --class fedora --class gnu-linux --class gnu --class os {
+#      linuxefi ${imagepath}/vmlinuz inst.text inst.stage2=http://${net_default_server}{{ .Values.prefix }} inst.ks=http://FIXME/bootc-ks9.cfg console=tty0 console=ttyS1,115200
+#      initrdefi ${imagepath}/initrd.img
+#    }
+
+extraFiles: []
+#  "bootc-ks9.cfg": |
+#    rootpw almalinux
+#    firewall --disabled
+#    selinux --enabled
+#    keyboard us
+#    lang en_US.UTF-8
+#    timezone --utc Etc/UTC
+#    zerombr
+#    poweroff
+#    text
+#    skipx
+#    %include /tmp/network.ks
+#
+#    %include /tmp/partition.ks
+#
+#    ostreecontainer --url FIXME
+#
+#    %pre
+#    #!/bin/bash
+#    IPRIMARY=eth0
+#    ROOT="/dev/disk/by-path/pci-0000:17:00.0-scsi-0:2:0:0"
+#    BB=`dmidecode --string baseboard-product-name`
+#    if [ "x$BB" == "xX12DPD-A6M25" ]; then
+#      IPRIMARY=eno1np0
+#      ROOT=/dev/disk/by-path/pci-0000:01:00.0-nvme-1
+#    elif [ "x$BB" == "x0G5DR5" ]; then
+#      IPRIMARY=eno1np0
+#      ROOT=/dev/disk/by-path/pci-0000:18:00.0-scsi-0:2:0:0
+#    fi
+#    CLUSTER=t
+#    IADDR=$(ip a show dev $IPRIMARY | grep 'inet ' | awk '{print $2}' | sed 's@/.*@@')
+#    LOCTET=$(echo "$IADDR" | awk -F. '{print $4}')
+#    HOSTNAME=${CLUSTER}$((LOCTET-10)).example.com
+#    echo "network --device $IPRIMARY --bootproto dhcp --hostname ${HOSTNAME}" > /tmp/network.ks
+#
+#    cat > /tmp/partition.ks <<EOF
+#    zerombr
+#    ignoredisk --only-use=$ROOT
+#    bootloader --location=mbr --driveorder=$ROOT
+#    clearpart --drive=$ROOT --initlabel
+#    partition /boot/efi --asprimary --fstype=vfat --label EFI  --size=200
+#    partition /boot     --asprimary --fstype=ext4 --label BOOT --size=500
+#    partition /         --asprimary --fstype=ext4 --label ROOT --size=4096 --grow
+#    EOF
+#
+#    %post --nochroot
+#    hostnamectl --static hostname $hostname
+#    cp /etc/hostname /mnt/sysroot/etc/hostname
+#    %end
+#
+#    %post
+#    #Setup Network
+#
+#    IPRIMARY=eth0
+#    BB=`dmidecode --string baseboard-product-name`
+#    if [ "x$BB" == "xX12DPD-A6M25" ]; then
+#      IPRIMARY=eno1np0
+#    elif [ "x$BB" == "x0G5DR5" ]; then
+#      IPRIMARY=eno1np0
+#    EOF
+#    LOCTET=$(echo "$IADDR" | awk -F. '{print $4}')
+#    CLUSTER=t
+#    # customize more hree
+#
+#    #Update hardware clock now.
+#    hwclock --systohc
+#
+#    %end
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  # annotations:
+  #   kubernetes.io/ingress.class: nginx
+  #   kubernetes.io/tls-acme: "true"
+  #
+  #   nginx.ingress.kubernetes.io/use-regex: "true"
+  #   nginx.ingress.kubernetes.io/rewrite-target: /$2
+  #   nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  # hosts:
+  #   - paths:
+  #       - path: /anaconda-kickstart-9.5-x86_64(/|$)(.*)
+  #         pathType: ImplementationSpecific
+  #     #host: chart-example.local
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes on the output Deployment definition.
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts: []
+# - name: foo
+#   mountPath: "/etc/foo"
+#   readOnly: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
