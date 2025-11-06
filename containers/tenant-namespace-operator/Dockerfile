@@ -1,6 +1,6 @@
 FROM quay.io/operator-framework/ansible-operator:v1.32.0
 
-ARG helm_version=v3.13.3
+ARG helm_version=v3.19.0
 USER 0
 RUN dnf clean all && \
     dnf install -y git && \
