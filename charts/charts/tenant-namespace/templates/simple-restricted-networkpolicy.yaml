@@ -33,7 +33,7 @@ spec:
   egress:
   - to:
 # Allow non pod traffic
-{{- range .Values.networkPolicy.ingress.ipBlocks }}
+{{- range .Values.networkPolicy.egress.ipBlocks }}
     - ipBlock:
 {{ toYaml . | indent 8 }}
 {{- end }}
