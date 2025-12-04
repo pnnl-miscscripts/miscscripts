@@ -51,6 +51,12 @@ rules:
   - list
   - watch
 - apiGroups:
+  - gateway.networking.k8s.io
+  resources:
+  - gateways
+  verbs:
+  - "*"
+- apiGroups:
   - discovery.k8s.io
   resources:
   - endpointslices

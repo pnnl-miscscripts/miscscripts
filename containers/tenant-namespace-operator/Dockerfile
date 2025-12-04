@@ -24,11 +24,11 @@ COPY roles/ ${HOME}/roles/
 RUN ansible-galaxy install -r ${HOME}/requirements.yml && \
     chmod -R ug+rwx ${HOME}/.ansible && \
     helm plugin install https://github.com/databus23/helm-diff --version master && \
-    helm pull --repo https://pnnl-miscscripts.github.io/charts tenant-namespace --version 0.6.15 --untar && \
+    helm pull --repo https://pnnl-miscscripts.github.io/charts tenant-namespace --version 0.6.17 --untar && \
     cd tenant-namespace/charts/ingress-nginx/ && \
     cd - && \
     find roles/ -type f -exec md5sum {} \; > /.extrafingerprints && \
-    echo 0.1.14 >> /.extrafingerprints && \
+    echo 0.1.17 >> /.extrafingerprints && \
     md5sum watches.yaml >> /.extrafingerprints
 
 ENTRYPOINT ["/tini", "--", "/usr/local/bin/ansible-operator", "run", "--watches-file=./watches.yaml", "--inject-owner-ref=false"]
