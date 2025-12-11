@@ -61,3 +61,10 @@ Create the name of the service account to use
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Create the name of the gateway class to use
+*/}}
+{{- define "tenant-namespace-operator.gatewayClassName" -}}
+{{ default (include "tenant-namespace-operator.fullname" .) .Values.gatewayClass.name }}
+{{- end -}}

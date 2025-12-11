@@ -103,6 +103,8 @@
         controller:
           scope:
             namespace: "{{ ansible_operator_meta.name }}"
+      gateway:
+        className: "{{ lookup('env', 'GATEWAY_CLASS_NAME') | default('tenant-namespace-operator') }}"
       adminNamespaceLabels:
         name: "{{ ansible_operator_meta.name + '-admin' }}"
         miscscripts.pnnl.gov/namespace-type: "admin"
