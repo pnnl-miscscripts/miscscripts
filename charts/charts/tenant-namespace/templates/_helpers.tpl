@@ -50,3 +50,23 @@ Selector labels
 app.kubernetes.io/name: {{ include "namespace.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+{{/*
+Create the name of the gateway to use
+*/}}
+{{- define "namespace.gatewayName" -}}
+{{ default (printf "%s-gateway" .Values.magicnamespace.namespace) .Values.gateway.name }}
+{{- end -}}
+
+{{/*
+Create the namespace of the gateway to use
+*/}}
+{{- define "namespace.gatewayNamespace" -}}
+{{- if eq .Values.gateway.deploymentMode "admin" -}}
+{{- .Release.Namespace -}}
+{{- else if eq .Values.gateway.deploymentMode "tenant" -}}
+{{- .Values.magicnamespace.namespace -}}
+{{- else if eq .Values.gateway.deploymentMode "custom" -}}
+{{- .Values.gateway.customNamespace -}}
+{{- end -}}
+{{- end -}}

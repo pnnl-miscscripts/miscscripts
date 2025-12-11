@@ -2,8 +2,8 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: {{ .Values.gateway.name }}
-  namespace: {{ .Release.Namespace }}
+  name: {{ template "namespace.gatewayName" . }}
+  namespace: {{ template "namespace.gatewayNamespace" . }}
   labels:
     {{- include "namespace.labels" . | nindent 4 }}
 spec:
@@ -40,8 +40,16 @@ spec:
     {{- with .Values.gateway.extraListeners }}
       {{- toYaml . | nindent 4 }}
     {{- end }}
-  {{- with .Values.gateway.infrastructure }}
   infrastructure:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- if .Values.gateway.envoyProxyConfig.enabled }}
+    parametersRef:
+      group: gateway.envoyproxy.io
+      kind: EnvoyProxy
+      name: {{ template "namespace.gatewayName" . }}
+    {{- else }}
+    {{- with .Values.gateway.parametersRef }}
+    parametersRef:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- end }}
 {{- end }}

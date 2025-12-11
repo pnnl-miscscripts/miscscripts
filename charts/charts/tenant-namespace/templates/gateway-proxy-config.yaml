@@ -1,0 +1,25 @@
+{{- if .Values.gateway.envoyProxyConfig.enabled }}
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: {{ template "namespace.gatewayName" . }}
+  namespace: {{ template "namespace.gatewayNamespace" . }}
+  labels:
+    {{- include "namespace.labels" . | nindent 4 }}
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      {{- with .Values.gateway.envoyProxyConfig.envoyDeployment }}
+      envoyDeployment:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.gateway.envoyProxyConfig.envoyPDB }}
+      envoyPDB:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.gateway.envoyProxyConfig.envoyService }}
+      envoyService:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

@@ -90,7 +90,8 @@ ingress:
 
 gateway:
   enabled: false
-  name: public
+#  name: project-gateway
+  deploymentMode: tenant
   className: public
   httpListener:
     enabled: true
@@ -110,11 +111,17 @@ gateway:
 #      name: http
 #      port: 80
 #      protocol: HTTP
-  infrastructure: {}
-#    annotations:
-#    labels:
-    # requires gw api 1.1.0
-#    parametersRef:
+  envoyProxyConfig:
+    enabled: false
+#    envoyDeployment:
+#      replicas: 2
+#    envoyPDB:
+#      minAvailable: 1
+#  parametersRef:
+#    group: gateway.envoyproxy.io
+#    kind: EnvoyProxy
+#    name: project-gateway
+
 
 quota:
   enabled: true
