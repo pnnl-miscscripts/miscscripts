@@ -57,6 +57,12 @@ rules:
   verbs:
   - "*"
 - apiGroups:
+  - gateway.envoyproxy.io
+  resources:
+  - envoyproxies
+  verbs:
+  - "*"
+- apiGroups:
   - discovery.k8s.io
   resources:
   - endpointslices

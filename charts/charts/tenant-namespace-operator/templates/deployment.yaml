@@ -82,6 +82,8 @@ spec:
 {{- end }}
             - name: INGRESS_CLUSTERROLE
               value: {{ include "tenant-namespace-operator.fullname" . }}-ic
+            - name: GATEWAY_CLASS_NAME
+              value: {{ include "tenant-namespace-operator.gatewayClassName" . }}
       volumes:
         - name: temp
           emptyDir:

@@ -1,0 +1,22 @@
+{{- if .Values.gatewayClass.enabled }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: {{ include "tenant-namespace-operator.gatewayClassName" . }}
+  labels:
+    {{- include "tenant-namespace-operator.labels" . | nindent 4 }}
+spec:
+  controllerName: {{ .Values.gatewayClass.controllerName }}
+  {{- if .Values.gatewayClass.envoyProxyConfig.enabled }}
+  parametersRef:
+    group: gateway.envoyproxy.io
+    kind: EnvoyProxy
+    name: {{ include "tenant-namespace-operator.gatewayClassName" . }}
+    namespace: {{ .Release.Namespace }}
+  {{- else }}
+  {{- with .Values.gatewayClass.parametersRef }}
+  parametersRef:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- end }}
+{{- end }}

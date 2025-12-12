@@ -93,3 +93,19 @@ affinity:
 ingressClass:
   enabled: true
   name: public
+
+gatewayClass:
+  enabled: false
+#  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+#  parametersRef:
+#    group: gateway.envoyproxy.io
+#    kind: EnvoyProxy
+#    name: gwc-public
+#    namespace: tenant-namespace-operator
+  envoyProxyConfig:
+    enabled: false
+#    envoyDeployment:
+#      replicas: 2
+#    envoyPDB:
+#      minAvailable: 1
+
