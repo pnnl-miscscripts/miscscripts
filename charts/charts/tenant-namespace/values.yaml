@@ -97,6 +97,8 @@ gateway:
     enabled: true
   httpsListener:
     enabled: false
+    certificateRefsAdminReferenceGrant:
+      enabled: false
     certificateRefs: []
 #      - kind: Secret
 #        group: ""

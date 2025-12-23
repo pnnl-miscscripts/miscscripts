@@ -1,0 +1,20 @@
+{{- if (and .Values.gateway.httpsListener.enabled (eq .Values.gateway.deploymentMode "admin") .Values.gateway.httpsListener.certificateRefsAdminReferenceGrant.enabled) }}
+{{- if gt (include "namespace.adminToTenantCertificateRefs" . | fromJsonArray | len) 0 -}}
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: {{ template "namespace.gatewayName" . }}
+  namespace: {{ .Values.magicnamespace.namespace }}
+spec:
+  from:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    namespace: {{ .Release.Namespace }}
+  to:
+  {{- range $ref := (include "namespace.adminToTenantCertificateRefs" . | fromJsonArray) }}
+  - group: {{ default "" $ref.group | quote }}
+    kind: {{ default "Secret" $ref.kind }}
+    name: {{ $ref.name }}
+  {{- end }}
+{{- end }}
+{{- end }}

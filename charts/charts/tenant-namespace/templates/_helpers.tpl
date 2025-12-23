@@ -70,3 +70,16 @@ Create the namespace of the gateway to use
 {{- .Values.gateway.customNamespace -}}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Create a filtered list of admin namespace to tenant certificate refs
+*/}}
+{{- define "namespace.adminToTenantCertificateRefs" -}}
+{{ $result := list }}
+  {{ range $ref := .Values.gateway.httpsListener.certificateRefs }}
+    {{ if eq $ref.namespace $.Values.magicnamespace.namespace }}
+    {{ $result = append $result $ref }}
+    {{- end -}}
+  {{- end }}
+{{ toJson $result }}
+{{- end -}}
