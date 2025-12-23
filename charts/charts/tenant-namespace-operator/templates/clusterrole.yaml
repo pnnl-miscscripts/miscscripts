@@ -54,6 +54,7 @@ rules:
   - gateway.networking.k8s.io
   resources:
   - gateways
+  - referencegrants
   verbs:
   - "*"
 - apiGroups:
