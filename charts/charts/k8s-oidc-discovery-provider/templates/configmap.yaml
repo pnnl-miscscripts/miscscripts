@@ -1,0 +1,12 @@
+{{- if .Values.serverConfig }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "k8s-oidc-discovery-provider.labels" . | nindent 4 }}
+data:
+  server-config.conf: |-
+{{ .Values.serverConfig | indent 4 }}
+{{- end }}

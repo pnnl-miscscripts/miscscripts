@@ -1,0 +1,84 @@
+serverConfig: |-
+  server {
+  listen 8080;
+
+  location / {
+    root /usr/share/nginx/html;
+    index index.html;
+    }
+
+  location /.well-known/ {
+    alias /.well-known/;
+  }
+
+  location /openid/v1/ {
+    alias /openid/v1/;
+  }
+  }
+
+image:
+  repository: nginx
+  tag: 1.29.4
+
+discovery:
+  name: discovery
+  image:
+    repository: curlimages/curl
+    tag: 8.17.0
+  command:
+      - sh
+      - -c
+      - |
+        while true; do
+          TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
+          curl \
+            -H "Authorization: Bearer ${TOKEN}" https://kubernetes.default.svc.cluster.local:443/.well-known/openid-configuration --cacert /run/secrets/kubernetes.io/serviceaccount/ca.crt \
+            -o /.well-known/openid-configuration
+
+          curl \
+            -H "Authorization: Bearer ${TOKEN}" https://kubernetes.default.svc.cluster.local:443/openid/v1/jwks --cacert /run/secrets/kubernetes.io/serviceaccount/ca.crt \
+            -o /openid/v1/jwks
+
+          sleep 300
+        done
+  volumeMounts: 
+    - name: oidc-config
+      mountPath: /.well-known
+    - name: jwks
+      mountPath: /openid/v1
+
+volumes:
+  - name: oidc-config
+    emptyDir: {}
+  - name: jwks
+    emptyDir: {}
+  - name: nginx-config
+    configMap:
+      name: nginx-config
+
+volumeMounts:
+  - name: oidc-config
+    mountPath: /.well-known
+  - name: jwks
+    mountPath: /openid/v1
+  - name: nginx-config
+    mountPath: /etc/nginx/conf.d
+  
+
+service:
+  port: 8080
+
+serviceAccount: 
+  create: "true" 
+ingress:
+  enabled: true
+  ingressClassName: pnnl
+  annotations: 
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+  hosts:
+    host: rzr.emsl.pnnl.gov
+    path: /
+  tls:
+    - secretName: default-tls
+      hosts:
+        - rzr.emsl.pnnl.gov
