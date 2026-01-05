@@ -1,3 +1,5 @@
+replicaCount: 1
+
 serverConfig: |-
   server {
     listen 8080;
