@@ -3,11 +3,12 @@ replicaCount: 1
 serverConfig: |-
   server {
     listen 8080;
+    server_tokens off;
 
     location / {
       root /usr/share/nginx/html;
-      index index.html;
-      }
+      return 404;
+    }
 
     location /.well-known/ {
       alias /.well-known/;
@@ -43,29 +44,11 @@ discovery:
 
         sleep 300
       done
-  volumeMounts: 
-    - name: oidc-config
-      mountPath: /.well-known
-    - name: jwks
-      mountPath: /openid/v1
+  extraVolumeMounts: []
 
-volumes:
-  - name: oidc-config
-    emptyDir: {}
-  - name: jwks
-    emptyDir: {}
-  - name: nginx-config
-    configMap:
-      name: nginx-config
+extraVolumes: []
 
-volumeMounts:
-  - name: oidc-config
-    mountPath: /.well-known
-  - name: jwks
-    mountPath: /openid/v1
-  - name: nginx-config
-    mountPath: /etc/nginx/conf.d
-  
+extraVolumeMounts: []
 
 service:
   port: 8080

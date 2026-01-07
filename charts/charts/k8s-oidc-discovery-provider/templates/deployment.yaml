@@ -11,10 +11,11 @@ spec:
       {{- include "k8s-oidc-discovery-provider.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
       labels:
         {{- include "k8s-oidc-discovery-provider.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
@@ -44,8 +45,14 @@ spec:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
           volumeMounts:
+            - name: oidc-config
+              mountPath: /.well-known
+            - name: jwks
+              mountPath: /openid/v1
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d
+          {{- with .Values.extraVolumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
         - name: {{ .Values.discovery.name }}
@@ -57,12 +64,23 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.discovery.resources | nindent 12 }}
-          {{- with .Values.discovery.volumeMounts }}
           volumeMounts:
+            - name: oidc-config
+              mountPath: /.well-known
+            - name: jwks
+              mountPath: /openid/v1
+          {{- with .Values.discovery.extraVolumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.volumes }}
       volumes:
+        - name: oidc-config
+          emptyDir: {}
+        - name: jwks
+          emptyDir: {}
+        - name: nginx-config
+          configMap:
+            name: {{ include "k8s-oidc-discovery-provider.fullname" . }}
+      {{- with .Values.extraVolumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       {{- with .Values.nodeSelector }}
