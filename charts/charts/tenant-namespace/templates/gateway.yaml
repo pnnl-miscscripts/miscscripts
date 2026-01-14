@@ -1,4 +1,6 @@
 {{- if .Values.gateway.enabled }}
+{{- $root := . -}}
+{{- $releaseNamespace := .Release.Namespace -}}
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
@@ -33,9 +35,12 @@ spec:
       tls:
         mode: Terminate
         certificateRefs:
-          {{- with .Values.gateway.httpsListener.certificateRefs }}
-            {{- toYaml . | nindent 10 }}
-          {{- end }}
+        {{- range .Values.gateway.httpsListener.certificateRefs }}
+          - group: {{ default "" .group | quote }}
+            kind: {{ default "Secret" .kind }}
+            name: {{ .name }}
+            namespace: {{ tpl (.namespace | default $releaseNamespace) $root }}
+        {{- end }}
     {{- end }}
     {{- with .Values.gateway.extraListeners }}
       {{- toYaml . | nindent 4 }}
