@@ -123,7 +123,17 @@ gateway:
 #    group: gateway.envoyproxy.io
 #    kind: EnvoyProxy
 #    name: project-gateway
-
+  networkPolicy:
+    enabled: false
+    envoyGateway: {}
+#      operatorNamespace: envoy-gateway-system
+#      operatorPort: 18000
+#      operatorPodMatchLabels:
+#        app.kubernetes.io/name: gateway-helm
+#      rateLimitEnabled: false
+#      rateLimitPort: 8081
+#      rateLimitPodMatchLabels:
+#        app.kubernetes.io/name: envoy-ratelimit
 
 quota:
   enabled: true

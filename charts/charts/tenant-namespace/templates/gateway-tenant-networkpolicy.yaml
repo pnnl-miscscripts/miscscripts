@@ -1,0 +1,46 @@
+{{- if (and .Values.gateway.enabled .Values.gateway.networkPolicy.enabled (eq .Values.gateway.deploymentMode "tenant")) }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: tenant-gateway
+  namespace: {{ .Values.magicnamespace.namespace }}
+  labels:
+    {{- include "namespace.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: {{ template "namespace.gatewayName" . }}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    # Allow envoy to reach gateway operator
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: {{ default "envoy-gateway-system" .Values.gateway.networkPolicy.envoyGateway.operatorNamespace }}
+      podSelector:
+        matchLabels:
+          {{- if .Values.gateway.networkPolicy.envoyGateway.operatorPodMatchLabels }}
+          {{ toYaml .Values.gateway.networkPolicy.envoyGateway.operatorPodMatchLabels | nindent 10 }}
+          {{- else }}
+          app.kubernetes.io/name: gateway-helm
+          {{- end }}
+    ports:
+    - port: {{ default 18000 .Values.gateway.networkPolicy.envoyGateway.operatorPort }}
+  {{- if .Values.gateway.networkPolicy.envoyGateway.rateLimitEnabled }}
+  # Allow envoy to reach ratelimit deployment
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: {{ default "envoy-gateway-system" .Values.gateway.networkPolicy.envoyGateway.operatorNamespace }}
+      podSelector:
+        matchLabels:
+          {{- if .Values.gateway.networkPolicy.envoyGateway.rateLimitPodMatchLabels }}
+          {{ toYaml .Values.gateway.networkPolicy.envoyGateway.rateLimitPodMatchLabels | nindent 10 }}
+          {{- else }}
+          app.kubernetes.io/name: envoy-ratelimit
+          {{- end }}
+    ports:
+    - port: {{ default 8081 .Values.gateway.networkPolicy.envoyGateway.rateLimitPort }}
+  {{- end }}
+{{- end }}
