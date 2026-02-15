@@ -105,6 +105,10 @@ gateway:
 #      - kind: Secret
 #        group: ""
 #        name: secret 
+  httpsRedirect:
+    enabled: false
+#    sectionName: http
+#    statusCode: 302
   extraListeners: []
 #    - allowedRoutes:
 #        namespaces:
