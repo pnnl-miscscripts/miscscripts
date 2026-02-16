@@ -46,13 +46,13 @@ jobs:
         uses: actions/checkout@v6.0.2
       - name: Build tenant-namespace-operator container
         run: ./containers/build tenant-namespace-operator
-  buildc-pixiecore:
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6.0.2
-      - name: Build pixiecore container
-        run: ./containers/build pixiecore
+#  buildc-pixiecore:
+#    runs-on: ubuntu-24.04
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v6.0.2
+#      - name: Build pixiecore container
+#        run: ./containers/build pixiecore
   buildc-ipmitool:
     runs-on: ubuntu-24.04
     steps:
@@ -221,7 +221,7 @@ jobs:
     - buildc-ipmi-exporter
     - buildc-ipmitool
 #    - build-node-image-nginx
-    - buildc-pixiecore
+#    - buildc-pixiecore
 #    - buildc-smartctl-exporter
     env:
       GITHUB_LIBRARY_CHARTS_TOKEN: ${{ secrets.GIT_LIBRARY_CHARTS_TOKEN }}
