@@ -35,6 +35,8 @@ networkPolicy:
       except:
       - 10.244.0.0/16 # Pod network
       - 10.96.0.0/12 # Service network
+#  extraIngress: []
+#  extraEgress: []
 
 magicnamespace:
   namespace: project

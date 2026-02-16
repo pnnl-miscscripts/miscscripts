@@ -30,6 +30,9 @@ spec:
       podSelector: {}
 # Allow this namespace to access itself
     - podSelector: {}
+  {{- with .Values.networkPolicy.extraIngress }}
+  {{- tpl (toYaml .) $ | nindent 2 }}
+  {{- end }}
   egress:
   - to:
 # Allow non pod traffic
@@ -49,4 +52,7 @@ spec:
       podSelector: {}
 # Allow this namespace to access itself
     - podSelector: {}
+  {{- with .Values.networkPolicy.extraEgress }}
+  {{- tpl (toYaml .) $ | nindent 2 }}
+  {{- end }}
 {{- end }}
