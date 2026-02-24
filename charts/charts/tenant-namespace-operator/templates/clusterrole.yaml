@@ -55,6 +55,7 @@ rules:
   resources:
   - gateways
   - referencegrants
+  - httproutes
   verbs:
   - "*"
 - apiGroups:
