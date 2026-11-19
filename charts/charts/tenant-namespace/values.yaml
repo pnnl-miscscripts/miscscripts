@@ -178,3 +178,23 @@ gitlabRunner:
   enabled: false
   name: default
   spec: {}
+
+# Extra objects rendered as part of this release. List entries may be either
+# structured YAML or a block string; both are run through tpl against the root
+# context, so {{ }} expressions work. Objects without an explicit namespace
+# land in the release namespace (<tenant>-admin).
+extraManifests: []
+#  - apiVersion: v1
+#    kind: ConfigMap
+#    metadata:
+#      name: "{{ .Release.Name }}-extra"
+#      namespace: "{{ .Values.magicnamespace.namespace }}"
+#    data:
+#      foo: bar
+#  - |
+#    apiVersion: v1
+#    kind: ConfigMap
+#    metadata:
+#      name: {{ .Release.Name }}-extra-string
+#    data:
+#      foo: bar
