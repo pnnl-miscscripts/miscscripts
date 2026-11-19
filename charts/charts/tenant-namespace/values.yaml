@@ -125,6 +125,10 @@ gateway:
 #      replicas: 2
 #    envoyPDB:
 #      minAvailable: 1
+#    backendTLS:
+#      clientCertificateRef:
+#        kind: Secret
+#        name: spire-svid
 #  parametersRef:
 #    group: gateway.envoyproxy.io
 #    kind: EnvoyProxy
