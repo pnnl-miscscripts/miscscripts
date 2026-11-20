@@ -28,7 +28,7 @@ RUN ansible-galaxy install -r ${HOME}/requirements.yml && \
     cd tenant-namespace/charts/ingress-nginx/ && \
     cd - && \
     find roles/ -type f -exec md5sum {} \; > /.extrafingerprints && \
-    echo 0.1.24 >> /.extrafingerprints && \
+    echo 0.1.25 >> /.extrafingerprints && \
     md5sum watches.yaml >> /.extrafingerprints
 
 ENTRYPOINT ["/tini", "--", "/usr/local/bin/ansible-operator", "run", "--watches-file=./watches.yaml", "--inject-owner-ref=false"]
